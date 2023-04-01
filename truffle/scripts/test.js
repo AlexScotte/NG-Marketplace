@@ -46,22 +46,20 @@ module.exports = async (deployer, network) => {
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
 
 
-
-    // await stuff.setApprovalForAll(auctionHouseInstance.address, true);
     await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a2 });
-    // await stuff.setApprovalForAll(owner, true);
-    // await treasureGuardianInstance.setApprovalForAll(owner, true);
-    // await treasureGuardianInstance.setApprovalForAll(auctionHouseInstance.address, true);
     console.log("tezst");
 
-
-    // await auctionHouseInstance.listItem(treasureGuardianInstance.address, 10, 1, 11);
     await auctionHouseInstance.listItem(10, 1, 11, { from: a2 });
     console.log((await stuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
     console.log((await stuff.balanceOf(auctionHouseInstance.address, 10)).toNumber());
 
+    await auctionHouseInstance.executeSale(0, { from: a3, value: 1 });
+    console.log((await stuff.balanceOf(a2, 10)).toNumber());
+    console.log((await stuff.balanceOf(a3, 10)).toNumber());
 
-    // await auctionHouseInstance.listItem(10, 1000, 1000, { from: treasureGuardianInstance.address });
-
+    console.log("ttt");
+    await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a3 });
+    await auctionHouseInstance.listItem(10, 1, 11, { from: a3 });
+    console.log((await stuff.balanceOf(a3, 10)).toNumber());
 };

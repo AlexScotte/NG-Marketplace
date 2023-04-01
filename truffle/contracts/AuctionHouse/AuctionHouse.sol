@@ -8,37 +8,43 @@ import "../../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Ho
 
 contract AuctionHouse is Ownable, ERC1155Holder {
     using Counters for Counters.Counter;
-    //_itemIds variable has the most recent minted tokenId
-    Counters.Counter private _itemIds;
-    //Keeps track of the number of items sold on the marketplace
-    Counters.Counter private _itemsSold;
-    // //owner is the contract address that created the smart contract
-    // address payable owner;
-    //The fee charged by the marketplace to be allowed to list an NFT
-    uint256 listPrice = 0.01 ether;
 
+    // Only this token address is allowed on this marketplace for now
     address public tokenAddress;
 
-    //The structure to store info about a listed token
+    //The fee charged by the marketplace to be allowed to list an NFT
+    uint256 listingPrice = 0.01 ether;
+
+    //_itemIds variable has the most recent minted tokenId
+    Counters.Counter private _itemIds;
+
+    // Number of item sold on the marketplace
+    Counters.Counter private _itemsSoldCount;
+
+    // Number of item listed on the marketplace
+    Counters.Counter public listedItemsCount;
+
+    // Lited token Informations
     struct ListedItem {
         uint256 itemId;
         address payable owner;
         address payable seller;
+        address buyer;
         uint256 price;
         uint256 deadline;
         bool currentlyListed;
+        bool isSold;
     }
 
-    //the event emitted when a token is successfully listed
-    // event ItemListedSuccess (
-    //     uint256 indexed tokenId,
-    //     address owner,
-    //     address seller,
-    //     uint256 price,
-    //     bool currentlyListed
-    // );
+    // Event listing successfull
+    event ItemListedSuccess(
+        uint256 indexed tokenId,
+        address owner,
+        address seller,
+        uint256 price
+    );
 
-    //This mapping maps tokenId to token info and is helpful when retrieving details about a tokenId
+    // Map listedItem by itemId
     mapping(uint256 => ListedItem) private idToListedItem;
 
     constructor(address _tokenAddress) {
@@ -47,14 +53,14 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         tokenAddress = _tokenAddress;
     }
 
-    // function updateListPrice(uint256 _listPrice) public payable {
-    //     require(owner == msg.sender, "Only owner can update listing price");
-    //     listPrice = _listPrice;
-    // }
+    function updateListingPrice(uint256 newPrice) public payable onlyOwner {
+        require(newPrice > 0, "New listing price cannot be 0");
+        listingPrice = newPrice;
+    }
 
-    // function getListPrice() public view returns (uint256) {
-    //     return listPrice;
-    // }
+    function getListingPrice() public view returns (uint256) {
+        return listingPrice;
+    }
 
     // function getLatestIdToListedItem()
     //     public
@@ -77,45 +83,41 @@ contract AuctionHouse is Ownable, ERC1155Holder {
 
     function listItem(
         uint256 itemId,
-        uint256 price,
+        uint256 sellingPrice,
         uint256 deadline
-    ) external {
+    ) external payable {
         //Make sure the sender sent enough ETH to pay for listing
-        // require(msg.value == listPrice, "Hopefully sending the correct price");
-        // //Just sanity check
-        // require(price > 0, "Make sure the price isn't negative");
+        require(msg.value == listingPrice, "You need to pay listing fees");
+        require(sellingPrice > 0, "You need to specify a correct price");
         // require(
         //     _deadline > 3600,
         //     "The deadline needs to be greater than 1 hour"
         // );
 
+        uint256 listedItemCount = listedItemsCount.current();
+
         //Update the mapping of tokenId's to Item details, useful for retrieval functions
-        idToListedItem[itemId] = ListedItem(
+        idToListedItem[listedItemCount] = ListedItem(
             itemId,
-            payable(address(this)),
-            payable(msg.sender),
-            price,
+            payable(msg.sender), // owner
+            payable(address(this)), // seller
+            address(0), // buyer
+            sellingPrice,
             deadline,
-            true
+            true,
+            false
         );
 
-        // IERC1155(nftContract).safeTransferFrom(
-        //     msg.sender,
-        //     _receiver,
-        //     _itemId,
-        //     _amountOfItem,
-        //     "0x0"
-        // );
-
         IERC1155(tokenAddress).safeTransferFrom(
-            msg.sender,
-            address(this),
+            msg.sender, // from
+            address(this), // to
             itemId,
             1,
             "0x0"
         );
+
         // _marketOwner.transfer(LISTING_FEE);
-        // _nftCount.increment();
+        listedItemsCount.increment();
 
         //Emit the event for successful transfer. The frontend parses this message and updates the end user
         // emit ItemListedSuccess(
@@ -177,27 +179,36 @@ contract AuctionHouse is Ownable, ERC1155Holder {
     //     return items;
     // }
 
-    // function executeSale(uint256 tokenId) public payable {
-    //     uint price = idToListedItem[tokenId].price;
-    //     address seller = idToListedItem[tokenId].seller;
-    //     require(
-    //         msg.value == price,
-    //         "Please submit the asking price in order to complete the purchase"
-    //     );
+    function executeSale(uint256 listedItemId) public payable {
+        uint itemPrice = idToListedItem[listedItemId].price;
+        address seller = idToListedItem[listedItemId].seller;
 
-    //     //update the details of the token
-    //     idToListedItem[tokenId].currentlyListed = true;
-    //     idToListedItem[tokenId].seller = payable(msg.sender);
-    //     _itemsSold.increment();
+        require(
+            msg.value == itemPrice,
+            "Insufficent price value for this item."
+        );
 
-    //     //Actually transfer the token to the new owner
-    //     _transfer(address(this), msg.sender, tokenId);
-    //     //approve the marketplace to sell NFTs on your behalf
-    //     approve(address(this), tokenId);
+        // Update item informations
+        idToListedItem[listedItemId].currentlyListed = false;
+        idToListedItem[listedItemId].buyer = payable(msg.sender);
+        idToListedItem[listedItemId].isSold = true;
 
-    //     //Transfer the listing fee to the marketplace creator
-    //     payable(owner).transfer(listPrice);
-    //     //Transfer the proceeds from the sale to the seller of the NFT
-    //     payable(seller).transfer(msg.value);
-    // }
+        _itemsSoldCount.increment();
+
+        // Transfer item to the new owner
+        IERC1155(tokenAddress).safeTransferFrom(
+            address(this), // from
+            msg.sender, // to
+            idToListedItem[listedItemId].itemId,
+            1,
+            "0x0"
+        );
+
+        // TODO
+        //Transfer the listing fee to the marketplace creator
+        // payable(owner).transfer(listPrice);
+
+        // Transfer money to the seller
+        payable(seller).transfer(msg.value);
+    }
 }
