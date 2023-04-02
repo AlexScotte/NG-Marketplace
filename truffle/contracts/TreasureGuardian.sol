@@ -30,11 +30,4 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     ) external onlyOwner {
         stuff.safeTransferFrom(from, to, id, amount, data);
     }
-
-    function setApprovalForAll(
-        address addressToApprove,
-        bool approved
-    ) external onlyOwner {
-        stuff.setApprovalForAll(addressToApprove, approved);
-    }
 }
