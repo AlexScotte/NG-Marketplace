@@ -13,19 +13,19 @@ function EthProvider({ children }) {
       // if (artifact) {
 
 
-      console.log("INIIIIIIT");
-      const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-      console.log(web3);
+      // console.log("INIIIIIIT");
+      // const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+      // console.log(web3);
       // accounts = await web3.eth.requestAccounts();
       // console.log("Accounts:   " + accounts);
       // console.log(accounts);
-      const networkID = await web3.eth.net.getId();
-      console.log(networkID);
+      // const networkID = await web3.eth.net.getId();
+      // console.log(networkID);
       // const deployTransaction = await web3.eth.getTransaction(artifact.networks[networkID].transactionHash);
       // const deployBlock = deployTransaction.blockNumber;
       // const currentBlock = await web3.eth.getBlockNumber();
       // const { abi } = artifact;
-      let address, contract;
+      // let address, contract;
       try {
         // address = artifact.networks[networkID].address;
         // console.log(address);
@@ -36,6 +36,7 @@ function EthProvider({ children }) {
       dispatch({
         type: actions.init,
         // data: { artifact, web3, accounts, networkID, contract, deployBlock, currentBlock }
+        data: { currentChainID, currentAccount }
       });
       // }
     }, []);
@@ -77,7 +78,7 @@ function EthProvider({ children }) {
 
     return () => {
 
-      console.log("Unsubscribe events");
+      console.log("Remove listener");
       window.ethereum.removeListener('accountsChanged', onAccountChanged);
       window.ethereum.removeListener('chainChanged', onChainIDChanged);
     };
@@ -87,6 +88,7 @@ function EthProvider({ children }) {
     try {
       console.log("Try to connect wallet");
       // const artifact = require("../../contracts/TreasureGuardian.json");
+      let artifact;
       // await window.ethereum.request({ method: 'eth_requestAccounts' });
 
       await window.ethereum.request({
@@ -94,7 +96,7 @@ function EthProvider({ children }) {
         params: [{ eth_accounts: {} }],
       });
 
-      // init(artifact);
+      init(artifact);
     } catch (err) {
 
       console.log("Errrrrr");
@@ -109,7 +111,7 @@ function EthProvider({ children }) {
     currentChainID = newChainID;
     console.log("New chain ID:" + currentChainID);
 
-    // init(state.artifact);
+    init(state.artifact);
 
   };
 
@@ -119,7 +121,7 @@ function EthProvider({ children }) {
     currentAccount = newAccounts[0];
     console.log("New current account: " + currentAccount);
 
-    // init(state.artifact);
+    init(state.artifact);
   };
 
 
