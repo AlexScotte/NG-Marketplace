@@ -5,16 +5,32 @@ import useEth from '../contexts/EthContext/useEth';
 import { useNavigate } from "react-router-dom";
 
 export default function Header({ }) {
-    const [tab, setTab] = useState(0);
     const navigate = useNavigate();
+
+    const Pages = {
+        Quests: 0,
+        Inventory: 1,
+        Marketplace: 2,
+    }
 
     const {
         state: { accounts },
         connectWallet
     } = useEth();
 
-    function handleClick() {
-        navigate("/quest");
+    function handleNavigation(page) {
+
+        console.log(page);
+        switch (page) {
+            case Pages.Quests:
+                navigate("/quests");
+                break;
+            case Pages.Inventory:
+                navigate("/inventory");
+                break;
+            case Pages.Marketplace:
+                break;
+        }
     }
     // const {
     //   state: { accounts },
@@ -46,8 +62,6 @@ export default function Header({ }) {
     const handleWalletClick = (() => {
 
         connectWallet();
-
-        console.log("IS CONNECTED:  " + window.ethereum.isConnected());
     });
 
     return (
@@ -59,15 +73,15 @@ export default function Header({ }) {
                     </Box>
                     <p fontWeight="400" fontFamily="Lato" fontStyle="normal" className="sc-b6e59fd5-0 fBKgLm sc-4bd5e3e4-1 ioWyuq">Beta</p>
 
-                    <Button onClick={handleClick}>
+                    <Button onClick={() => handleNavigation(Pages.Quests)}>
                         <p className="textStyle">Quests</p>
                     </Button>
 
-                    <Button onClick={() => setTab(2)}>
+                    <Button onClick={() => handleNavigation(Pages.Inventory)}>
                         <p className="textStyle">Inventory</p>
                     </Button>
 
-                    <Button onClick={() => setTab(3)}>
+                    <Button onClick={() => handleNavigation(Pages.Marketplace)}>
                         <p className="textStyle">Marketplace</p>
                     </Button>
 

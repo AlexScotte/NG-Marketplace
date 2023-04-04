@@ -1,11 +1,11 @@
 import { EthProvider } from "./contexts/EthContext";
 import Header from "./components/Header";
-import Quest from "./pages/Quest";
+import Quests from "./pages/Quests";
+import Inventory from "./pages/Inventory";
 import {
   BrowserRouter as Router,
   Route,
-  Routes,
-  BrowserRouter
+  Routes
 } from "react-router-dom";
 
 
@@ -19,7 +19,8 @@ function App() {
         <Routes>
 
           {/* <Switch> */}
-          <Route path="/quest" element={<Quest />} />
+          <Route path="/quests" element={<Quests />} />
+          <Route path="/inventory" element={<Inventory />} />
           {/* <Route path="/users">
               <Users />
               </Route>
