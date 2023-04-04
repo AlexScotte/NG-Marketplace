@@ -4,9 +4,11 @@ import Quests from "./pages/Quests";
 import Inventory from "./pages/Inventory";
 import {
   BrowserRouter as Router,
+  HashRouter,
   Route,
   Routes
 } from "react-router-dom";
+import AuctionHouse from "./pages/AuctionHouse/AuctionHouse";
 
 
 function App() {
@@ -14,34 +16,15 @@ function App() {
     <EthProvider>
 
       {/* <div id="App"> */}
-      <Router>
+      <HashRouter>
         <Header />
         <Routes>
-
-          {/* <Switch> */}
           <Route path="/quests" element={<Quests />} />
           <Route path="/inventory" element={<Inventory />} />
-          {/* <Route path="/users">
-              <Users />
-              </Route>
-              <Route path="/">
-              <Home />
-            </Route> */}
-          {/* </Switch> */}
-
-          {/* <div className="container">
-          <hr />
-          <hr />
-          <Intro />
-          <hr />
-          <Setup />
-          <hr />
-          <Demo />
-          <hr />
-          <Footer />
-        </div> */}
+          <Route path="/auction-house" element={<AuctionHouse />} />
         </Routes>
-      </Router>
+
+      </HashRouter>
       {/* </div> */}
     </EthProvider >
   );

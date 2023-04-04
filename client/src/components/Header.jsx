@@ -29,6 +29,7 @@ export default function Header({ }) {
                 navigate("/inventory");
                 break;
             case Pages.Marketplace:
+                navigate("/auction-house");
                 break;
         }
     }
@@ -82,7 +83,7 @@ export default function Header({ }) {
                     </Button>
 
                     <Button onClick={() => handleNavigation(Pages.Marketplace)}>
-                        <p className="textStyle">Marketplace</p>
+                        <p className="textStyle" >Marketplace</p>
                     </Button>
 
                     <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b", cursor: "pointer" }} onClick={handleWalletClick} />
