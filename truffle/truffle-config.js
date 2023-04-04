@@ -81,17 +81,17 @@ module.exports = {
     //
     // Useful for deploying to a public network.
     // Note: It's important to wrap the provider as a function to ensure truffle uses a new provider every time.
-    goerli: {
-      provider: function () {
-        return new HDWalletProvider(
-          {
-            mnemonic: { phrase: `${process.env.MNEMONIC}` },
-            providerOrUrl: `https://goerli.infura.io/v3/${process.env.INFURA_ID}`
-          },
-        )
-      },
-      network_id: 5,
-    },
+    // goerli: {
+    //   provider: function () {
+    //     return new HDWalletProvider(
+    //       {
+    //         mnemonic: { phrase: `${process.env.MNEMONIC}` },
+    //         providerOrUrl: `https://goerli.infura.io/v3/${process.env.INFURA_ID}`
+    //       },
+    //     )
+    //   },
+    //   network_id: 5,
+    // },
     //
     // Useful for private networks
     // private: {

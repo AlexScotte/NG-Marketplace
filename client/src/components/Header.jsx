@@ -4,9 +4,14 @@ import { AccountBalanceWallet } from '@mui/icons-material';
 import useEth from '../contexts/EthContext/useEth';
 import { useNavigate } from "react-router-dom";
 
-export default function Header({ currentTab }) {
+export default function Header({ }) {
     const [tab, setTab] = useState(0);
     const navigate = useNavigate();
+
+    const {
+        state: { accounts },
+        connectWallet
+    } = useEth();
 
     function handleClick() {
         navigate("/quest");
@@ -32,8 +37,17 @@ export default function Header({ currentTab }) {
     //   // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, []);
 
-    const handleChange = (() => {
+    // useEffect(() => {
+    //     if (window.ethereum && window.ethereum.isConnected()) {
+    //         tryInit();
+    //     }
+    // }, []);
 
+    const handleWalletClick = (() => {
+
+        connectWallet();
+
+        console.log("IS CONNECTED:  " + window.ethereum.isConnected());
     });
 
     return (
@@ -57,7 +71,7 @@ export default function Header({ currentTab }) {
                         <p className="textStyle">Marketplace</p>
                     </Button>
 
-                    <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b" }} />
+                    <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b", cursor: "pointer" }} onClick={handleWalletClick} />
                 </Toolbar>
             </AppBar>
         </Box>
