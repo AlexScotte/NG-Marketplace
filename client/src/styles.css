@@ -3,7 +3,7 @@ body {
   font-size: 10px;
   font-family: sans-serif;
   height: 100%;
-  /* background-image: url('https://nodeguardians.io/_next/image?url=%2Fassets%2Ftextures%2Fbackground-2.webp&w=1800&q=100'); */
+  background-image: url('https://nodeguardians.io/_next/image?url=%2Fassets%2Ftextures%2Fbackground-2.webp&w=1800&q=100');
   background-size: 100% 100%;
 
 }
