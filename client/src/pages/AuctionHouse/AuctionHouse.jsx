@@ -1,15 +1,94 @@
+import React, { useEffect, useState } from "react";
+import useEth from '../../contexts/EthContext/useEth';
+import web3 from "web3";
 import { DataGrid } from '@mui/x-data-grid';
-import { borders } from '@mui/system';
 import Box from '@mui/material/Box';
-import { red } from '@mui/material/colors';
+
+
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
 const AuctionHouse = () => {
 
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const [daiBalance, setDaiBalance] = useState(0);
+
+    const item = {
+        itemID: "",
+        owner: "",
+        seller: "",
+        buyer: "",
+        price: "",
+        deadline: "",
+        currentlyListed: "",
+        isSold: "",
+    };
+
+    const listedItems = [];
+
+    const {
+        state: { userConnected, currentChainID, currentAccount, auctionHouseContract },
+    } = useEth();
+
+    const [balance, setBalance] = useState(0);
+    const [items, setItems] = useState("");
+
+    useEffect(() => {
+
+        console.log("Loading page auction house");
+
+        if (userConnected) {
+
+            // TODO: Check the chain id
+
+            if (auctionHouseContract) {
+
+                getListedItems();
+            }
+        }
+
+    }, [currentAccount, currentChainID, auctionHouseContract]);
+
+    const getListedItems = async () => {
+
+        try {
+
+            let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
+
+            storedListedItems.map((storedListedItem) => {
+
+                const listedItem =
+                {
+                    itemID: storedListedItem.itemId,
+                    owner: storedListedItem.owner,
+                    seller: storedListedItem.seller,
+                    buyer: storedListedItem.buyer,
+                    price: storedListedItem.price,
+                    deadline: storedListedItem.deadline,
+                    currentlyListed: storedListedItem.currentlyListed,
+                    isSold: storedListedItem.isSold,
+                };
+
+                listedItems.push(listedItem);
+                listedItems.push(listedItem);
+
+                rowr = listedItems.map(o => ({ ...o }));
+                console.log(rowr);
+                console.log(rows);
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    let rowr = [];
     const renderNameCell = (params) => {
         return (
-
             <div >
-
                 <img src='https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"' height="10px" width="10px" />
 
                 <label
@@ -91,7 +170,60 @@ const AuctionHouse = () => {
         },
     ];
 
-    const rows = [
+
+    // const columns = [
+    //     {
+    //         field: 'designation',
+    //         headerName: 'Designation',
+    //         minWidth: 200,
+    //         flex: 1,
+    //         renderCell: renderNameCell
+    //     },
+    //     {
+    //         field: 'itemID',
+    //         headerName: 'ID',
+    //         width: 130,
+    //         flex: 1,
+    //         renderCell: renderCells
+
+    //     },
+    //     {
+    //         field: 'owner',
+    //         headerName: 'Owner',
+    //         width: 130,
+    //         flex: 1,
+    //     },
+    //     {
+    //         field: 'seller',
+    //         headerName: 'Seller',
+    //         width: 90,
+    //         flex: 1,
+    //     },
+    //     {
+    //         field: 'deadline',
+    //         headerName: 'Dead line',
+    //         width: 130,
+    //         flex: 1,
+    //     },
+    //     {
+    //         field: 'currentOffer',
+    //         headerName: 'Current offer',
+    //         width: 130,
+    //         flex: 1,
+    //     },
+    //     {
+    //         field: 'price',
+    //         headerName: 'Price',
+    //         // description: 'This column has a value getter and is not sortable.',
+    //         width: 160,
+    //         flex: 1,
+    //         // valueGetter: (params) =>
+    //         //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    //     },
+
+    // ];
+
+    let rows = [
         { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
         { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
         { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
@@ -103,14 +235,57 @@ const AuctionHouse = () => {
         { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
     ];
 
-    const handleRowClick = (param, event) => {
+    const handleRowClick = async (param, event) => {
         console.log("Row:");
         console.log(param);
         console.log(event);
+
+
+
+        // try {
+
+        //     const test = await auctionHouseContract.methods.getListingPrice().call();
+        //     console.log("test: " + test);
+        //     setBalance(test);
+        // }
+        // catch (error) {
+        //     console.log(error.message);
+        // }
+
     };
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    }
 
     return (
         <div style={{ height: '70vh', width: '80%', justifyContent: 'center', alignItems: 'center' }}>
+
+            <Button onClick={handleOpen}>Open modal</Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Text in a modal
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                    </Typography>
+                </Box>
+            </Modal>
+
             <DataGrid
                 rows={rows}
                 columns={columns}

@@ -3,8 +3,10 @@ const TreasureGuardian = artifacts.require("TreasureGuardian");
 const Stuff = artifacts.require("Stuff");
 const ForgeMaster = artifacts.require("ForgeMaster");
 const AuctionHouse = artifacts.require("AuctionHouse");
+const { BN } = require("web3-utils");
 
 module.exports = async (deployer, network) => {
+
 
     var accounts = await web3.eth.getAccounts();
     var owner = accounts[0];
@@ -49,17 +51,23 @@ module.exports = async (deployer, network) => {
     await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a2 });
     console.log("tezst");
 
-    await auctionHouseInstance.listItem(10, 1, 11, { from: a2 });
+    let listingFee = await auctionHouseInstance.listingPrice();
+    listingFee = listingFee.toString();
+    console.log("listing fee: " + listingFee);
+
+    await auctionHouseInstance.listItem(10, 1, 11, { from: a2, value: listingFee });
     console.log((await stuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
     console.log((await stuff.balanceOf(auctionHouseInstance.address, 10)).toNumber());
+
+    console.log("achat");
 
     await auctionHouseInstance.executeSale(0, { from: a3, value: 1 });
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
     console.log((await stuff.balanceOf(a3, 10)).toNumber());
 
     console.log("ttt");
-    await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a3 });
+    await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a3, value: listingFee });
     await auctionHouseInstance.listItem(10, 1, 11, { from: a3 });
     console.log((await stuff.balanceOf(a3, 10)).toNumber());
 };

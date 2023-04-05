@@ -13,10 +13,9 @@ contract AuctionHouse is Ownable, ERC1155Holder {
     address public tokenAddress;
 
     //The fee charged by the marketplace to be allowed to list an NFT
-    uint256 listingPrice = 0.01 ether;
+    uint256 public listingPrice = 0.01 ether;
 
-    //_itemIds variable has the most recent minted tokenId
-    Counters.Counter private _itemIds;
+    // uint floorPrice
 
     // Number of item sold on the marketplace
     Counters.Counter private _itemsSoldCount;
@@ -47,18 +46,20 @@ contract AuctionHouse is Ownable, ERC1155Holder {
     // Map listedItem by itemId
     mapping(uint256 => ListedItem) private idToListedItem;
 
+    ListedItem[] public listedItems;
+
     constructor(address _tokenAddress) {
         // Set the token address in the constructor
         // to only be able to list/buy/sell this specific token
         tokenAddress = _tokenAddress;
     }
 
-    function updateListingPrice(uint256 newPrice) public payable onlyOwner {
+    function updateListingPrice(uint256 newPrice) external payable onlyOwner {
         require(newPrice > 0, "New listing price cannot be 0");
         listingPrice = newPrice;
     }
 
-    function getListingPrice() public view returns (uint256) {
+    function getListingPrice() external view returns (uint256) {
         return listingPrice;
     }
 
@@ -96,8 +97,7 @@ contract AuctionHouse is Ownable, ERC1155Holder {
 
         uint256 listedItemCount = listedItemsCount.current();
 
-        //Update the mapping of tokenId's to Item details, useful for retrieval functions
-        idToListedItem[listedItemCount] = ListedItem(
+        ListedItem memory newListedItem = ListedItem(
             itemId,
             payable(msg.sender), // owner
             payable(address(this)), // seller
@@ -107,6 +107,10 @@ contract AuctionHouse is Ownable, ERC1155Holder {
             true,
             false
         );
+
+        //Update the mapping of tokenId's to Item details, useful for retrieval functions
+        idToListedItem[listedItemCount] = newListedItem;
+        listedItems.push(newListedItem);
 
         IERC1155(tokenAddress).safeTransferFrom(
             msg.sender, // from
@@ -129,23 +133,51 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         // );
     }
 
-    //This will return all the NFTs currently listed to be sold on the marketplace
-    // function getAllNFTs() public view returns (ListedItem[] memory) {
-    //     uint nftCount = _itemIds.current();
-    //     ListedItem[] memory tokens = new ListedItem[](nftCount);
-    //     uint currentIndex = 0;
+    // This will return all the NFTs currently listed to be sold on the marketplace
+    function getListedItems(
+        bool ownedByCaller,
+        bool stillListed,
+        bool isSold
+    ) public view returns (ListedItem[] memory) {
+        ListedItem[] memory filteredListedItems = new ListedItem[](
+            listedItemsCount.current()
+        );
+        uint filteredListedItemIndex = 0;
 
-    //     //at the moment currentlyListed is true for all, if it becomes false in the future we will
-    //     //filter out currentlyListed == false over here
-    //     for (uint i = 0; i < nftCount; i++) {
-    //         uint currentId = i + 1;
-    //         ListedItem storage currentItem = idToListedItem[currentId];
-    //         tokens[currentIndex] = currentItem;
-    //         currentIndex += 1;
-    //     }
-    //     //the array 'tokens' has the list of all NFTs in the marketplace
-    //     return tokens;
-    // }
+        for (uint i = 0; i < listedItemsCount.current(); i++) {
+            ListedItem storage listedItem = listedItems[i];
+
+            if (ownedByCaller) {
+                if (listedItem.owner != msg.sender) {
+                    continue;
+                }
+            }
+
+            // item can be not listed and not sold if the user cancel the listing
+
+            if (stillListed) {
+                if (!listedItem.currentlyListed) {
+                    continue;
+                }
+            }
+
+            if (isSold) {
+                if (!listedItem.isSold) {
+                    continue;
+                }
+            }
+
+            filteredListedItems[filteredListedItemIndex] = listedItem;
+            filteredListedItemIndex++;
+
+            // uint currentId = i + 1;
+            // ListedItem storage currentItem = idToListedItem[currentId];
+            // tokens[currentIndex] = currentItem;
+            // currentIndex += 1;
+        }
+
+        return filteredListedItems;
+    }
 
     // //Returns all the NFTs that the current user is owner or seller in
     // function getMyNFTs() public view returns (ListedItem[] memory) {

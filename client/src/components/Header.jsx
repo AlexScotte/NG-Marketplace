@@ -3,15 +3,10 @@ import { AppBar, Box, Button, Toolbar, Typography, Tabs, Tab, TabPanel } from '@
 import { AccountBalanceWallet } from '@mui/icons-material';
 import useEth from '../contexts/EthContext/useEth';
 import { useNavigate } from "react-router-dom";
+import { Pages } from "../Utils/utils";
 
 export default function Header({ }) {
     const navigate = useNavigate();
-
-    const Pages = {
-        Quests: 0,
-        Inventory: 1,
-        Marketplace: 2,
-    }
 
     const {
         state: { accounts },
