@@ -6,7 +6,7 @@ import "../../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Ho
 import "../../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
-import "./Stuff.sol";
+import "./GuardianStuff.sol";
 
 contract ForgeMaster is Ownable, ERC1155Holder {
     address public collectionAddress;
@@ -15,7 +15,7 @@ contract ForgeMaster is Ownable, ERC1155Holder {
         string memory collectionName
     ) external returns (address newCollectionAddress) {
         // Import the bytecode of the contract to deploy
-        bytes memory collectionBytecode = type(Stuff).creationCode;
+        bytes memory collectionBytecode = type(GuardianStuff).creationCode;
         // Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(collectionName));
 
@@ -32,8 +32,8 @@ contract ForgeMaster is Ownable, ERC1155Holder {
             }
         }
 
-        Stuff stuff = Stuff(newCollectionAddress);
-        stuff.forgeStuff(msg.sender);
+        GuardianStuff guardianStuff = GuardianStuff(newCollectionAddress);
+        guardianStuff.forgeStuff(msg.sender);
 
         collectionAddress = newCollectionAddress;
         return (newCollectionAddress);

@@ -1,6 +1,6 @@
 const TreasureGuardian = artifacts.require("TreasureGuardian");
 const ForgeMaster = artifacts.require("ForgeMaster");
-const Stuff = artifacts.require("Stuff");
+const GuardianStuff = artifacts.require("GuardianStuff");
 const AuctionHouse = artifacts.require("AuctionHouse");
 
 module.exports = async (deployer) => {
@@ -9,5 +9,5 @@ module.exports = async (deployer) => {
     var treasureGuardianInstance = await TreasureGuardian.deployed();
     // // deployer.deploy(ForgeMaster);
     // // deployer.deploy(ForgeFactory);
-    await deployer.deploy(AuctionHouse, await treasureGuardianInstance.stuff());
+    await deployer.deploy(AuctionHouse, await treasureGuardianInstance.guardianStuff());
 };

@@ -7,18 +7,18 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 import "./Forge/ForgeMaster.sol";
-import "./Forge/Stuff.sol";
+import "./Forge/GuardianStuff.sol";
 
 contract TreasureGuardian is Ownable, ERC1155Holder {
     ForgeMaster public factory;
-    Stuff public stuff;
+    GuardianStuff public guardianStuff;
 
     constructor() {
         factory = new ForgeMaster();
         address collectionAddress = factory.forgeCollection(
             "Node Guardians genesis collection"
         );
-        stuff = Stuff(collectionAddress);
+        guardianStuff = GuardianStuff(collectionAddress);
     }
 
     function safeTransferFrom(
@@ -28,6 +28,6 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         uint amount,
         bytes memory data
     ) external onlyOwner {
-        stuff.safeTransferFrom(from, to, id, amount, data);
+        guardianStuff.safeTransferFrom(from, to, id, amount, data);
     }
 }

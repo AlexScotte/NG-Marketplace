@@ -39,7 +39,7 @@ const AuctionHouse = () => {
     };
 
     const {
-        state: { userConnected, currentChainID, currentAccount, auctionHouseContract, stuffContract },
+        state: { userConnected, currentChainID, currentAccount, auctionHouseContract, guardianStuffContract },
     } = useEth();
 
     useEffect(() => {
@@ -50,27 +50,26 @@ const AuctionHouse = () => {
 
             // TODO: Check the chain id
 
-            if (auctionHouseContract && stuffContract) {
+            if (auctionHouseContract && guardianStuffContract) {
 
                 getListedItems();
             }
         }
 
-    }, [currentAccount, currentChainID, auctionHouseContract, stuffContract]);
+    }, [currentAccount, currentChainID, auctionHouseContract, guardianStuffContract]);
 
     const getListedItems = async () => {
 
         try {
 
-            const uri = await stuffContract.methods.uri(0).call();
+            const uri = await guardianStuffContract.methods.uri(0).call();
             setIpfsUrl(uri);
             console.log(uri);
             setIpfsUrl(ipfsUrl);
 
             let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
             setListedItems([]);
-            let index = 0;
-            storedListedItems.map(async (storedListedItem) => {
+            storedListedItems.map(async (storedListedItem, index) => {
 
                 const test = uri.replace("{id}", storedListedItem.itemId);
                 const meta = await axios.get("https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/10.json");
@@ -92,8 +91,6 @@ const AuctionHouse = () => {
                 };
 
                 setListedItems(listedItems => [...listedItems, listedItem]);
-                index++;
-
             });
         } catch (error) {
             console.log(error.message);

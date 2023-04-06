@@ -17,12 +17,12 @@ function EthProvider({ children }) {
         const [
           loadingArtifactsOK,
           treasureGuardianArtifact,
-          stuffArtifact,
+          guardianStuffArtifact,
           auctionHouseArtifact,
           web3] = await loadArtifact();
 
         let treasureGuardianContract;
-        let stuffContract;
+        let guardianStuffContract;
         let auctionHouseContract;
 
         if (loadingArtifactsOK) {
@@ -36,10 +36,10 @@ function EthProvider({ children }) {
             const treasureGuardianAddress = treasureGuardianArtifact.networks[networkID].address;
             treasureGuardianContract = new web3.eth.Contract(treasureGuardianArtifact.abi, treasureGuardianAddress);
 
-            // Stuff contract
-            const stuffAddress = await treasureGuardianContract.methods.stuff().call();
-            // const stuffAdress = stuffArtifact.networks[networkID].address;
-            stuffContract = new web3.eth.Contract(stuffArtifact.abi, stuffAddress);
+            // Guardian Stuff contract
+            const guardianStuffAddress = await treasureGuardianContract.methods.guardianStuff().call();
+            // const guardianStuffAdress = guardianStuffArtifact.networks[networkID].address;
+            guardianStuffContract = new web3.eth.Contract(guardianStuffArtifact.abi, guardianStuffAddress);
 
             // Auction house contract
             const auctionHouseAddress = auctionHouseArtifact.networks[networkID].address;
@@ -60,7 +60,7 @@ function EthProvider({ children }) {
             currentAccount,
             loadingArtifactsOK,
             treasureGuardianContract,
-            stuffContract,
+            guardianStuffContract,
             auctionHouseContract
           }
         });
@@ -73,7 +73,7 @@ function EthProvider({ children }) {
     let loadingArtifactsOK = false;
     let treasureGuardianArtifact;
     let auctionHouseArtifact;
-    let stuffArtifact;
+    let guardianStuffArtifact;
     let web3;
 
     if (currentChainID == ChainID.Local) {
@@ -81,7 +81,7 @@ function EthProvider({ children }) {
       try {
 
         treasureGuardianArtifact = require("../../contracts/TreasureGuardian.json");
-        stuffArtifact = require("../../contracts/Stuff.json");
+        guardianStuffArtifact = require("../../contracts/GuardianStuff.json");
         auctionHouseArtifact = require("../../contracts/AuctionHouse.json");
         web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
         loadingArtifactsOK = true;
@@ -97,7 +97,7 @@ function EthProvider({ children }) {
     return [
       loadingArtifactsOK,
       treasureGuardianArtifact,
-      stuffArtifact,
+      guardianStuffArtifact,
       auctionHouseArtifact,
       web3];
   }
