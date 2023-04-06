@@ -3,6 +3,7 @@ import useEth from '../../contexts/EthContext/useEth';
 import web3 from "web3";
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import axios from 'axios';
 
 import Button from '@mui/material/Button';
@@ -24,6 +25,9 @@ const AuctionHouse = () => {
         image: "",
         name: "",
         itemID: "",
+        rarity: "",
+        set: "",
+        class: "",
         description: "",
         owner: "",
         seller: "",
@@ -129,59 +133,6 @@ const AuctionHouse = () => {
         )
     }
 
-    // const columns = [
-    //     {
-    //         field: 'id', headerName: 'Name',
-    //         minWidth: 200,
-    //         flex: 1,
-    //         renderCell: renderNameCell
-    //     },
-    //     {
-    //         field: 'firstName',
-    //         headerName: 'Rarity',
-    //         width: 130,
-    //         flex: 1,
-    //         renderCell: renderCells
-
-    //     },
-    //     {
-    //         field: 'lastName',
-    //         headerName: 'Time left',
-    //         width: 130,
-    //         flex: 1,
-    //     },
-    //     {
-    //         field: 'age',
-    //         headerName: 'Age',
-    //         type: 'number',
-    //         width: 90,
-    //         flex: 1,
-    //     },
-    //     {
-    //         field: 'fullName',
-    //         headerName: 'Seller',
-    //         description: 'This column has a value getter and is not sortable.',
-    //         sortable: false,
-    //         width: 160,
-    //         flex: 1,
-    //         valueGetter: (params) =>
-    //             `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    //     },
-    //     {
-    //         field: 'currentOffer',
-    //         headerName: 'Current offer',
-    //         width: 130,
-    //         flex: 1,
-    //     },
-    //     {
-    //         field: 'sellingPrice',
-    //         headerName: 'Selling price',
-    //         width: 130,
-    //         flex: 1,
-    //     },
-    // ];
-
-
     const columns = [
         {
             field: 'designation',
@@ -191,12 +142,16 @@ const AuctionHouse = () => {
             renderCell: renderDesignationCell
         },
         {
-            field: 'itemID',
-            headerName: 'ID',
+            field: 'rarity',
+            headerName: 'Rarity',
             width: 130,
             flex: 1,
-            renderCell: renderCells
-
+        },
+        {
+            field: 'class',
+            headerName: 'Class',
+            width: 130,
+            flex: 1,
         },
         {
             field: 'owner',
@@ -235,13 +190,28 @@ const AuctionHouse = () => {
     ];
 
     const handleRowClick = async (param, event) => {
-        console.log("Row:");
-        console.log(param);
-        console.log(event);
 
         setSelectedItem(listedItems[param.id]);
         handleOpen();
     };
+
+
+    const handleBuyItem = async () => {
+
+        try {
+
+            const price = selectedItem.price.toString();
+            await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: web3.utils.toWei(price, 'ether') });
+            console.log(price);
+            console.log(auctionHouseContract.methods);
+            console.log(currentAccount);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+
 
     const style = {
         position: 'absolute',
@@ -249,14 +219,15 @@ const AuctionHouse = () => {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
+        bgcolor: 'rgb(29, 28, 26)',
+        border: '1px solid rgba(190, 167, 126, 0.314)',
         boxShadow: 24,
-        p: 4,
+        borderRadius: '2px',
+        p: 2,
     }
 
     return (
-        <div style={{ height: '70vh', width: '80%', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ height: '70vh', width: '80%', justifyContent: 'center', alignItems: 'center', display: 'block' }}>
 
             <Modal
                 open={open}
@@ -265,12 +236,76 @@ const AuctionHouse = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {selectedItem.owner}
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
+
+                    <Stack direction="row" display="block" >
+                        <label >
+                            Object details
+                        </label>
+
+                        <button color="red" >
+                            text
+                        </button>
+                    </Stack>
+
+                    <div style={{ alignContent: "center" }}>
+
+                        <img src={selectedItem.image} height="50%" width="50%" />
+                    </div>
+
+                    <Stack direction="row">
+
+                        <img src="https://nodeguardians.io/assets/divers/title-decoration.svg" height="50%" width="50%" />
+
+                        <label>
+                            {selectedItem.name}
+                        </label>
+
+
+                        <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                            style={{ alignContent: "center", rotate: "180deg" }}
+                            height="50%"
+                            width="50%" />
+
+
+                    </Stack>
+
+                    <Stack alignContent="center" textAlign="center">
+                        <label>
+                            Legendary
+                        </label>
+                    </Stack>
+
+                    <Stack direction="row">
+
+
+                        <label>
+                            {selectedItem.owner}
+                        </label>
+                    </Stack>
+
+                    <Stack direction="column">
+
+                        <label>
+                            Description:
+                        </label>
+                        <label>
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        </label>
+                    </Stack>
+
+
+                    <Stack direction="row" textAlign="center">
+                        <label>
+                            {selectedItem.price}
+                        </label>
+                    </Stack>
+
+                    <Button onClick={handleBuyItem} variant="outlined" style={{ border: '1px solid rgba(190, 167, 126, 0.5)', backgroundColor: 'rgb(29, 28, 26)', cursor: 'pointer', borderRadius: '5px', fontFamily: 'Cinzel, serif', fontWeight: '900' }}>Buy</Button>
+
+
                 </Box>
             </Modal>
 

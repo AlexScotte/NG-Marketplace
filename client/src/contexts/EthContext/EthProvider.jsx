@@ -6,7 +6,6 @@ import { ChainID } from "../../Utils/utils";
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  let accounts;
   let currentAccount;
   let currentChainID;
   const initProvider = useCallback(
@@ -14,20 +13,6 @@ function EthProvider({ children }) {
 
       const userConnected = currentAccount && currentAccount != "" && currentAccount != undefined
       if (userConnected) {
-
-        // console.log("INIIIIIIT");
-        // const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-        // console.log(web3);
-        // accounts = await web3.eth.requestAccounts();
-        // console.log("Accounts:   " + accounts);
-        // console.log(accounts);
-        // const networkID = await web3.eth.net.getId();
-        // console.log(networkID);
-        // const deployTransaction = await web3.eth.getTransaction(artifact.networks[networkID].transactionHash);
-        // const deployBlock = deployTransaction.blockNumber;
-        // const currentBlock = await web3.eth.getBlockNumber();
-        // const { ABI } = artifact;
-        // let address, contract;
 
         const [
           loadingArtifactsOK,
@@ -69,7 +54,6 @@ function EthProvider({ children }) {
 
         dispatch({
           type: actions.init,
-          // data: { artifact, web3, accounts, networkID, contract, deployBlock, currentBlock }
           data: {
             userConnected,
             currentChainID,
@@ -118,38 +102,24 @@ function EthProvider({ children }) {
       web3];
   }
 
-  // useEffect(() => {
-  //   const tryInit = async () => {
-  //     try {
-  //       const artifact = require("../../contracts/TreasureGuardian.json");
-  //       init(artifact);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   tryInit();
-  // }, [init]);
-
   useEffect(() => {
 
     console.log("Loading page");
 
     const getCurrentInfos = async () => {
-      currentAccount = await window.ethereum.request({ method: 'eth_accounts' });
+      var accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      currentAccount = accounts[0];
       console.log("Current account: " + currentAccount);
 
       currentChainID = await window.ethereum.request({ method: 'eth_chainId' });
       console.log("Current chain ID: " + currentChainID);
 
       if (currentAccount) {
-        initProvider(state.artifact);
+        initProvider();
       }
     }
 
     getCurrentInfos();
-    // console.log("ETH:  " + window.ethereum);
-    // console.log("IS CONNECTED:  " + window.ethereum.isConnected());
 
     window.ethereum.on('accountsChanged', onAccountChanged);
     window.ethereum.on('chainChanged', onChainIDChanged);
@@ -160,7 +130,7 @@ function EthProvider({ children }) {
       window.ethereum.removeListener('accountsChanged', onAccountChanged);
       window.ethereum.removeListener('chainChanged', onChainIDChanged);
     };
-  }, [initProvider, state.artifact]);
+  }, [initProvider]);
 
   const connectWallet = async () => {
     try {
@@ -168,24 +138,15 @@ function EthProvider({ children }) {
       console.log("Current account connected: " + currentAccount);
       console.log("Current chain ID: " + currentChainID);
 
-
-
-
-
-
-      let artifact;
-
       await window.ethereum.request({
         method: 'wallet_requestPermissions',
         params: [{ eth_accounts: {} }],
       });
 
-      initProvider(artifact);
-    } catch (err) {
+      initProvider();
+    } catch (error) {
 
-      console.log("Errrrrr");
-      console.error(err.message);
-      // console.error(err);
+      console.error(error.message);
     }
   };
 
