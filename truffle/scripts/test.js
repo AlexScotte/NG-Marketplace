@@ -42,7 +42,7 @@ module.exports = async (deployer, network) => {
     // console.log(treasureGuardianInstance.address);
     // console.log(auctionHouseInstance.address);
 
-    // await stuff.safeTransferFrom(treasureGuardianInstance.address, a2, 10, 10, [], { from: owner });
+    // // //  await stuff.safeTransferFrom(treasureGuardianInstance.address, a2, 10, 10, [], { from: owner });
     await treasureGuardianInstance.safeTransferFrom(treasureGuardianInstance.address, a2, 10, 10, []);
     console.log((await stuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
@@ -55,19 +55,26 @@ module.exports = async (deployer, network) => {
     listingFee = listingFee.toString();
     console.log("listing fee: " + listingFee);
 
-    await auctionHouseInstance.listItem(10, 1, 11, { from: a2, value: listingFee });
-    console.log((await stuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
+    await auctionHouseInstance.listItem(10, web3.utils.toWei('1', 'ether'), 11, { from: a2, value: listingFee });
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
     console.log((await stuff.balanceOf(auctionHouseInstance.address, 10)).toNumber());
 
     console.log("achat");
 
-    await auctionHouseInstance.executeSale(0, { from: a3, value: 1 });
+    let test = await auctionHouseInstance.getListedItems(false, false, false);
+    console.log(test);
+
+    await auctionHouseInstance.executeSale(0, { from: a3, value: web3.utils.toWei('1', 'ether') });
     console.log((await stuff.balanceOf(a2, 10)).toNumber());
     console.log((await stuff.balanceOf(a3, 10)).toNumber());
 
     console.log("ttt");
-    await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a3, value: listingFee });
-    await auctionHouseInstance.listItem(10, 1, 11, { from: a3 });
+    await stuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a3 });
+    console.log("taaa");
     console.log((await stuff.balanceOf(a3, 10)).toNumber());
+    await auctionHouseInstance.listItem(10, 1, 11, { from: a3, value: listingFee });
+    console.log((await stuff.balanceOf(a3, 10)).toNumber());
+
+    let tests = await auctionHouseInstance.getListedItems(false, false, false);
+    console.log(tests);
 };

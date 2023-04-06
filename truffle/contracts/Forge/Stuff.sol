@@ -15,7 +15,7 @@ contract Stuff is ERC1155, Ownable {
 
     constructor()
         ERC1155(
-            "https://gateway.pinata.cloud/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/{id}/json"
+            "https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/{id}.json"
         )
     {}
 

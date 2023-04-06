@@ -225,6 +225,10 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         idToListedItem[listedItemId].buyer = payable(msg.sender);
         idToListedItem[listedItemId].isSold = true;
 
+        listedItems[listedItemId].currentlyListed = false;
+        listedItems[listedItemId].buyer = payable(msg.sender);
+        listedItems[listedItemId].isSold = true;
+
         _itemsSoldCount.increment();
 
         // Transfer item to the new owner
@@ -236,11 +240,11 @@ contract AuctionHouse is Ownable, ERC1155Holder {
             "0x0"
         );
 
-        // TODO
-        //Transfer the listing fee to the marketplace creator
-        // payable(owner).transfer(listPrice);
+        // // TODO
+        // //Transfer the listing fee to the marketplace creator
+        // // payable(owner).transfer(listPrice);
 
-        // Transfer money to the seller
-        payable(seller).transfer(msg.value);
+        // // Transfer money to the seller
+        // payable(seller).transfer(msg.value);
     }
 }

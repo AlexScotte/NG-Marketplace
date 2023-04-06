@@ -3,7 +3,7 @@ import useEth from '../../contexts/EthContext/useEth';
 import web3 from "web3";
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-
+import axios from 'axios';
 
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -11,14 +11,20 @@ import Modal from '@mui/material/Modal';
 
 const AuctionHouse = () => {
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const [daiBalance, setDaiBalance] = useState(0);
+    const [listedItems, setListedItems] = useState([]);
+    const [selectedItem, setSelectedItem] = useState("");
+    const [ipfsUrl, setIpfsUrl] = useState("");
 
     const item = {
+        id: 0,
+        image: "",
+        name: "",
         itemID: "",
+        description: "",
         owner: "",
         seller: "",
         buyer: "",
@@ -28,14 +34,9 @@ const AuctionHouse = () => {
         isSold: "",
     };
 
-    const listedItems = [];
-
     const {
-        state: { userConnected, currentChainID, currentAccount, auctionHouseContract },
+        state: { userConnected, currentChainID, currentAccount, auctionHouseContract, stuffContract },
     } = useEth();
-
-    const [balance, setBalance] = useState(0);
-    const [items, setItems] = useState("");
 
     useEffect(() => {
 
@@ -45,24 +46,37 @@ const AuctionHouse = () => {
 
             // TODO: Check the chain id
 
-            if (auctionHouseContract) {
+            if (auctionHouseContract && stuffContract) {
 
                 getListedItems();
             }
         }
 
-    }, [currentAccount, currentChainID, auctionHouseContract]);
+    }, [currentAccount, currentChainID, auctionHouseContract, stuffContract]);
 
     const getListedItems = async () => {
 
         try {
 
+            const uri = await stuffContract.methods.uri(0).call();
+            setIpfsUrl(uri);
+            console.log(uri);
+            setIpfsUrl(ipfsUrl);
+
             let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
+            setListedItems([]);
+            let index = 0;
+            storedListedItems.map(async (storedListedItem) => {
 
-            storedListedItems.map((storedListedItem) => {
+                const test = uri.replace("{id}", storedListedItem.itemId);
+                const meta = await axios.get("https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/10.json");
 
-                const listedItem =
+                let listedItem =
                 {
+                    id: index,
+                    image: "https://ipfs.io/ipfs/" + meta.data.image,
+                    name: meta.data.name,
+                    description: meta.data.description,
                     itemID: storedListedItem.itemId,
                     owner: storedListedItem.owner,
                     seller: storedListedItem.seller,
@@ -73,30 +87,27 @@ const AuctionHouse = () => {
                     isSold: storedListedItem.isSold,
                 };
 
-                listedItems.push(listedItem);
-                listedItems.push(listedItem);
+                setListedItems(listedItems => [...listedItems, listedItem]);
+                index++;
 
-                rowr = listedItems.map(o => ({ ...o }));
-                console.log(rowr);
-                console.log(rows);
             });
         } catch (error) {
             console.log(error.message);
         }
     }
 
-    let rowr = [];
-    const renderNameCell = (params) => {
+
+    const renderDesignationCell = (params) => {
         return (
-            <div >
-                <img src='https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"' height="10px" width="10px" />
+            <div style={{ display: "contents", alignContent: "center" }}>
+                <img src={params.row.image} height="80%" />
 
                 <label
                     variant="contained"
                     color="primary"
                     size="small"
                     style={{ marginLeft: 16 }}>
-                    {params.value}
+                    {params.row.name}
                 </label>
             </div>
         )
@@ -118,92 +129,43 @@ const AuctionHouse = () => {
         )
     }
 
-    const columns = [
-        {
-            field: 'id', headerName: 'Name',
-            minWidth: 200,
-            flex: 1,
-            renderCell: renderNameCell
-        },
-        {
-            field: 'firstName',
-            headerName: 'Rarity',
-            width: 130,
-            flex: 1,
-            renderCell: renderCells
-
-        },
-        {
-            field: 'lastName',
-            headerName: 'Time left',
-            width: 130,
-            flex: 1,
-        },
-        {
-            field: 'age',
-            headerName: 'Age',
-            type: 'number',
-            width: 90,
-            flex: 1,
-        },
-        {
-            field: 'fullName',
-            headerName: 'Seller',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
-            width: 160,
-            flex: 1,
-            valueGetter: (params) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-        },
-        {
-            field: 'currentOffer',
-            headerName: 'Current offer',
-            width: 130,
-            flex: 1,
-        },
-        {
-            field: 'sellingPrice',
-            headerName: 'Selling price',
-            width: 130,
-            flex: 1,
-        },
-    ];
-
-
     // const columns = [
     //     {
-    //         field: 'designation',
-    //         headerName: 'Designation',
+    //         field: 'id', headerName: 'Name',
     //         minWidth: 200,
     //         flex: 1,
     //         renderCell: renderNameCell
     //     },
     //     {
-    //         field: 'itemID',
-    //         headerName: 'ID',
+    //         field: 'firstName',
+    //         headerName: 'Rarity',
     //         width: 130,
     //         flex: 1,
     //         renderCell: renderCells
 
     //     },
     //     {
-    //         field: 'owner',
-    //         headerName: 'Owner',
+    //         field: 'lastName',
+    //         headerName: 'Time left',
     //         width: 130,
     //         flex: 1,
     //     },
     //     {
-    //         field: 'seller',
-    //         headerName: 'Seller',
+    //         field: 'age',
+    //         headerName: 'Age',
+    //         type: 'number',
     //         width: 90,
     //         flex: 1,
     //     },
     //     {
-    //         field: 'deadline',
-    //         headerName: 'Dead line',
-    //         width: 130,
+    //         field: 'fullName',
+    //         headerName: 'Seller',
+    //         description: 'This column has a value getter and is not sortable.',
+    //         sortable: false,
+    //         width: 160,
     //         flex: 1,
+    //         valueGetter: (params) =>
+    //             `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     //     },
     //     {
     //         field: 'currentOffer',
@@ -212,27 +174,64 @@ const AuctionHouse = () => {
     //         flex: 1,
     //     },
     //     {
-    //         field: 'price',
-    //         headerName: 'Price',
-    //         // description: 'This column has a value getter and is not sortable.',
-    //         width: 160,
+    //         field: 'sellingPrice',
+    //         headerName: 'Selling price',
+    //         width: 130,
     //         flex: 1,
-    //         // valueGetter: (params) =>
-    //         //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     //     },
-
     // ];
 
-    let rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+
+    const columns = [
+        {
+            field: 'designation',
+            headerName: 'Designation',
+            minWidth: 200,
+            flex: 1,
+            renderCell: renderDesignationCell
+        },
+        {
+            field: 'itemID',
+            headerName: 'ID',
+            width: 130,
+            flex: 1,
+            renderCell: renderCells
+
+        },
+        {
+            field: 'owner',
+            headerName: 'Owner',
+            width: 130,
+            flex: 1,
+        },
+        {
+            field: 'seller',
+            headerName: 'Seller',
+            width: 90,
+            flex: 1,
+        },
+        {
+            field: 'deadline',
+            headerName: 'Dead line',
+            width: 130,
+            flex: 1,
+        },
+        {
+            field: 'currentOffer',
+            headerName: 'Current offer',
+            width: 130,
+            flex: 1,
+        },
+        {
+            field: 'price',
+            headerName: 'Price',
+            // description: 'This column has a value getter and is not sortable.',
+            width: 160,
+            flex: 1,
+            // valueGetter: (params) =>
+            //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+        },
+
     ];
 
     const handleRowClick = async (param, event) => {
@@ -240,18 +239,8 @@ const AuctionHouse = () => {
         console.log(param);
         console.log(event);
 
-
-
-        // try {
-
-        //     const test = await auctionHouseContract.methods.getListingPrice().call();
-        //     console.log("test: " + test);
-        //     setBalance(test);
-        // }
-        // catch (error) {
-        //     console.log(error.message);
-        // }
-
+        setSelectedItem(listedItems[param.id]);
+        handleOpen();
     };
 
     const style = {
@@ -269,7 +258,6 @@ const AuctionHouse = () => {
     return (
         <div style={{ height: '70vh', width: '80%', justifyContent: 'center', alignItems: 'center' }}>
 
-            <Button onClick={handleOpen}>Open modal</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -278,7 +266,7 @@ const AuctionHouse = () => {
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Text in a modal
+                        {selectedItem.owner}
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
@@ -287,12 +275,13 @@ const AuctionHouse = () => {
             </Modal>
 
             <DataGrid
-                rows={rows}
+
+                rows={listedItems}
                 columns={columns}
                 // pageSize={5}
                 // rowsPerPageOptions={[5]}
                 onRowClick={handleRowClick}
-                rowHeight={120}
+                // rowHeight={120}
                 hideFooter
                 hideFooterPagination
                 hideFooterSelectedRowCount
