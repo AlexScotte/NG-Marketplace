@@ -14,22 +14,21 @@ module.exports = async (deployer, network) => {
     var a2 = accounts[2];
     var a3 = accounts[3];
 
-
     const treasureGuardianInstance = await TreasureGuardian.deployed();
     const auctionHouseInstance = await AuctionHouse.deployed();
     //  const guardianStuffInstance = await GuardianStuff.deployed();
-    //  const ironForgeFactory = await ForgeMaster.deployed();
-
     var guardianStuff = await GuardianStuff.at(await treasureGuardianInstance.guardianStuff());
 
-    console.log(owner);
-    console.log(treasureGuardianInstance.address);
-    console.log(guardianStuff.address);
+    console.log(await guardianStuff.getTokenIDs());
 
-    console.log(await treasureGuardianInstance.owner());
-    console.log(await guardianStuff.owner());
+    // console.log(owner);
+    // console.log(treasureGuardianInstance.address);
+    // console.log(guardianStuff.address);
 
-    console.log((await guardianStuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
+    // console.log(await treasureGuardianInstance.owner());
+    // console.log(await guardianStuff.owner());
+
+    // console.log((await guardianStuff.balanceOf(treasureGuardianInstance.address, 10)).toNumber());
     // console.log((await guardianStuff.balanceOf(treasureGuardianInstance.address, 20)).toNumber());
 
     // await guardianStuff.setApprovalForAll(owner, true, { from: a2 });
@@ -78,7 +77,7 @@ module.exports = async (deployer, network) => {
     // let tests = await auctionHouseInstance.getListedItems(false, false, false);
     // console.log(tests);
 
-    console.log(a2);
-    console.log((await guardianStuff.balanceOf(a2, 10)).toNumber());
+    // console.log(a2);
+    // console.log((await guardianStuff.balanceOf(a2, 10)).toNumber());
 
 };
