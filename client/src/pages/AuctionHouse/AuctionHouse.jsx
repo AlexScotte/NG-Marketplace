@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
+import DetailsItems from "../../components/DetailsItem";
+
 const AuctionHouse = () => {
 
     const [open, setOpen] = useState(false);
@@ -68,11 +70,13 @@ const AuctionHouse = () => {
             setIpfsUrl(ipfsUrl);
 
             let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
+            console.log(storedListedItems);
+            listedItems = [];
             setListedItems([]);
             storedListedItems.map(async (storedListedItem, index) => {
 
                 const test = uri.replace("{id}", storedListedItem.itemId);
-                const meta = await axios.get("https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/10.json");
+                const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
 
                 let listedItem =
                 {
@@ -89,8 +93,13 @@ const AuctionHouse = () => {
                     currentlyListed: storedListedItem.currentlyListed,
                     isSold: storedListedItem.isSold,
                 };
+                const match = listedItems.find(x => x.id === listedItem.id);
 
-                setListedItems(listedItems => [...listedItems, listedItem]);
+                if (!match) {
+                    setListedItems(listedItems => [...listedItems, listedItem]);
+                }
+
+
             });
         } catch (error) {
             console.log(error.message);
@@ -107,7 +116,7 @@ const AuctionHouse = () => {
                     variant="contained"
                     color="primary"
                     size="small"
-                    style={{ marginLeft: 16 }}>
+                    sx={{ marginLeft: 16, fontSize: "12px" }}>
                     {params.row.name}
                 </label>
             </div>
@@ -192,7 +201,6 @@ const AuctionHouse = () => {
         handleOpen();
     };
 
-
     const handleBuyItem = async () => {
 
         try {
@@ -208,8 +216,6 @@ const AuctionHouse = () => {
         }
     };
 
-
-
     const style = {
         position: 'absolute',
         top: '50%',
@@ -220,11 +226,36 @@ const AuctionHouse = () => {
         border: '1px solid rgba(190, 167, 126, 0.314)',
         boxShadow: 24,
         borderRadius: '2px',
+        height: "80%",
         p: 2,
     }
 
     return (
-        <div style={{ height: '70vh', width: '80%', justifyContent: 'center', alignItems: 'center', display: 'block' }}>
+        <div style={{
+            height: 'calc(100vh - 64px)', display: "grid",
+            gridTemplateColumns: "repeat(3, 70% 30%)",
+            gridGap: "15px",
+            padding: "20px",
+            position: "relative",
+            boxSizing: "border-box",
+            // , maxWidth: "1000px", margin: "20px, auto"
+        }}>
+
+            {/* <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+
+
+
+                <DetailsItems
+                    auctionHouseContract={auctionHouseContract}
+                    currentAccount={currentAccount}
+                    selectedItem={selectedItem} />
+
+            </Modal> */}
 
             <Modal
                 open={open}
@@ -232,26 +263,27 @@ const AuctionHouse = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-
-                    <Stack direction="row" display="block" >
-                        <label >
+                <Box sx={style} className="modal-main-content">
+                    <div className="header-modal-container" direction="row" display="block" >
+                        <label>
                             Object details
                         </label>
 
-                        <button color="red" >
-                            text
+                        <button className="close-bt" color="red" >
+                            X
                         </button>
-                    </Stack>
+                    </div>
 
-                    <div style={{ alignContent: "center" }}>
-
-                        <img src={selectedItem.image} height="50%" width="50%" />
+                    <div className="modal-picture-container">
+                        <img src={selectedItem.image} />
                     </div>
 
                     <Stack direction="row">
 
-                        <img src="https://nodeguardians.io/assets/divers/title-decoration.svg" height="50%" width="50%" />
+                        <div>
+                            <img src="https://nodeguardians.io/assets/divers/title-decoration.svg" />
+                        </div>
+
 
                         <label>
                             {selectedItem.name}
@@ -259,9 +291,7 @@ const AuctionHouse = () => {
 
 
                         <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
-                            style={{ alignContent: "center", rotate: "180deg" }}
-                            height="50%"
-                            width="50%" />
+                            style={{ alignContent: "center", rotate: "180deg" }} />
 
 
                     </Stack>
@@ -273,25 +303,56 @@ const AuctionHouse = () => {
                     </Stack>
 
                     <Stack direction="row">
-
-
                         <label>
                             {selectedItem.owner}
                         </label>
                     </Stack>
+                    <div className="generic-label-container"><span>title:</span> <span>value</span></div>
+                    <div className="generic-label-container"><span>title:</span> <span>value</span></div>
 
-                    <Stack direction="column">
+                    <div className="text-modal-container">
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                    </div>
 
-                        <label>
-                            Description:
-                        </label>
-                        <label>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        </label>
-                    </Stack>
 
 
                     <Stack direction="row" textAlign="center">
@@ -300,10 +361,11 @@ const AuctionHouse = () => {
                         </label>
                     </Stack>
 
-                    <Button onClick={handleBuyItem} variant="outlined" style={{ border: '1px solid rgba(190, 167, 126, 0.5)', backgroundColor: 'rgb(29, 28, 26)', cursor: 'pointer', borderRadius: '5px', fontFamily: 'Cinzel, serif', fontWeight: '900' }}>Buy</Button>
+                    <Button className="modal-submit" onClick={handleBuyItem} variant="outlined" style={{ border: '1px solid rgba(190, 167, 126, 0.5)', backgroundColor: 'rgb(29, 28, 26)', cursor: 'pointer', borderRadius: '5px', fontFamily: 'Cinzel, serif', fontWeight: '900' }}>Buy</Button>
 
 
                 </Box>
+
             </Modal>
 
             <DataGrid
@@ -419,6 +481,11 @@ const AuctionHouse = () => {
                     },
                 }}
             />
+
+            <div sx={{}}>
+
+            </div>
+
         </div>
 
     )

@@ -48,7 +48,7 @@ function EthProvider({ children }) {
             console.log("Successfully loaded contracts");
           } catch (err) {
             console.log("Error when loading contracts");
-            console.error(err);
+            console.error(err.message);
           }
         }
 

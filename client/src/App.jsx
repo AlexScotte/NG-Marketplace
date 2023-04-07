@@ -15,7 +15,6 @@ function App() {
   return (
     <EthProvider>
 
-      {/* <div id="App"> */}
       <HashRouter>
         <Header />
         <Routes>
@@ -25,7 +24,6 @@ function App() {
         </Routes>
 
       </HashRouter>
-      {/* </div> */}
     </EthProvider >
   );
 }

@@ -63,25 +63,36 @@ export default function Header({ }) {
     return (
         <Box sx={{ flexGrow: 1 }} height="100">
             <AppBar position="static" sx={{ bgcolor: "black" }} height="500">
-                <Toolbar>
-                    <Box component="div" >
-                        {<img src="https://nodeguardians.io/assets/logo-white.svg" alt="logo" width="400" color='black' />}
-                    </Box>
-                    <p fontWeight="400" fontFamily="Lato" fontStyle="normal" className="sc-b6e59fd5-0 fBKgLm sc-4bd5e3e4-1 ioWyuq">Beta</p>
+                <Toolbar sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}>
+                    <div style={{ display: "flex", justifyContent: "flex-start" }}>
 
-                    <Button onClick={() => handleNavigation(Pages.Quests)}>
-                        <p className="textStyle">Quests</p>
-                    </Button>
+                        <Box component="div" sx={{ width: "200px" }}>
+                            <img src="https://nodeguardians.io/assets/logo-white.svg" sx={{ maxWidth: "100%" }} alt="logo" color='black' />
+                        </Box>
+                        <label fontWeight="400" fontFamily="Lato" fontStyle="normal" color="#b8a27b">Beta</label>
+                    </div>
 
-                    <Button onClick={() => handleNavigation(Pages.Inventory)}>
-                        <p className="textStyle">Inventory</p>
-                    </Button>
+                    <div>
+                        <button className='item-menu' onClick={() => handleNavigation(Pages.Quests)}>
+                            <label  >Quests</label>
+                        </button>
 
-                    <Button onClick={() => handleNavigation(Pages.Marketplace)}>
-                        <p className="textStyle" >Marketplace</p>
-                    </Button>
+                        <button className='item-menu' onClick={() => handleNavigation(Pages.Inventory)}>
+                            <label>Inventory</label>
+                        </button>
 
-                    <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b", cursor: "pointer" }} onClick={handleWalletClick} />
+                        <button className='item-menu' onClick={() => handleNavigation(Pages.Marketplace)}>
+                            <label>Marketplace</label>
+                        </button>
+                    </div>
+
+                    <div>
+                        <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b", cursor: "pointer" }} onClick={handleWalletClick} />
+                    </div>
                 </Toolbar>
             </AppBar>
         </Box>

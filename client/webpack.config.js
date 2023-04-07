@@ -1,16 +1,35 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
-
+// const dotenv = require('dotenv').config();
+var webpack = require('webpack');
 const extensions = [".js", ".jsx"];
-
+// dotenv.config();
 module.exports = {
+  // plugins: [
+  //   new webpack.ProvidePlugin({
+  //     process: 'process/browser',
+  //   }),
+  // ],
+  // mode: process.env.NODE_ENV === "production" ? "production" : "development",
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: "./src/index.jsx",
   output: {
     path: path.resolve(__dirname, "build"),
   },
-  resolve: { extensions },
+  resolve: {
+    extensions,
+    // alias: {
+    //   process: "process/browser"
+    // },
+    fallback: {
+      "assert": require.resolve("assert/"),
+      "buffer": require.resolve("buffer/"),
+      "crypto": require.resolve("crypto-browserify"),
+      "stream": require.resolve("stream-browserify"),
+      "url": require.resolve("url/")
+    }
+  },
   devServer: {
     client: {
       overlay: false,

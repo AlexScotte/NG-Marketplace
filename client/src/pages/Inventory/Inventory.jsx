@@ -77,7 +77,7 @@ const Inventory = () => {
 
             if (items[index] > 0) {
 
-                const meta = await axios.get("https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/10.json");
+                const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
                 let ownedItem =
                 {
                     id: index,
@@ -191,12 +191,21 @@ const Inventory = () => {
                     }}
                 >
 
-                    {ownedItems.map((item) => {
-                        return (
-                            <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+                    {
+                        // ownedItems.map((item) => {
+                        //     return (
+                        //         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
 
-                        );
-                    })}
+                        //     );
+                        // })
+
+                        [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
+                            return (
+                                <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+
+                            );
+                        })
+                    }
                 </Box>
 
 
