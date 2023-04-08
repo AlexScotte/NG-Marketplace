@@ -9,8 +9,9 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-
-
+import { ChainID } from "../../Utils/utils";
+import ChangeChain from "../../components/ChangeChain";
+import NotConnected from "../../components/NotConnected";
 
 const Inventory = () => {
     const array = [8, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2];
@@ -18,6 +19,7 @@ const Inventory = () => {
         state: { userConnected, currentChainID, currentAccount, auctionHouseContract, guardianStuffContract },
     } = useEth();
 
+    const [wrongChain, setWrongChain] = useState(true);
     const [ownedItems, setOwnedItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState("");
 
@@ -48,11 +50,13 @@ const Inventory = () => {
 
         if (userConnected) {
 
-            // TODO: Check the chain id
+            setWrongChain(currentChainID != ChainID.Mumbai);
+            if (!wrongChain) {
 
-            if (auctionHouseContract && guardianStuffContract) {
+                if (auctionHouseContract && guardianStuffContract) {
 
-                getOwnedItems();
+                    getOwnedItems();
+                }
             }
         }
 
@@ -153,70 +157,95 @@ const Inventory = () => {
     };
 
     return (
-        <Stack direction="row" height="100%" width="100%" border="1px solid red">
-            <Stack direction="row" height="100%" width="25%" border="1px solid red">
 
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        // p: 1,
-                        // m: 1,
-                        bgcolor: 'blue',
-                        maxWidth: 60,
-                        alignContent: 'flex-start',
-                        borderRadius: 1,
-                    }}
-                >
-                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
+        <div>
 
+            {
+                userConnected ? (
+                    <>
+                        {
+                            wrongChain ?
+                                (
+                                    <>
+                                        <ChangeChain chain="Mumbai" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Stack direction="row" height="100%" width="100%" border="1px solid red">
+                                            <Stack direction="row" height="100%" width="25%" border="1px solid red">
 
-                </Box>
-
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        // p: 1,
-                        // m: 1,
-                        bgcolor: 'red',
-                        // maxWidth: 300,
-                        height: '70vh',
-                        overflow: 'scroll',
-                        alignContent: 'flex-start',
-                        borderRadius: 1,
-                    }}
-                >
-
-                    {
-                        // ownedItems.map((item) => {
-                        //     return (
-                        //         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
-
-                        //     );
-                        // })
-
-                        [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
-                            return (
-                                <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
-
-                            );
-                        })
-                    }
-                </Box>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexWrap: 'wrap',
+                                                        // p: 1,
+                                                        // m: 1,
+                                                        bgcolor: 'blue',
+                                                        maxWidth: 60,
+                                                        alignContent: 'flex-start',
+                                                        borderRadius: 1,
+                                                    }}
+                                                >
+                                                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
+                                                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
+                                                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
+                                                    <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
 
 
-            </Stack>
+                                                </Box>
+
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexWrap: 'wrap',
+                                                        // p: 1,
+                                                        // m: 1,
+                                                        bgcolor: 'red',
+                                                        // maxWidth: 300,
+                                                        height: '70vh',
+                                                        overflow: 'scroll',
+                                                        alignContent: 'flex-start',
+                                                        borderRadius: 1,
+                                                    }}
+                                                >
+
+                                                    {
+                                                        // ownedItems.map((item) => {
+                                                        //     return (
+                                                        //         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+
+                                                        //     );
+                                                        // })
+
+                                                        [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
+                                                            return (
+                                                                <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+
+                                                            );
+                                                        })
+                                                    }
+                                                </Box>
 
 
-            <Stack direction="row" height="100%" width="50%" border="1px solid red">
+                                            </Stack>
 
-                <img style={{}} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Fchests%2Fchest.png&w=1800&q=75" />
-            </Stack>
-        </Stack>
+                                            <Stack direction="row" height="100%" width="50%" border="1px solid red">
+
+                                                <img style={{}} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Fchests%2Fchest.png&w=1800&q=75" />
+                                            </Stack>
+                                        </Stack>
+                                    </>
+                                )
+                        }
+                    </>
+                ) : (
+                    <>
+                        <NotConnected />
+                    </>
+                )
+            }
+        </div>
+
     )
 }
 
