@@ -17,3 +17,7 @@ export const ToShortAddress = (address) => {
     ) + "..." +
         address.substr(address.length - 5);
 }
+
+export const ToFriendlyPrice = (price, decimals) => {
+    return parseFloat(price * 10 ** -decimals).toFixed(2);
+}

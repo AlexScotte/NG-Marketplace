@@ -15,7 +15,7 @@ const NotConnected = () => {
                     Not connected
                 </label>
                 <label className="modal-information-text generic-text-font generic-text-color" style={{ marginTop: '10px' }}>
-                    Guardian, you need to connect you to accesss this section
+                    Guardian, you need to connect to accesss this section
                 </label>
             </Box>
         </div>

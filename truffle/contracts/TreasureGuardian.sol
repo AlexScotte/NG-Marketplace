@@ -15,7 +15,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     GuardianStuff public guardianStuff;
     GuardianToken public guardianToken;
 
-    uint256 public chestPrice = 25;
+    uint256 public chestPrice = 25 ether;
     uint256 private _nonce;
 
     uint8 private _itemPerChest = 5;
@@ -24,6 +24,8 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     uint8 private _dropRateRare = 10;
     uint8 private _dropRateEpic = 4;
     uint8 private _dropRateLegendary = 1;
+
+    event onStuffTransferedTo(address to, uint256[] ids);
 
     constructor() {
         guardianToken = new GuardianToken();
@@ -61,7 +63,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     }
 
     function buyChest(uint amount) external {
-        uint8 chestItemID = 0;
+        uint8 chestItemID = guardianStuff.chestItemID();
 
         require(
             guardianStuff.balanceOf(address(this), chestItemID) > amount,
@@ -111,7 +113,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     }
 
     function openChest() external returns (uint256[] memory ids) {
-        uint8 chestItemID = 0;
+        uint8 chestItemID = guardianStuff.chestItemID();
 
         require(
             guardianStuff.balanceOf(msg.sender, chestItemID) > 0,
@@ -123,14 +125,25 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         for (uint i = 0; i < _itemPerChest; i++) {
             uint256 itemID = _generateItemID();
             itemIDs[i] = itemID;
-            // guardianStuff.safeTransferFrom(
-            //     address(this), // from
-            //     msg.sender, // to
-            //     itemID,
-            //     1,
-            //     ""
-            // );
+            guardianStuff.safeTransferFrom(
+                address(this), // from
+                msg.sender, // to
+                itemID,
+                1,
+                ""
+            );
         }
+
+        // Burn chest
+        // guardianStuff.safeTransferFrom(
+        //     msg.sender,
+        //     address(0),
+        //     chestItemID,
+        //     1,
+        //     ""
+        // );
+
+        emit onStuffTransferedTo(msg.sender, itemIDs);
 
         return itemIDs;
     }

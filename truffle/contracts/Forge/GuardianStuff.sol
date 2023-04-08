@@ -7,6 +7,7 @@ import "../../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 contract GuardianStuff is ERC1155, Ownable {
     uint256[] private _itemIDs;
+    uint8 public chestItemID = 0;
 
     constructor()
         ERC1155(
@@ -58,7 +59,7 @@ contract GuardianStuff is ERC1155, Ownable {
 
     function forgeChests(address itemOwner) external {
         // Chests - TODO: calculate in function of the item supply and the number of item in a chest
-        _mint(itemOwner, 0, 10 ** 12, "");
+        _mint(itemOwner, chestItemID, 10 ** 12, "");
     }
 
     function getTokenIDs() external view returns (uint256[] memory tokenId) {

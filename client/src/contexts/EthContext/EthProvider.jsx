@@ -18,28 +18,41 @@ function EthProvider({ children }) {
           loadingArtifactsOK,
           treasureGuardianArtifact,
           guardianStuffArtifact,
+          guardianTokenArtifact,
           auctionHouseArtifact,
           web3] = await loadArtifact();
 
         let treasureGuardianContract;
+        let treasureGuardianAddress;
         let guardianStuffContract;
+        let guardianTokenContract;
+        let guardianTokenDecimals;
         let auctionHouseContract;
+        let deployBlock;
+        let currentBlock;
 
         if (loadingArtifactsOK) {
 
           const networkID = await web3.eth.net.getId();
           const deployTransaction = await web3.eth.getTransaction(treasureGuardianArtifact.networks[networkID].transactionHash);
-          const deployBlock = deployTransaction.blockNumber;
-          const currentBlock = await web3.eth.getBlockNumber();
+          deployBlock = deployTransaction.blockNumber;
+          currentBlock = await web3.eth.getBlockNumber();
           try {
             // Tresure guardian contract
-            const treasureGuardianAddress = treasureGuardianArtifact.networks[networkID].address;
+            treasureGuardianAddress = treasureGuardianArtifact.networks[networkID].address;
+            console.log("Treasure guardian address: " + treasureGuardianAddress);
             treasureGuardianContract = new web3.eth.Contract(treasureGuardianArtifact.abi, treasureGuardianAddress);
 
             // Guardian Stuff contract
             const guardianStuffAddress = await treasureGuardianContract.methods.guardianStuff().call();
-            // const guardianStuffAdress = guardianStuffArtifact.networks[networkID].address;
             guardianStuffContract = new web3.eth.Contract(guardianStuffArtifact.abi, guardianStuffAddress);
+            console.log("Guardian stuff address: " + guardianStuffAddress);
+
+            // Guardian Token contract
+            const guardianTokenAddress = await treasureGuardianContract.methods.guardianToken().call();
+            guardianTokenContract = new web3.eth.Contract(guardianTokenArtifact.abi, guardianTokenAddress);
+            guardianTokenDecimals = await guardianTokenContract.methods.decimals().call();
+            console.log("Guardian token address: " + guardianTokenAddress);
 
             // Auction house contract
             const auctionHouseAddress = auctionHouseArtifact.networks[networkID].address;
@@ -58,9 +71,14 @@ function EthProvider({ children }) {
             userConnected,
             currentChainID,
             currentAccount,
+            deployBlock,
+            currentBlock,
             loadingArtifactsOK,
+            treasureGuardianAddress,
             treasureGuardianContract,
             guardianStuffContract,
+            guardianTokenContract,
+            guardianTokenDecimals,
             auctionHouseContract
           }
         });
@@ -84,6 +102,7 @@ function EthProvider({ children }) {
     let treasureGuardianArtifact;
     let auctionHouseArtifact;
     let guardianStuffArtifact;
+    let guardianTokenArtifact;
     let web3;
 
     if (currentChainID == ChainID.Local) {
@@ -92,6 +111,7 @@ function EthProvider({ children }) {
 
         treasureGuardianArtifact = require("../../contracts/TreasureGuardian.json");
         guardianStuffArtifact = require("../../contracts/GuardianStuff.json");
+        guardianTokenArtifact = require("../../contracts/GuardianToken.json");
         auctionHouseArtifact = require("../../contracts/AuctionHouse.json");
         web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
         loadingArtifactsOK = true;
@@ -108,6 +128,7 @@ function EthProvider({ children }) {
       loadingArtifactsOK,
       treasureGuardianArtifact,
       guardianStuffArtifact,
+      guardianTokenArtifact,
       auctionHouseArtifact,
       web3];
   }

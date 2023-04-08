@@ -266,9 +266,9 @@ label {
 }
 
 .inventory-text-info {
-  margin-top: 5px;
+  margin-top: 8px;
   margin-right: 5px;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 
@@ -405,7 +405,7 @@ label {
   cursor: "pointer";
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 6px !important;
   border-radius: 10px !important;
 }
@@ -423,4 +423,22 @@ label {
 ::-webkit-scrollbar-thumb {
   background-color: #5d5d5d !important;
   border-radius: 10px !important;
+} */
+
+
+
+/* ::-webkit-scrollbar {
+  width: '6px';
+  height: '6px';
 }
+
+::-webkit-scrollbar-track {
+  border-radius: '6px';
+  box-shadow: 'rgb(15, 15, 15) 0px 0px 6px inset;';
+}
+
+::-webkit-scrollbar-thumb {
+
+  border-radius: '6px';
+  box-shadow: 'rgb(146, 146, 146) 0px 0px 6px inset';
+} */
