@@ -3,15 +3,29 @@ import { AppBar, Box, Button, Toolbar, Typography, Tabs, Tab, TabPanel } from '@
 import { AccountBalanceWallet } from '@mui/icons-material';
 import useEth from '../contexts/EthContext/useEth';
 import { useNavigate } from "react-router-dom";
-import { Pages } from "../Utils/utils";
+import { Pages, ToShortAddress } from "../Utils/utils";
 
 export default function Header({ }) {
     const navigate = useNavigate();
+    const [connectedWallet, setConnectedWallet] = useState("");
 
     const {
-        state: { accounts },
+        state: { userConnected, currentAccount },
         connectWallet
     } = useEth();
+
+    useEffect(() => {
+
+        if (userConnected) {
+            setConnectedWallet(ToShortAddress(currentAccount));
+        }
+        else {
+            setConnectedWallet("Connect wallet");
+        }
+
+    }, [userConnected, currentAccount]);
+
+
 
     function handleNavigation(page) {
 
@@ -73,25 +87,39 @@ export default function Header({ }) {
                         <Box component="div" sx={{ width: "200px" }}>
                             <img src="https://nodeguardians.io/assets/logo-white.svg" sx={{ maxWidth: "100%" }} alt="logo" color='black' />
                         </Box>
-                        <label fontWeight="400" fontFamily="Lato" fontStyle="normal" color="#b8a27b">Beta</label>
+                        <label className='generic-text-font2-uppercase generic-text-color-yellow item-menu-beta' >Beta</label>
+                    </div>
+
+                    <div style={{ translate: '-25%' }}>
+                        <button className='item-menu generic-text-color' onClick={() => handleNavigation(Pages.Quests)}>
+                            Quests
+                        </button>
+
+                        <button className='item-menu generic-text-color' onClick={() => handleNavigation(Pages.Inventory)}>
+                            Inventory
+                        </button>
+
+                        <button className='item-menu generic-text-color' onClick={() => handleNavigation(Pages.Marketplace)}>
+                            Auction House
+                        </button>
                     </div>
 
                     <div>
-                        <button className='item-menu' onClick={() => handleNavigation(Pages.Quests)}>
-                            <label  >Quests</label>
-                        </button>
 
-                        <button className='item-menu' onClick={() => handleNavigation(Pages.Inventory)}>
-                            <label>Inventory</label>
-                        </button>
+                        <div style={{ cursor: "pointer" }} onClick={handleWalletClick}>
+                            <label className='header-text-wallet generic-text-font2-uppercase generic-text-color-white' style={{ cursor: "pointer" }}>
+                                {connectedWallet}
+                            </label>
 
-                        <button className='item-menu' onClick={() => handleNavigation(Pages.Marketplace)}>
-                            <label>Marketplace</label>
-                        </button>
-                    </div>
+                            <span className='decoration' />
 
-                    <div>
-                        <AccountBalanceWallet color="#b8a27b" sx={{ color: "#b8a27b", cursor: "pointer" }} onClick={handleWalletClick} />
+                            <div className='decoration-circle' style={{ height: "40px", width: "40px" }}>
+                                <div className='decoration-circle'>
+
+                                    <AccountBalanceWallet className='icon' sx={{ fontSize: "20px" }} />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </Toolbar>
             </AppBar>

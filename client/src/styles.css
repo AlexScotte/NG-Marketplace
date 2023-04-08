@@ -199,28 +199,28 @@ label {
 
 .item-menu {
   font-size: 16px;
-  font-weight: bold;
-  color: #fff5f5 !important;
+  font-weight: 550 !important;
   transition: ease-in-out 0.3s;
-  cursor: pointer;
+  cursor: pointer !important;
   background-color: transparent;
   border: 0;
   text-transform: uppercase;
   padding: 10px 0;
   margin-right: 10px;
-
-}
-
-.item-menu label {
   font-family: Cinzel;
-  cursor: pointer;
 }
+
 
 .item-menu:hover {
   transform: translateY(-2px);
   text-shadow: 0px 0px 6px rgb(254, 234, 15);
   color: #fff5f5 !important;
 
+}
+
+.item-menu-beta {
+  font-size: 9px;
+  margin: 5px 5px;
 }
 
 /***** Modal ******/
@@ -231,6 +231,7 @@ label {
   flex-direction: column;
   padding-bottom: 60px !important;
 }
+
 
 .header-modal-container {
   position: relative;
@@ -284,6 +285,52 @@ label {
   color: #fff;
 }
 
+
+
+.generic-text-font1-uppercase {
+  font-family: Cinzel;
+  text-transform: uppercase !important;
+}
+
+.generic-text-font1 {
+  font-family: Cinzel;
+}
+
+.generic-text-font2-uppercase {
+  font-family: Lato;
+  text-transform: uppercase !important;
+}
+
+.generic-text-font2 {
+  font-family: Lato;
+}
+
+.generic-text-color {
+
+  color: rgb(142, 142, 142);
+}
+
+.generic-text-color-white {
+
+  color: #fff5f5;
+}
+
+.generic-text-color-yellow {
+
+  color: rgb(159, 140, 108);
+}
+
+.modal-information-text {
+  text-align: center;
+  font-size: 16px;
+}
+
+.modal-information-title {
+  text-align: center;
+  font-size: 14px;
+}
+
+
 .generic-label-container:first-of-type {
   font-weight: bold;
 }
@@ -300,6 +347,49 @@ label {
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+
+.decoration {
+  position: absolute;
+  display: flex;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  -webkit-box-align: center;
+  align-items: center;
+  height: 2px;
+  bottom: 15px;
+  left: 80%;
+  right: 1px;
+  background: linear-gradient(to right, rgb(190, 167, 126), rgba(190, 167, 126, 0))
+}
+
+.decoration-circle {
+  width: 35px;
+  height: 35px;
+  border: 1px solid rgb(190, 167, 126);
+  border-radius: 50%;
+  /* padding: 4px; */
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  background-color: transparent;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.header-text-wallet {
+  position: absolute !important;
+  right: 100px;
+  font-size: 12px;
+  bottom: 25px;
+}
+
+.icon {
+  color: rgb(190, 167, 126);
+  cursor: "pointer";
 }
 
 ::-webkit-scrollbar {

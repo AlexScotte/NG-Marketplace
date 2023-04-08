@@ -65,6 +65,16 @@ function EthProvider({ children }) {
           }
         });
       }
+      else {
+        dispatch({
+          type: actions.init,
+          data: {
+            userConnected,
+            currentChainID,
+            currentAccount
+          }
+        });
+      }
     }, []);
 
   const loadArtifact = async () => {
