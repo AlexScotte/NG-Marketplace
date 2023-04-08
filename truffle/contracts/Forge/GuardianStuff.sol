@@ -54,7 +54,9 @@ contract GuardianStuff is ERC1155, Ownable {
                 }
             }
         }
+    }
 
+    function forgeChests(address itemOwner) external {
         // Chests - TODO: calculate in function of the item supply and the number of item in a chest
         _mint(itemOwner, 0, 10 ** 12, "");
     }

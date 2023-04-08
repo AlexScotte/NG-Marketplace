@@ -26,12 +26,16 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     uint8 private _dropRateLegendary = 1;
 
     constructor() {
+        guardianToken = new GuardianToken();
         factory = new ForgeMaster();
-        address collectionAddress = factory.forgeCollection(
+    }
+
+    function createCollection() external onlyOwner {
+        address collectionAddress = factory.createCollection(
             "Node Guardians genesis collection"
         );
+        factory.forgeCollection();
         guardianStuff = GuardianStuff(collectionAddress);
-        guardianToken = new GuardianToken();
     }
 
     function safeTransferFrom(

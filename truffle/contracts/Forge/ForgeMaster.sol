@@ -11,7 +11,7 @@ import "./GuardianStuff.sol";
 contract ForgeMaster is Ownable, ERC1155Holder {
     address public collectionAddress;
 
-    function forgeCollection(
+    function createCollection(
         string memory collectionName
     ) external returns (address newCollectionAddress) {
         // Import the bytecode of the contract to deploy
@@ -32,10 +32,13 @@ contract ForgeMaster is Ownable, ERC1155Holder {
             }
         }
 
-        GuardianStuff guardianStuff = GuardianStuff(newCollectionAddress);
-        guardianStuff.forgeStuff(msg.sender);
-
         collectionAddress = newCollectionAddress;
         return (newCollectionAddress);
+    }
+
+    function forgeCollection() external onlyOwner {
+        GuardianStuff guardianStuff = GuardianStuff(collectionAddress);
+        guardianStuff.forgeStuff(msg.sender);
+        guardianStuff.forgeChests(msg.sender);
     }
 }

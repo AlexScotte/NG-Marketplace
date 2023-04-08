@@ -99,7 +99,7 @@ module.exports = {
         return new HDWalletProvider(
           {
             mnemonic: { phrase: `${process.env.MNEMONIC}` },
-            providerOrUrl: `https://rpc.ankr.com/polygon_mumbai`
+            providerOrUrl: `https://polygon-mumbai.infura.io/v3/${process.env.INFURA_ID}`
           },
         )
       },
