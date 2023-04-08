@@ -18,17 +18,18 @@ contract GuardianStuff is ERC1155, Ownable {
         uint setCount = 1;
         uint256 supply;
 
-        // Knight, mage, rogue
+        // Class: knight, mage, rogue
         for (uint class = 1; class <= 4; class++) {
-            // There is 2 set of armor for the knight class
+            // There is 2 sets of armor for the knight class
             if (class == 0) {
                 setCount = 2;
             }
 
+            // Armor set
             for (uint set = 1; set <= setCount; set++) {
-                // Head, body, legs, hands, weapon right, weapon left
+                // Armor parts: head, body, legs, hands, weapon right, weapon left
                 for (uint part = 0; part < 7; part++) {
-                    // Common, uncommon, rare, epic, legendary
+                    // Item rarity: Common, uncommon, rare, epic, legendary
                     for (uint rarity = 0; rarity < 5; rarity++) {
                         uint itemID = (class * 1000) +
                             (set * 100) +
@@ -53,6 +54,9 @@ contract GuardianStuff is ERC1155, Ownable {
                 }
             }
         }
+
+        // Chests - TODO: calculate in function of the item supply and the number of item in a chest
+        _mint(itemOwner, 0, 10 ** 12, "");
     }
 
     function getTokenIDs() external view returns (uint256[] memory tokenId) {
