@@ -225,6 +225,60 @@ label {
 
 /***** Modal ******/
 
+
+
+
+.generic-text-font1-uppercase {
+  font-family: Cinzel;
+  text-transform: uppercase !important;
+}
+
+.generic-text-font1 {
+  font-family: Cinzel;
+}
+
+.generic-text-font2-uppercase {
+  font-family: Lato;
+  text-transform: uppercase !important;
+}
+
+.generic-text-font2 {
+  font-family: Lato;
+}
+
+.generic-text-color {
+
+  color: rgb(142, 142, 142);
+}
+
+.generic-text-color-white {
+
+  color: #fff5f5;
+}
+
+.generic-text-color-yellow {
+
+  color: rgb(159, 140, 108);
+}
+
+.generic-text-font2 {
+  font-family: Lato;
+}
+
+.inventory-text-info {
+  margin-top: 5px;
+  margin-right: 5px;
+  font-size: 25px;
+}
+
+
+
+/***** MODAL *****/
+.modal-information-text {
+  text-align: center;
+  font-size: 16px;
+}
+
 .modal-main-content {
   display: flex;
   justify-content: flex-start;
@@ -285,51 +339,10 @@ label {
   color: #fff;
 }
 
-
-
-.generic-text-font1-uppercase {
-  font-family: Cinzel;
-  text-transform: uppercase !important;
-}
-
-.generic-text-font1 {
-  font-family: Cinzel;
-}
-
-.generic-text-font2-uppercase {
-  font-family: Lato;
-  text-transform: uppercase !important;
-}
-
-.generic-text-font2 {
-  font-family: Lato;
-}
-
-.generic-text-color {
-
-  color: rgb(142, 142, 142);
-}
-
-.generic-text-color-white {
-
-  color: #fff5f5;
-}
-
-.generic-text-color-yellow {
-
-  color: rgb(159, 140, 108);
-}
-
-.modal-information-text {
-  text-align: center;
-  font-size: 16px;
-}
-
 .modal-information-title {
   text-align: center;
   font-size: 14px;
 }
-
 
 .generic-label-container:first-of-type {
   font-weight: bold;
