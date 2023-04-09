@@ -25,28 +25,9 @@ const AuctionHouse = () => {
     const [modalTitle, setModalTitle] = useState("");
     const [modalMesage, setModalMesage] = useState("");
 
-
     const [listedItems, setListedItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState("");
-    const [ipfsUrl, setIpfsUrl] = useState("");
     const [wrongChain, setWrongChain] = useState(true);
-
-    const item = {
-        id: 0,
-        listedId: 0,
-        image: "",
-        name: "",
-        itemID: "",
-        rarity: "",
-        set: "",
-        class: "",
-        description: "",
-        seller: "",
-        buyer: "",
-        price: "",
-        currentlyListed: "",
-        isSold: "",
-    };
 
     const {
         state: {
@@ -74,27 +55,16 @@ const AuctionHouse = () => {
         }
     }, [currentAccount, currentChainID, auctionHouseContract, guardianStuffContract]);
 
-    let getListedItemsLoading = false;
     const getListedItems = async () => {
 
-        if (getListedItemsLoading)
-            return;
-
-        getListedItemsLoading = true;
         try {
 
             const uri = await guardianStuffContract.methods.uri(0).call();
-            setIpfsUrl(uri);
             console.log(uri);
+            const storedListedItems = await auctionHouseContract.methods.getListedItems().call();
 
-            let storedListedItems = await auctionHouseContract.methods.getListedItems().call();
-            console.log(storedListedItems);
-            setListedItems(listedItems => []);
-            console.log("empty ? :" + listedItems);
-            storedListedItems.map(async (storedListedItem, index) => {
+            const items = await Promise.all(storedListedItems.map(async (storedListedItem, index) => {
 
-                console.log("item: " + index);
-                console.log("item: " + storedListedItem.listedId);
                 if (storedListedItem.isSold) {
                     return;
                 }
@@ -102,8 +72,9 @@ const AuctionHouse = () => {
                 // console.log("Item metadata url: " + uriWithID);
                 // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1103.json");
                 const meta = await axios.get(uriWithID);
+              
 
-                let listedItem =
+                return(
                 {
                     id: index,
                     image: "https://ipfs.io/ipfs/" + meta.data.image,
@@ -113,24 +84,19 @@ const AuctionHouse = () => {
                     type: meta.data.type,
                     class: meta.data.class,
                     description: meta.data.description,
-                    listedID: storedListedItem.listedItemId,
+                    listedItemId: storedListedItem.listedItemId,
                     itemID: storedListedItem.itemId,
                     seller: storedListedItem.seller,
                     buyer: storedListedItem.buyer,
                     price: storedListedItem.price,
                     currentlyListed: storedListedItem.currentlyListed,
                     isSold: storedListedItem.isSold,
-                };
-                const match = listedItems.find(x => x.id === listedItem.id);
+                });
+            }));
 
-                if (!match) {
-                    setListedItems(listedItems => [...listedItems, listedItem]);
-                }
+            setListedItems(items);
 
-                getListedItemsLoading = false;
-            });
         } catch (error) {
-            getListedItemsLoading = false;
             console.log(error.message);
         }
     }
@@ -141,13 +107,12 @@ const AuctionHouse = () => {
             <div style={{ display: "contents", alignContent: "center" }}>
 
                 <Box sx={{
-                    height: "50%",
                     borderColor: 'rgba(190, 167, 126, 0.125)',
                     background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity(params.row.rarity) + ' 100%);'
                 }}>
 
 
-                    <img src={params.row.image} height="100%" />
+                    <img src={params.row.image} height="80%" style={{marginTop: "5px"}}/>
                 </Box>
 
                 <label
@@ -253,12 +218,10 @@ const AuctionHouse = () => {
 
             try {
 
-                console.log(selectedItem.itemId);
-                const price = selectedItem.price.toString();
-                console.log(price);
+                console.log("liste id" + selectedItem.listedItemId);
                 // price already in ether
-                console.log(price);
-                await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: price });
+                console.log(selectedItem.price);
+                await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: selectedItem.price });
 
 
                 const title = "Congratulations Guardian !";

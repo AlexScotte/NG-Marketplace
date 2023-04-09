@@ -34,27 +34,6 @@ const Inventory = () => {
             auctionHouseAddress
         },
     } = useEth();
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [wrongChain, setWrongChain] = useState(true);
-    const [ownedItems, setOwnedItems] = useState([]);
-    const [guardianTokens, setGuardianTokens] = useState(0);
-    const [chestItemCount, setChestItemCount] = useState(0);
-    const [chestPrice, setChestPrice] = useState(0);
-    const [selectedItem, setSelectedItem] = useState("");
-    const [priceValue, setPriceValue] = useState("");
-
-    const [modalMesage, setModalMesage] = useState("");
-    const [modalTitle, setModalTitle] = useState("");
-    const [open, setOpen] = useState(false);
-    const [openDetailsModal, setOpenDetailsModal] = useState(false);
-    const handleModalOpen = () => setOpen(true);
-    const handleModalClose = () => setOpen(false);
-    const handleDetailsModalOpen = () => setOpenDetailsModal(true);
-    const handleDetailsModalClose = () => setOpenDetailsModal(false);
-
-    const [ipfsUrl, setIpfsUrl] = useState("");
-
     const item = {
         id: 0,
         image: "",
@@ -66,6 +45,26 @@ const Inventory = () => {
         description: "",
         amount: 0,
     };
+    const [wrongChain, setWrongChain] = useState(true);
+    const [ownedItems, setOwnedItems] = useState([]);
+    const [guardianTokens, setGuardianTokens] = useState(0);
+    const [chestItemCount, setChestItemCount] = useState(0);
+    const [chestPrice, setChestPrice] = useState(0);
+    const [selectedItem, setSelectedItem] = useState(item);
+    const [priceValue, setPriceValue] = useState("");
+
+
+
+    const [modalMesage, setModalMesage] = useState("");
+    const [modalTitle, setModalTitle] = useState("");
+    const [open, setOpen] = useState(false);
+    const [openDetailsModal, setOpenDetailsModal] = useState(false);
+    const handleModalOpen = () => setOpen(true);
+    const handleModalClose = () => setOpen(false);
+    const handleDetailsModalOpen = () => setOpenDetailsModal(true);
+    const handleDetailsModalClose = () => setOpenDetailsModal(false);
+
+    const [ipfsUrl, setIpfsUrl] = useState("");
 
 
     useEffect(() => {
@@ -83,14 +82,9 @@ const Inventory = () => {
 
                 if (treasureGuardianContract) {
 
-                    console.log("isloading " + isLoading);
-                    if (!isLoading) {
-
-
-                        setIsLoading(true);
-                        getOldEvents();
-                        getChestsPrice();
-                    }
+                    getOldEvents();
+                    getChestsPrice();
+                    
                 }
 
                 if (auctionHouseContract && guardianStuffContract) {
@@ -181,11 +175,13 @@ const Inventory = () => {
 
                         const uri = await guardianStuffContract.methods.uri(0).call({ from: currentAccount });
                         const uriWithID = uri.replace("{id}", itemID);
-                        const meta = await axios.get(uriWithID);
-                        // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
-                        // console.log("META:");
-                        // console.log(index);
-                        // console.log(meta.data);
+
+                        
+                            const meta = await axios.get(uriWithID);
+                            // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                            // console.log("META:");
+                            // console.log(index);
+                            // console.log(meta.data);
                         return {
                             id: index,
                             image: "https://ipfs.io/ipfs/" + meta.data.image,
@@ -203,7 +199,6 @@ const Inventory = () => {
             }));
             
             setOwnedItems(items);
-            setIsLoading(false);
         }
         catch (error) {
             console.log(error.message);
@@ -213,13 +208,9 @@ const Inventory = () => {
 
     const handleOwnedItemClick = async (param, event) => {
 
-        console.log("OWNED ITEMS");
-        // console.log(ownedItems);
-        console.log(param.id);
-        console.log(param.itemID);
+
         console.log(param)
         setSelectedItem(ownedItems[param.id]);
-        console.log(param);
         handleDetailsModalOpen();
     };
 
