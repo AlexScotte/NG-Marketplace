@@ -20643,37 +20643,37 @@
     "absolutePath": "project:/contracts/Forge/GuardianStuff.sol",
     "exportedSymbols": {
       "Address": [
-        3960
+        3999
       ],
       "Context": [
-        3982
+        4021
       ],
       "Counters": [
-        4056
+        4095
       ],
       "ERC1155": [
-        2677
+        2716
       ],
       "ERC165": [
-        4080
+        4119
       ],
       "GuardianStuff": [
         660
       ],
       "IERC1155": [
-        2799
+        2838
       ],
       "IERC1155MetadataURI": [
-        2855
+        2894
       ],
       "IERC1155Receiver": [
-        2840
+        2879
       ],
       "IERC165": [
-        4092
+        4131
       ],
       "Ownable": [
-        1454
+        1493
       ]
     },
     "id": 661,
@@ -20698,7 +20698,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 661,
-        "sourceUnit": 2678,
+        "sourceUnit": 2717,
         "src": "61:78:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -20710,7 +20710,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 661,
-        "sourceUnit": 4057,
+        "sourceUnit": 4096,
         "src": "141:71:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -20722,7 +20722,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 661,
-        "sourceUnit": 1455,
+        "sourceUnit": 1494,
         "src": "214:71:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -20738,7 +20738,7 @@
                 "315:7:2"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 2677,
+              "referencedDeclaration": 2716,
               "src": "315:7:2"
             },
             "id": 462,
@@ -20753,7 +20753,7 @@
                 "324:7:2"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1454,
+              "referencedDeclaration": 1493,
               "src": "324:7:2"
             },
             "id": 464,
@@ -20768,13 +20768,13 @@
         "id": 660,
         "linearizedBaseContracts": [
           660,
-          1454,
-          2677,
-          2855,
-          2799,
-          4080,
-          4092,
-          3982
+          1493,
+          2716,
+          2894,
+          2838,
+          4119,
+          4131,
+          4021
         ],
         "name": "GuardianStuff",
         "nameLocation": "298:13:2",
@@ -20899,7 +20899,7 @@
                     "432:7:2"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 2677,
+                  "referencedDeclaration": 2716,
                   "src": "432:7:2"
                 },
                 "nodeType": "ModifierInvocation",
@@ -22231,7 +22231,7 @@
                                               "name": "_mint",
                                               "nodeType": "Identifier",
                                               "overloadedDeclarations": [],
-                                              "referencedDeclaration": 2111,
+                                              "referencedDeclaration": 2150,
                                               "src": "1987:5:2",
                                               "typeDescriptions": {
                                                 "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$_t_uint256_$_t_bytes_memory_ptr_$returns$__$",
@@ -23051,7 +23051,7 @@
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2111,
+                      "referencedDeclaration": 2150,
                       "src": "2317:5:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$_t_uint256_$_t_bytes_memory_ptr_$returns$__$",
@@ -23238,7 +23238,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-08T23:29:21.758Z",
+  "updatedAt": "2023-04-09T06:30:20.216Z",
   "devdoc": {
     "events": {
       "ApprovalForAll(address,address,bool)": {

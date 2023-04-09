@@ -9,13 +9,12 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ChainID, ToFriendlyPrice } from "../../Utils/utils";
+import { ChainID, ToFriendlyPrice, GetColorRarity } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
 
 const Inventory = () => {
-    const array = [8, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2, 4, 5, 6, 2];
     const {
         state: {
             userConnected,
@@ -57,13 +56,7 @@ const Inventory = () => {
         set: "",
         class: "",
         description: "",
-        owner: "",
-        seller: "",
-        buyer: "",
-        price: "",
-        deadline: "",
-        currentlyListed: "",
-        isSold: "",
+        amount: 0,
     };
 
 
@@ -88,9 +81,7 @@ const Inventory = () => {
 
                 if (auctionHouseContract && guardianStuffContract) {
 
-                    console.log("OOOOOOOOOOO");
                     getChestsCount();
-                    // getOwnedItems();
                 }
             }
         }
@@ -133,126 +124,75 @@ const Inventory = () => {
         }
     }
 
-
-    // const getOldEvents = useCallback(
-    //     async (eventName, stateName) => {
-    //       let events = await contract.getPastEvents(eventName, {
-    //         fromBlock: deployBlock,
-    //         toBlock: currentBlock
-    //       });
-    //       if (eventName === 'ProposalRegistered') {
-    //         events.map((event) => {
-    //           return getProposalDescription(event);
-    //         });
-    //       }
-    //       dispatch({
-    //         type: actions.updateEvents,
-    //         data: { events, stateName }
-    //       });
-    //     },
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //     [contract]
-    //   );
-
-
-
     const getOldEvents = async () => {
 
-        let events = await treasureGuardianContract.getPastEvents('onStuffTransferedTo', {
+        let onStuffTransferedToEvents = await treasureGuardianContract.getPastEvents('onStuffTransferedTo', {
             fromBlock: deployBlock,
             toBlock: currentBlock
         });
 
-        events.map((event) => {
+        onStuffTransferedToEvents.map((event) => {
+
             console.log(event);
+            if (event.returnValues.to.toUpperCase() == currentAccount.toUpperCase()) {
+                getOwnedItems(event.returnValues.ids)
+            }
         });
     };
 
+    let isLoading = false;
+    const getOwnedItems = async (ids) => {
 
-    const getOwnedItems = async () => {
+        if (isLoading)
+            return;
 
-        // let transferEvents = await guardianStuffContract.getPastEvents('TransferSingle', { fromBlock: 0, toBlock: 'latest' });
-        // console.log(transferEvents);
+        isLoading = true;
+        try {
+            const addresses = ids.map(i => currentAccount);
+            const balanceItems = await guardianStuffContract.methods.balanceOfBatch(addresses, ids).call();
+            console.log(balanceItems);
+            console.log(ownedItems.length);
+            let loadedItems = [];
+            ids.map(async (itemId, index) => {
 
-        const ids = await guardianStuffContract.methods.getTokenIDs().call();
-        console.log(ids);
+                // TODO: manage missing supply for this id 
+                if (itemId != 0) {
 
-        const addresses = ids.map(i => currentAccount);
-        const items = await guardianStuffContract.methods.balanceOfBatch(addresses, ids).call();
-        console.log(items);
-        console.log(ownedItems.length);
-        setOwnedItems([]);
-        console.log(ownedItems.length);
-        ids.map(async (id, index) => {
+                    if (balanceItems[index] > 0) {
 
-            if (items[index] > 0) {
+                        // No need to reload all informations if the ID is already in the inventory
+                        console.log(loadedItems);
+                        const match = loadedItems.find(x => x.id === itemId);
+                        console.log(match);
+                        if (!match) {
 
-                const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
-                let ownedItem =
-                {
-                    id: index,
-                    image: "https://ipfs.io/ipfs/" + meta.data.image,
-                    name: meta.data.name,
-                    description: meta.data.description,
-                    itemID: id,
-                    // owner: storedListedItem.owner,
-                    // seller: storedListedItem.seller,
-                    // buyer: storedListedItem.buyer,
-                    // price: storedListedItem.price,
-                    // deadline: storedListedItem.deadline,
-                    // currentlyListed: storedListedItem.currentlyListed,
-                    // isSold: storedListedItem.isSold,
-                };
+                            console.log("hop");
+                            const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                            console.log(meta);
+                            let ownedItem =
+                            {
+                                id: index,
+                                image: "https://ipfs.io/ipfs/" + meta.data.image,
+                                name: meta.data.name,
+                                description: meta.data.description,
+                                itemID: itemId,
+                                amount: balanceItems[index]
+                            };
 
-                setOwnedItems(listedItems => [...listedItems, ownedItem]);
-            }
-        });
+                            setOwnedItems(ownedItems => [...ownedItems, ownedItem]);
+                            console.log(loadedItems);
+                        }
+                    }
+                }
+            });
+            isLoading = false;
+        }
+        catch (error) {
 
-        // transferEvents.map(async (event) => {
+            isLoading = false;
+            console.log(error.message);
+        }
 
-        //     if (event.returnValues.to == "")
-        //         console.log(transferEvents);
-
-        // }
-
-        // try {
-
-        //     const uri = await guardianStuffContract.methods.uri(0).call();
-        //     setIpfsUrl(uri);
-        //     console.log(uri);
-        //     setIpfsUrl(ipfsUrl);
-
-        //     let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
-        //     setListedItems([]);
-        //     let index = 0;
-        //     storedListedItems.map(async (storedListedItem) => {
-
-        //         const test = uri.replace("{id}", storedListedItem.itemId);
-        //         const meta = await axios.get("https://ipfs.io/ipfs/QmWHoeyafsznQ6QKqWvUUZ4scivKh8j4y4PMryk2w8nN4r/10.json");
-
-        //         let listedItem =
-        //         {
-        //             id: index,
-        //             image: "https://ipfs.io/ipfs/" + meta.data.image,
-        //             name: meta.data.name,
-        //             description: meta.data.description,
-        //             itemID: storedListedItem.itemId,
-        //             owner: storedListedItem.owner,
-        //             seller: storedListedItem.seller,
-        //             buyer: storedListedItem.buyer,
-        //             price: storedListedItem.price,
-        //             deadline: storedListedItem.deadline,
-        //             currentlyListed: storedListedItem.currentlyListed,
-        //             isSold: storedListedItem.isSold,
-        //         };
-
-        //         setListedItems(listedItems => [...listedItems, listedItem]);
-        //         index++;
-
-        //     });
-        // } catch (error) {
-        //     console.log(error.message);
-        // }
     }
 
     const handleOwnedItemClick = async (param, event) => {
@@ -322,6 +262,7 @@ const Inventory = () => {
                 const test = await treasureGuardianContract.methods.openChest().send({ from: currentAccount });
                 console.log(test);
 
+                getOldEvents();
                 getChestsCount();
 
                 setModalTitle("Congratulations Guardian !");
@@ -375,6 +316,8 @@ const Inventory = () => {
             borderColor: 'rgb(190, 167, 125)'
         }
     }
+
+
 
     return (
 
@@ -457,7 +400,6 @@ const Inventory = () => {
                                                             flexWrap: 'wrap',
                                                             // p: 1,
                                                             // m: 1,
-                                                            bgcolor: 'red',
                                                             // maxWidth: 300,
                                                             height: '70vh',
                                                             overflow: 'scroll',
@@ -467,19 +409,26 @@ const Inventory = () => {
                                                     >
 
                                                         {
-                                                            // ownedItems.map((item) => {
+                                                            ownedItems.map((item) => {
+                                                                return (
+
+                                                                    <Box sx={{
+                                                                        borderColor: 'rgba(190, 167, 126, 0.125)',
+                                                                        background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity("item.rarity") + ' 100%);'
+                                                                    }}>
+
+                                                                        <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+                                                                    </Box>
+
+                                                                );
+                                                            })
+
+                                                            // [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
                                                             //     return (
                                                             //         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
 
                                                             //     );
                                                             // })
-
-                                                            [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
-                                                                return (
-                                                                    <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
-
-                                                                );
-                                                            })
                                                         }
                                                     </Box>
 

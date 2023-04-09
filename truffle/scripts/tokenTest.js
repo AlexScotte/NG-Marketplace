@@ -66,7 +66,7 @@ module.exports = async (deployer, network) => {
     let itemIDs = [];
     itemIDs = await treasureGuardianInstance.openChest({ from: a1 });
     const test = await guardianStuffInstance.getTokenIDs();
-    console.log(test);
+    // console.log(test);
     console.log("user1 chest item balance after opening chest: " + (await guardianStuffInstance.balanceOf(a1, itemChestID)).toNumber());
 
     // for (let i = 0; i < itemIDs.length; i++) {

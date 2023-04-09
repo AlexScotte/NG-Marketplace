@@ -7451,25 +7451,25 @@
     "absolutePath": "project:/contracts/Forge/ForgeMaster.sol",
     "exportedSymbols": {
       "Address": [
-        3960
+        3999
       ],
       "Context": [
-        3982
+        4021
       ],
       "Counters": [
-        4056
+        4095
       ],
       "ERC1155": [
-        2677
+        2716
       ],
       "ERC1155Holder": [
-        2906
+        2945
       ],
       "ERC1155Receiver": [
-        2940
+        2979
       ],
       "ERC165": [
-        4080
+        4119
       ],
       "ForgeMaster": [
         455
@@ -7478,19 +7478,19 @@
         660
       ],
       "IERC1155": [
-        2799
+        2838
       ],
       "IERC1155MetadataURI": [
-        2855
+        2894
       ],
       "IERC1155Receiver": [
-        2840
+        2879
       ],
       "IERC165": [
-        4092
+        4131
       ],
       "Ownable": [
-        1454
+        1493
       ]
     },
     "id": 456,
@@ -7515,7 +7515,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 456,
-        "sourceUnit": 2678,
+        "sourceUnit": 2717,
         "src": "61:78:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -7527,7 +7527,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 456,
-        "sourceUnit": 2907,
+        "sourceUnit": 2946,
         "src": "141:90:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -7539,7 +7539,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 456,
-        "sourceUnit": 4057,
+        "sourceUnit": 4096,
         "src": "233:71:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -7551,7 +7551,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 456,
-        "sourceUnit": 1455,
+        "sourceUnit": 1494,
         "src": "306:71:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -7579,7 +7579,7 @@
                 "438:7:1"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1454,
+              "referencedDeclaration": 1493,
               "src": "438:7:1"
             },
             "id": 391,
@@ -7594,7 +7594,7 @@
                 "447:13:1"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 2906,
+              "referencedDeclaration": 2945,
               "src": "447:13:1"
             },
             "id": 393,
@@ -7611,13 +7611,13 @@
         "id": 455,
         "linearizedBaseContracts": [
           455,
-          2906,
-          2940,
-          2840,
-          4080,
-          4092,
-          1454,
-          3982
+          2945,
+          2979,
+          2879,
+          4119,
+          4131,
+          1493,
+          4021
         ],
         "name": "ForgeMaster",
         "nameLocation": "423:11:1",
@@ -8536,7 +8536,7 @@
                     "1465:9:1"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 1373,
+                  "referencedDeclaration": 1412,
                   "src": "1465:9:1"
                 },
                 "nodeType": "ModifierInvocation",
@@ -8693,7 +8693,7 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-08T23:29:38.874Z",
+  "updatedAt": "2023-04-09T06:30:29.410Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

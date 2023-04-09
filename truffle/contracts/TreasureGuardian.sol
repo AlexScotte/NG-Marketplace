@@ -25,7 +25,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     uint8 private _dropRateEpic = 4;
     uint8 private _dropRateLegendary = 1;
 
-    event onStuffTransferedTo(address to, uint256[] ids);
+    event onStuffTransferedTo(address to, uint256[] ids, uint256[] missingIds);
 
     constructor() {
         guardianToken = new GuardianToken();
@@ -120,18 +120,31 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
             "Sorry Guardian, you do not have any chest in your inventory."
         );
         uint256[] memory itemIDs = new uint256[](_itemPerChest);
-        // TODO: Check balance of every item if there is still supply
-        // try to regroup by id to use the amount paramater in safeTransferFrom
+        uint256[] memory missingItemIDs = new uint256[](_itemPerChest);
+
+        // TODO: try to regroup by id to use the amount paramater in safeTransferFrom
         for (uint i = 0; i < _itemPerChest; i++) {
             uint256 itemID = _generateItemID();
-            itemIDs[i] = itemID;
-            guardianStuff.safeTransferFrom(
-                address(this), // from
-                msg.sender, // to
-                itemID,
-                1,
-                ""
+
+            uint256 stuffItemCount = guardianStuff.balanceOf(
+                address(this),
+                itemID
             );
+            if (stuffItemCount > 0) {
+                itemIDs[i] = itemID;
+
+                guardianStuff.safeTransferFrom(
+                    address(this), // from
+                    msg.sender, // to
+                    itemID,
+                    1,
+                    ""
+                );
+            } else {
+                // TODO: Manage the case when the treasure guardian does not have stuff anymore
+                missingItemIDs[i] = itemID;
+                continue;
+            }
         }
 
         // Burn chest
@@ -143,7 +156,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         //     ""
         // );
 
-        emit onStuffTransferedTo(msg.sender, itemIDs);
+        emit onStuffTransferedTo(msg.sender, itemIDs, missingItemIDs);
 
         return itemIDs;
     }
