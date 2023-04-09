@@ -1,10 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const EslintWebpackPlugin = require("eslint-webpack-plugin");
-// const dotenv = require('dotenv').config();
-var webpack = require('webpack');
+
 const extensions = [".js", ".jsx"];
-// dotenv.config();
+const Dotenv = require("dotenv-webpack");
 module.exports = {
   // plugins: [
   //   new webpack.ProvidePlugin({
@@ -23,12 +22,17 @@ module.exports = {
     //   process: "process/browser"
     // },
     fallback: {
-      "assert": require.resolve("assert/"),
-      "buffer": require.resolve("buffer/"),
-      "crypto": require.resolve("crypto-browserify"),
-      "stream": require.resolve("stream-browserify"),
-      "url": require.resolve("url/")
-    }
+      assert: require.resolve("assert/"),
+      buffer: require.resolve("buffer/"),
+      crypto: require.resolve("crypto-browserify"),
+      stream: require.resolve("stream-browserify"),
+      url: require.resolve("url/"),
+      // "os": require.resolve("os-browserify/browser"),
+      // "path": require.resolve("path-browserify"),
+      fs: false,
+      os: false,
+      path: false,
+    },
   },
   devServer: {
     client: {
@@ -55,11 +59,12 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
       },
     ],
   },
   plugins: [
+    new Dotenv(),
     new EslintWebpackPlugin({ extensions }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",

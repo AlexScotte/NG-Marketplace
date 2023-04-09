@@ -47,7 +47,7 @@ const Quests = () => {
             // Create Mumbai RPC
             const web3 = new Web3("https://rpc.ankr.com/polygon_mumbai");
             const networkID = await web3.eth.net.getId();
-            
+
             // Get wallet of the Node Guardian admin
             const signer = web3.eth.accounts.privateKeyToAccount(process.env.REACT_APP_PRIVATE_KEY);
             console.log("Admin Node Guardian address: " + signer.address);
