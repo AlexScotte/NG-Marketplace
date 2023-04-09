@@ -5,105 +5,130 @@ import "../../node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "../../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "../../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "../../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract AuctionHouse is Ownable, ERC1155Holder {
+contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     using Counters for Counters.Counter;
 
-    // Only this token address is allowed on this marketplace for now
+    /**
+     * @notice The fee charged to be able to list an item
+     */
+    uint256 public listingFee = 0.01 ether;
+
+    /**
+     * @notice Only this token address is allowed on this marketplace for now
+     */
     address public tokenAddress;
 
-    //The fee charged by the marketplace to be allowed to list an NFT
-    uint256 public listingPrice = 0.01 ether;
-
-    // uint floorPrice
-
-    // Number of item sold on the marketplace
+    /**
+     * @notice Number of item sold on the marketplace
+     */
     Counters.Counter private _itemsSoldCount;
 
-    // Number of item listed on the marketplace
+    /**
+     * @notice Number of item listed on the marketplace
+     */
     Counters.Counter public listedItemsCount;
 
-    // Lited token Informations
+    /**
+     * @notice The fee charged to be able to list an item
+     */
+    // Listed token Informations
     struct ListedItem {
-        uint256 itemId;
-        address payable owner;
+        uint256 listedItemId; // Id in the marketplace list
+        uint256 itemId; // token id
         address payable seller;
         address buyer;
         uint256 price;
-        uint256 deadline;
         bool currentlyListed;
         bool isSold;
     }
 
-    // Event listing successfull
+    /**
+     * @notice Event listing successfull
+     */
     event ItemListedSuccess(
-        uint256 indexed tokenId,
-        address owner,
+        uint256 indexed itemId,
         address seller,
         uint256 price
     );
 
-    // Map listedItem by itemId
+    /**
+     * @notice Event sell successfull
+     */
+    event ItemSoldSuccess(
+        uint256 indexed itemId,
+        address seller,
+        address buyer,
+        uint256 price
+    );
+    /**
+     * @notice Map listedItem by itemId
+     */
     mapping(uint256 => ListedItem) private idToListedItem;
 
+    /**
+     * @notice All lited items
+     */
     ListedItem[] public listedItems;
 
+    /**
+     * @notice Set the token address in the constructor to only be able to list/buy/sell this specific token
+     * @param _tokenAddress: Address of the marketplace token
+     */
     constructor(address _tokenAddress) {
-        // Set the token address in the constructor
-        // to only be able to list/buy/sell this specific token
         tokenAddress = _tokenAddress;
     }
 
-    function updateListingPrice(uint256 newPrice) external payable onlyOwner {
-        require(newPrice > 0, "New listing price cannot be 0");
-        listingPrice = newPrice;
+    /**
+     * @notice Allows a registered voter to check informations of another voter.
+     * Requirements:
+     *  - The caller must be the owner.
+     * @param newListingFee: New marketplace listing fee
+     */
+    function updatelistingFee(
+        uint256 newListingFee
+    ) external payable onlyOwner nonReentrant {
+        require(newListingFee > 0, "New listing fee cannot be 0");
+        listingFee = newListingFee;
     }
 
-    function getListingPrice() external view returns (uint256) {
-        return listingPrice;
+    /**
+     * @notice Allows to know the current listing fees
+     */
+    function getlistingFee() external view returns (uint256) {
+        return listingFee;
     }
 
-    // function getLatestIdToListedItem()
-    //     public
-    //     view
-    //     returns (ListedItem memory)
-    // {
-    //     uint256 currentItemId = _itemIds.current();
-    //     return idToListedItem[currentItemId];
-    // }
+    /**
+     * @notice Allows to list all the items that is sell on the marketplace
+     * @return Items listed on the marketplace.
+     */
+    function getListedItems() external view returns (ListedItem[] memory) {
+        return listedItems;
+    }
 
-    // function getListedItemForId(
-    //     uint256 tokenId
-    // ) public view returns (ListedItem memory) {
-    //     return idToListedItem[tokenId];
-    // }
-
-    // function getCurrentItem() public view returns (uint256) {
-    //     return _itemIds.current();
-    // }
-
+    /**
+     * @notice Allow a user to sell an item on the marketplace
+     * @param itemId: Collection item ID to sell
+     * @param sellingPrice: Sell price of the item
+     */
     function listItem(
         uint256 itemId,
-        uint256 sellingPrice,
-        uint256 deadline
-    ) external payable {
-        //Make sure the sender sent enough ETH to pay for listing
-        require(msg.value == listingPrice, "You need to pay listing fees");
+        uint256 sellingPrice
+    ) external payable nonReentrant {
+        //Make sure the user sent enough money to pay for the listing fee
+        require(msg.value == listingFee, "You need to pay listing fees");
         require(sellingPrice > 0, "You need to specify a correct price");
-        // require(
-        //     _deadline > 3600,
-        //     "The deadline needs to be greater than 1 hour"
-        // );
 
         uint256 listedItemCount = listedItemsCount.current();
 
         ListedItem memory newListedItem = ListedItem(
+            listedItemCount,
             itemId,
-            payable(msg.sender), // owner
-            payable(address(this)), // seller
+            payable(msg.sender), // seller
             address(0), // buyer
             sellingPrice,
-            deadline,
             true,
             false
         );
@@ -123,95 +148,11 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         // _marketOwner.transfer(LISTING_FEE);
         listedItemsCount.increment();
 
-        //Emit the event for successful transfer. The frontend parses this message and updates the end user
-        // emit ItemListedSuccess(
-        //     tokenId,
-        //     address(this),
-        //     msg.sender,
-        //     price,
-        //     true
-        // );
+        // Trigger the event
+        emit ItemListedSuccess(itemId, msg.sender, sellingPrice);
     }
 
-    // This will return all the NFTs currently listed to be sold on the marketplace
-    function getListedItems(
-        bool ownedByCaller,
-        bool stillListed,
-        bool isSold
-    ) public view returns (ListedItem[] memory) {
-        ListedItem[] memory filteredListedItems = new ListedItem[](
-            listedItemsCount.current()
-        );
-        uint filteredListedItemIndex = 0;
-
-        for (uint i = 0; i < listedItemsCount.current(); i++) {
-            ListedItem storage listedItem = listedItems[i];
-
-            if (ownedByCaller) {
-                if (listedItem.owner != msg.sender) {
-                    continue;
-                }
-            }
-
-            // item can be not listed and not sold if the user cancel the listing
-
-            if (stillListed) {
-                if (!listedItem.currentlyListed) {
-                    continue;
-                }
-            }
-
-            if (isSold) {
-                if (!listedItem.isSold) {
-                    continue;
-                }
-            }
-
-            filteredListedItems[filteredListedItemIndex] = listedItem;
-            filteredListedItemIndex++;
-
-            // uint currentId = i + 1;
-            // ListedItem storage currentItem = idToListedItem[currentId];
-            // tokens[currentIndex] = currentItem;
-            // currentIndex += 1;
-        }
-
-        return filteredListedItems;
-    }
-
-    // //Returns all the NFTs that the current user is owner or seller in
-    // function getMyNFTs() public view returns (ListedItem[] memory) {
-    //     uint totalItemCount = _itemIds.current();
-    //     uint itemCount = 0;
-    //     uint currentIndex = 0;
-
-    //     //Important to get a count of all the NFTs that belong to the user before we can make an array for them
-    //     for (uint i = 0; i < totalItemCount; i++) {
-    //         if (
-    //             idToListedItem[i + 1].owner == msg.sender ||
-    //             idToListedItem[i + 1].seller == msg.sender
-    //         ) {
-    //             itemCount += 1;
-    //         }
-    //     }
-
-    //     //Once you have the count of relevant NFTs, create an array then store all the NFTs in it
-    //     ListedItem[] memory items = new ListedItem[](itemCount);
-    //     for (uint i = 0; i < totalItemCount; i++) {
-    //         if (
-    //             idToListedItem[i + 1].owner == msg.sender ||
-    //             idToListedItem[i + 1].seller == msg.sender
-    //         ) {
-    //             uint currentId = i + 1;
-    //             ListedItem storage currentItem = idToListedItem[currentId];
-    //             items[currentIndex] = currentItem;
-    //             currentIndex += 1;
-    //         }
-    //     }
-    //     return items;
-    // }
-
-    function executeSale(uint256 listedItemId) public payable {
+    function executeSale(uint256 listedItemId) external payable {
         uint itemPrice = idToListedItem[listedItemId].price;
         address seller = idToListedItem[listedItemId].seller;
 
@@ -220,14 +161,15 @@ contract AuctionHouse is Ownable, ERC1155Holder {
             "Insufficent price value for this item."
         );
 
-        // Update item informations
-        idToListedItem[listedItemId].currentlyListed = false;
-        idToListedItem[listedItemId].buyer = payable(msg.sender);
-        idToListedItem[listedItemId].isSold = true;
+        require(seller != msg.sender, "You cannot buy your own item");
 
-        listedItems[listedItemId].currentlyListed = false;
-        listedItems[listedItemId].buyer = payable(msg.sender);
-        listedItems[listedItemId].isSold = true;
+        // Update item informations
+        ListedItem memory listedItem = idToListedItem[listedItemId];
+        listedItem.currentlyListed = false;
+        listedItem.buyer = payable(msg.sender);
+        listedItem.isSold = true;
+
+        listedItems[listedItemId] = listedItem;
 
         _itemsSoldCount.increment();
 
@@ -235,7 +177,7 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         IERC1155(tokenAddress).safeTransferFrom(
             address(this), // from
             msg.sender, // to
-            idToListedItem[listedItemId].itemId,
+            listedItem.itemId,
             1,
             "0x0"
         );
@@ -245,6 +187,13 @@ contract AuctionHouse is Ownable, ERC1155Holder {
         // // payable(owner).transfer(listPrice);
 
         // // Transfer money to the seller
-        // payable(seller).transfer(msg.value);
+        payable(idToListedItem[listedItemId].seller).transfer(msg.value);
+
+        emit ItemSoldSuccess(
+            listedItem.itemId,
+            listedItem.seller,
+            msg.sender,
+            listedItem.price
+        );
     }
 }

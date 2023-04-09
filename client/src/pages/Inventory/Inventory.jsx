@@ -35,6 +35,7 @@ const Inventory = () => {
         },
     } = useEth();
 
+    const [isLoading, setIsLoading] = useState(false);
     const [wrongChain, setWrongChain] = useState(true);
     const [ownedItems, setOwnedItems] = useState([]);
     const [guardianTokens, setGuardianTokens] = useState(0);
@@ -70,7 +71,6 @@ const Inventory = () => {
     useEffect(() => {
 
         console.log("Loading page inventory");
-
         if (userConnected) {
 
             const wrongChainID = currentChainID != ChainID.Local;
@@ -82,13 +82,21 @@ const Inventory = () => {
                 }
 
                 if (treasureGuardianContract) {
-                    getOldEvents();
-                    getChestsPrice();
+
+                    console.log("isloading " + isLoading);
+                    if (!isLoading) {
+
+
+                        setIsLoading(true);
+                        getOldEvents();
+                        getChestsPrice();
+                    }
                 }
 
                 if (auctionHouseContract && guardianStuffContract) {
 
                     getChestsCount();
+
                 }
             }
         }
@@ -146,66 +154,58 @@ const Inventory = () => {
             toBlock: currentBlock
         });
 
+        let ids = [];
         onStuffTransferedToEvents.map((event) => {
 
-            console.log(event);
             if (event.returnValues.to.toUpperCase() == currentAccount.toUpperCase()) {
-                getOwnedItems(event.returnValues.ids)
+
+                ids = ids.concat(event.returnValues.ids);
             }
         });
+
+        getOwnedItems(ids);
     };
 
-    let isLoading = false;
     const getOwnedItems = async (ids) => {
 
-        if (isLoading)
-            return;
-
-        isLoading = true;
         try {
             const addresses = ids.map(i => currentAccount);
             const balanceItems = await guardianStuffContract.methods.balanceOfBatch(addresses, ids).call();
-            let loadedItems = [];
-            ids.map(async (itemId, index) => {
+
+            const items = await Promise.all(ids.map(async (itemID, index) => {
 
                 // TODO: manage missing supply for this id 
-                if (itemId != 0) {
+                if (itemID != 0) {
 
                     if (balanceItems[index] > 0) {
 
-                        // No need to reload all informations if the ID is already in the inventory
-                        const match = loadedItems.find(x => x.id === itemId);
-                        if (!match) {
-
-                            const uri = await guardianStuffContract.methods.uri(0).call({ from: currentAccount });
-                            const uriWithID = uri.replace("{id}", itemId);
-                            const meta = await axios.get(uriWithID);
-                            // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
-                            console.log(meta.data);
-                            let ownedItem =
-                            {
-                                id: index,
-                                image: "https://ipfs.io/ipfs/" + meta.data.image,
-                                name: meta.data.name,
-                                rarity: meta.data.rarity,
-                                set: meta.data.set,
-                                type: meta.data.type,
-                                class: meta.data.class,
-                                description: meta.data.description,
-                                itemID: itemId,
-                                amount: balanceItems[index]
-                            };
-
-                            setOwnedItems(ownedItems => [...ownedItems, ownedItem]);
-                        }
+                        const uri = await guardianStuffContract.methods.uri(0).call({ from: currentAccount });
+                        const uriWithID = uri.replace("{id}", itemID);
+                        const meta = await axios.get(uriWithID);
+                        // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                        // console.log("META:");
+                        // console.log(index);
+                        // console.log(meta.data);
+                        return {
+                            id: index,
+                            image: "https://ipfs.io/ipfs/" + meta.data.image,
+                            name: meta.data.name,
+                            rarity: meta.data.rarity,
+                            set: meta.data.set,
+                            type: meta.data.type,
+                            class: meta.data.class,
+                            description: meta.data.description,
+                            itemID: itemID,
+                            amount: balanceItems[index]
+                        };
                     }
                 }
-            });
-            isLoading = false;
+            }));
+            
+            setOwnedItems(items);
+            setIsLoading(false);
         }
         catch (error) {
-
-            isLoading = false;
             console.log(error.message);
         }
 
@@ -213,6 +213,11 @@ const Inventory = () => {
 
     const handleOwnedItemClick = async (param, event) => {
 
+        console.log("OWNED ITEMS");
+        // console.log(ownedItems);
+        console.log(param.id);
+        console.log(param.itemID);
+        console.log(param)
         setSelectedItem(ownedItems[param.id]);
         console.log(param);
         handleDetailsModalOpen();
@@ -237,13 +242,13 @@ const Inventory = () => {
             try {
                 const price = Web3.utils.BN(await treasureGuardianContract.methods.chestPrice().call());
                 console.log(price)
-                    ; console.log("Approve treasure guardian contract");
-                // await guardianTokenContract.methods.approve(treasureGuardianAddress, price).call({ from: currentAccount });
-                // await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount });
+                ; console.log("Approve treasure guardian contract");
+                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).call({ from: currentAccount });
+                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount });
                 console.log("Approve treasure succeeded");
 
                 console.log("Buying chest ... ");
-                // await treasureGuardianContract.methods.buyChest(1).call({ from: currentAccount });
+                await treasureGuardianContract.methods.buyChest(1).call({ from: currentAccount });
                 await treasureGuardianContract.methods.buyChest(1).send({ from: currentAccount });
 
                 const title = "Congratulations Guardian !";
@@ -315,12 +320,12 @@ const Inventory = () => {
                 await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).send({ from: currentAccount });
                 console.log("Approved");
 
-                let listingFee = web3.utils.BN(await auctionHouseContract.methods.listingPrice().call({ from: currentAccount }));
+                let listingFee = web3.utils.BN(await auctionHouseContract.methods.listingFee().call({ from: currentAccount }));
                 console.log("listing fee: " + listingFee);
 
                 console.log("Listing item");
-                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether'), 1).call({ from: currentAccount, value: listingFee });
-                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether'), 1).send({ from: currentAccount, value: listingFee });
+                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether')).call({ from: currentAccount, value: listingFee });
+                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether')).send({ from: currentAccount, value: listingFee });
 
                 const title = "Congratulations Guardian !";
                 const message = "You item is now available in the auction house";
@@ -566,26 +571,20 @@ const Inventory = () => {
                                                     >
 
                                                         {
-                                                            ownedItems.map((item) => {
+                                                            ownedItems.map((item, index) => {
                                                                 return (
+                                                                    <div key={index}>
+                                                                        <Box sx={{
+                                                                            borderColor: 'rgba(190, 167, 126, 0.125)',
+                                                                            background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity(item.rarity) + ' 100%);'
+                                                                        }}>
 
-                                                                    <Box sx={{
-                                                                        borderColor: 'rgba(190, 167, 126, 0.125)',
-                                                                        background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity(item.rarity) + ' 100%);'
-                                                                    }}>
-
-                                                                        <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
-                                                                    </Box>
+                                                                            <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
+                                                                        </Box>
+                                                                    </div>
 
                                                                 );
                                                             })
-
-                                                            // [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
-                                                            //     return (
-                                                            //         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />
-
-                                                            //     );
-                                                            // })
                                                         }
                                                     </Box>
 

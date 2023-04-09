@@ -15,8 +15,16 @@ import ChangeChain from "../../components/ChangeChain";
 const AuctionHouse = () => {
 
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleModalOpen = () => setOpen(true);
+    const handleModalClose = () => setOpen(false);
+
+    const [openDetailsModal, setOpenDetailsModal] = useState(false);
+    const handleDetailsModalOpen = () => setOpenDetailsModal(true);
+    const handleDetailsModalClose = () => setOpenDetailsModal(false);
+
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalMesage, setModalMesage] = useState("");
+
 
     const [listedItems, setListedItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState("");
@@ -25,6 +33,7 @@ const AuctionHouse = () => {
 
     const item = {
         id: 0,
+        listedId: 0,
         image: "",
         name: "",
         itemID: "",
@@ -32,11 +41,9 @@ const AuctionHouse = () => {
         set: "",
         class: "",
         description: "",
-        owner: "",
         seller: "",
         buyer: "",
         price: "",
-        deadline: "",
         currentlyListed: "",
         isSold: "",
     };
@@ -67,20 +74,30 @@ const AuctionHouse = () => {
         }
     }, [currentAccount, currentChainID, auctionHouseContract, guardianStuffContract]);
 
+    let getListedItemsLoading = false;
     const getListedItems = async () => {
 
+        if (getListedItemsLoading)
+            return;
+
+        getListedItemsLoading = true;
         try {
 
             const uri = await guardianStuffContract.methods.uri(0).call();
             setIpfsUrl(uri);
             console.log(uri);
 
-            let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
+            let storedListedItems = await auctionHouseContract.methods.getListedItems().call();
             console.log(storedListedItems);
             setListedItems(listedItems => []);
             console.log("empty ? :" + listedItems);
             storedListedItems.map(async (storedListedItem, index) => {
 
+                console.log("item: " + index);
+                console.log("item: " + storedListedItem.listedId);
+                if (storedListedItem.isSold) {
+                    return;
+                }
                 const uriWithID = uri.replace("{id}", storedListedItem.itemId);
                 // console.log("Item metadata url: " + uriWithID);
                 // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1103.json");
@@ -96,13 +113,11 @@ const AuctionHouse = () => {
                     type: meta.data.type,
                     class: meta.data.class,
                     description: meta.data.description,
+                    listedID: storedListedItem.listedItemId,
                     itemID: storedListedItem.itemId,
-                    // owner: storedListedItem.owner,
-                    // seller: storedListedItem.seller,
-                    seller: storedListedItem.owner,
+                    seller: storedListedItem.seller,
                     buyer: storedListedItem.buyer,
                     price: storedListedItem.price,
-                    // deadline: storedListedItem.deadline,
                     currentlyListed: storedListedItem.currentlyListed,
                     isSold: storedListedItem.isSold,
                 };
@@ -111,8 +126,11 @@ const AuctionHouse = () => {
                 if (!match) {
                     setListedItems(listedItems => [...listedItems, listedItem]);
                 }
+
+                getListedItemsLoading = false;
             });
         } catch (error) {
+            getListedItemsLoading = false;
             console.log(error.message);
         }
     }
@@ -220,21 +238,42 @@ const AuctionHouse = () => {
     const handleRowClick = async (param, event) => {
 
         setSelectedItem(listedItems[param.id]);
-        handleOpen();
+        handleDetailsModalOpen();
     };
 
     const handleBuyItem = async () => {
 
-        try {
+        if (selectedItem.seller.toUpperCase() === currentAccount.toUpperCase()) {
 
-            const price = selectedItem.price.toString();
-            console.log(price);
-            // price already in ether
-            console.log(price);
-            await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: price });
+            setModalTitle("Error !");
+            setModalMesage("Sorry Guardian, you cannot buy your own item");
+            handleModalOpen();
         }
-        catch (error) {
-            console.log(error);
+        else {
+
+            try {
+
+                console.log(selectedItem.itemId);
+                const price = selectedItem.price.toString();
+                console.log(price);
+                // price already in ether
+                console.log(price);
+                await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: price });
+
+
+                const title = "Congratulations Guardian !";
+                const message = "You buy a new piece of equipement";
+                setModalTitle(title);
+                setModalMesage(message);
+                await getListedItems();
+                handleModalOpen();
+            }
+            catch (error) {
+                setModalTitle("Error !");
+                setModalMesage("An error occurred while buying the item");
+                handleModalOpen();
+                console.log(error);
+            }
         }
     };
 
@@ -245,10 +284,10 @@ const AuctionHouse = () => {
         transform: 'translate(-50%, -50%)',
         width: 400,
         bgcolor: 'rgb(29, 28, 26)',
-        border: '1px solid rgba(190, 167, 126, 0.314)',
+        border: '1px solid rgb(159, 140, 108)',
         boxShadow: 24,
         borderRadius: '2px',
-        height: "80%",
+        height: "10%",
         p: 2,
     }
 
@@ -305,7 +344,30 @@ const AuctionHouse = () => {
 
                                 <Modal
                                     open={open}
-                                    onClose={handleClose}
+                                    onClose={handleModalClose}>
+
+                                    {
+                                        <Box sx={style} className="modal-main-content">
+
+                                            <label className="modal-information-title generic-text-font1-uppercase generic-text-color">
+                                                {modalTitle}
+                                            </label>
+                                            <label className="modal-information-text generic-text-font generic-text-color" style={{ marginTop: '10px' }}>
+                                                {modalMesage}
+                                            </label>
+
+                                            <Button className="modal-submit" onClick={handleModalClose} variant="outlined"
+                                                sx={buttonStyle}>
+                                                Close
+                                            </Button>
+                                        </Box>
+
+                                    }
+                                </Modal>
+
+                                <Modal
+                                    open={openDetailsModal}
+                                    onClose={handleDetailsModalClose}
                                     aria-labelledby="modal-modal-title"
                                     aria-describedby="modal-modal-description"
                                 >

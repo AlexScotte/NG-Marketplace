@@ -33,14 +33,14 @@ module.exports = async (deployer, network) => {
 
     // // Get chest price
     // console.log("Get chest price");
-    const chestPrice = BN(await treasureGuardianInstance.chestPrice());
-    balanceOfBN = web3.utils.fromWei(chestPrice);
-    console.log("Chest price: " + chestPrice);
+    // const chestPrice = BN(await treasureGuardianInstance.chestPrice());
+    // balanceOfBN = web3.utils.fromWei(chestPrice);
+    // console.log("Chest price: " + chestPrice);
 
 
-    // Approve treasure contract to use our token
-    console.log("Approve treasure contract to use our token");
-    await guardianTokenInstance.approve(treasureGuardianInstance.address, chestPrice, { from: a2 });
+    // // Approve treasure contract to use our token
+    // console.log("Approve treasure contract to use our token");
+    // await guardianTokenInstance.approve(treasureGuardianInstance.address, chestPrice, { from: a2 });
 
     // const itemChestID = (await guardianStuffInstance.chestItemID()).toNumber();
     // console.log(itemChestID);
@@ -72,4 +72,18 @@ module.exports = async (deployer, network) => {
     // for (let i = 0; i < itemIDs.length; i++) {
     //     console.log("Item ID looted: " + itemIDs[i]);
     // }
+
+
+
+
+
+
+
+    const p = BN(await treasureGuardianInstance.chestPrice());
+    // Approve treasure contract to use our token
+    console.log("Approve treasure contract to use our token");
+    // await guardianTokenInstance.approve(treasureGuardianInstance.address, p, { from: a1 });
+    await guardianTokenInstance.approve(treasureGuardianInstance.address, p, { from: a2 });
+    console.log("Approve OK");
+
 };
