@@ -5,12 +5,6 @@ const EslintWebpackPlugin = require("eslint-webpack-plugin");
 const extensions = [".js", ".jsx"];
 const Dotenv = require("dotenv-webpack");
 module.exports = {
-  // plugins: [
-  //   new webpack.ProvidePlugin({
-  //     process: 'process/browser',
-  //   }),
-  // ],
-  // mode: process.env.NODE_ENV === "production" ? "production" : "development",
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: "./src/index.jsx",
   output: {
@@ -18,21 +12,7 @@ module.exports = {
   },
   resolve: {
     extensions,
-    // alias: {
-    //   process: "process/browser"
-    // },
-    fallback: {
-      assert: require.resolve("assert/"),
-      buffer: require.resolve("buffer/"),
-      crypto: require.resolve("crypto-browserify"),
-      stream: require.resolve("stream-browserify"),
-      url: require.resolve("url/"),
-      // "os": require.resolve("os-browserify/browser"),
-      // "path": require.resolve("path-browserify"),
-      fs: false,
-      os: false,
-      path: false,
-    },
+    fallback: {},
   },
   devServer: {
     client: {
