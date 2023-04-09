@@ -9,10 +9,11 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ChainID, ToFriendlyPrice, GetColorRarity } from "../../Utils/utils";
+import { ChainID, ToFriendlyPrice, GetColorRarity, GetColorRarityWithoutTransparency } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
+import TextField from '@mui/material/TextField';
 
 const Inventory = () => {
     const {
@@ -27,7 +28,8 @@ const Inventory = () => {
             treasureGuardianContract,
             guardianStuffContract,
             guardianTokenContract,
-            guardianTokenDecimals
+            guardianTokenDecimals,
+            auctionHouseAddress
         },
     } = useEth();
 
@@ -37,13 +39,16 @@ const Inventory = () => {
     const [chestItemCount, setChestItemCount] = useState(0);
     const [chestPrice, setChestPrice] = useState(0);
     const [selectedItem, setSelectedItem] = useState("");
+    const [priceValue, setPriceValue] = useState("");
 
     const [modalMesage, setModalMesage] = useState("");
     const [modalTitle, setModalTitle] = useState("");
     const [open, setOpen] = useState(false);
-    const [inError, setInError] = useState(false);
+    const [openDetailsModal, setOpenDetailsModal] = useState(false);
     const handleModalOpen = () => setOpen(true);
     const handleModalClose = () => setOpen(false);
+    const handleDetailsModalOpen = () => setOpenDetailsModal(true);
+    const handleDetailsModalClose = () => setOpenDetailsModal(false);
 
     const [ipfsUrl, setIpfsUrl] = useState("");
 
@@ -87,7 +92,15 @@ const Inventory = () => {
         }
 
 
-    }, [userConnected, currentAccount, currentChainID, auctionHouseContract, treasureGuardianContract, guardianStuffContract, guardianTokenContract]);
+    }, [
+        userConnected,
+        currentAccount,
+        currentChainID,
+        auctionHouseContract,
+        treasureGuardianContract,
+        guardianStuffContract,
+        guardianTokenContract
+    ]);
 
     const getBalanceOfGuardiantToken = async () => {
         try {
@@ -150,8 +163,6 @@ const Inventory = () => {
         try {
             const addresses = ids.map(i => currentAccount);
             const balanceItems = await guardianStuffContract.methods.balanceOfBatch(addresses, ids).call();
-            console.log(balanceItems);
-            console.log(ownedItems.length);
             let loadedItems = [];
             ids.map(async (itemId, index) => {
 
@@ -161,26 +172,25 @@ const Inventory = () => {
                     if (balanceItems[index] > 0) {
 
                         // No need to reload all informations if the ID is already in the inventory
-                        console.log(loadedItems);
                         const match = loadedItems.find(x => x.id === itemId);
-                        console.log(match);
                         if (!match) {
 
-                            console.log("hop");
                             const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
-                            console.log(meta);
                             let ownedItem =
                             {
                                 id: index,
                                 image: "https://ipfs.io/ipfs/" + meta.data.image,
                                 name: meta.data.name,
+                                rarity: meta.data.rarity,
+                                set: meta.data.set,
+                                type: meta.data.type,
+                                class: meta.data.class,
                                 description: meta.data.description,
                                 itemID: itemId,
                                 amount: balanceItems[index]
                             };
 
                             setOwnedItems(ownedItems => [...ownedItems, ownedItem]);
-                            console.log(loadedItems);
                         }
                     }
                 }
@@ -199,7 +209,12 @@ const Inventory = () => {
 
         setSelectedItem(ownedItems[param.id]);
         console.log(param);
-        // handleOpen();
+        handleDetailsModalOpen();
+    };
+
+    const onPriceChange = async (e) => {
+
+        setPriceValue(e.target.value);
     };
 
 
@@ -207,7 +222,6 @@ const Inventory = () => {
 
         if (parseInt(guardianTokens) < parseInt(chestPrice)) {
 
-            setInError(true);
             setModalTitle("Not enough money !");
             setModalMesage("Sorry Guardian, you do not have enough money");
             handleModalOpen();
@@ -216,9 +230,12 @@ const Inventory = () => {
 
             try {
                 console.log("Approve treasure guardian contract");
-                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).call({ from: currentAccount });
+                // await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).call({ from: currentAccount });
                 console.log("Approved");
-                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount });
+                console.log(currentAccount);
+                console.log(treasureGuardianAddress);
+                console.log(chestPrice);
+                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount, gasLimit: 1000000000 });
                 console.log("Approve treasure succeeded");
 
                 console.log("Buying chest ... ");
@@ -227,8 +244,6 @@ const Inventory = () => {
 
                 const title = "Congratulations Guardian !";
                 const message = "You can open the chest to retrieve the equipment inside";
-
-                setInError(false);
                 console.log(message);
                 setModalTitle(title);
                 setModalMesage(message);
@@ -237,8 +252,6 @@ const Inventory = () => {
                 handleModalOpen();
             }
             catch (error) {
-                console.log("ttttttttttttt");
-                setInError(true);
                 setModalTitle("Error !");
                 setModalMesage("An error occurred while buying a chest");
                 handleModalOpen();
@@ -254,13 +267,9 @@ const Inventory = () => {
 
             try {
 
-                setInError(false);
-
-                const ttt = await guardianStuffContract.methods.owner().call({ from: currentAccount });
-                console.log(ttt);
-                await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
-                const test = await treasureGuardianContract.methods.openChest().send({ from: currentAccount });
-                console.log(test);
+                // const ttt = await guardianStuffContract.methods.owner().call({ from: currentAccount });
+                // await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
+                await treasureGuardianContract.methods.openChest().send({ from: currentAccount, gasLimit: 100000000000 });
 
                 getOldEvents();
                 getChestsCount();
@@ -271,7 +280,6 @@ const Inventory = () => {
 
             }
             catch (error) {
-                setInError(true);
                 setModalTitle("Error !");
                 setModalMesage("An error occurred while opening your chest");
                 handleModalOpen();
@@ -279,13 +287,59 @@ const Inventory = () => {
             }
         }
         else {
-            setInError(true);
             setModalTitle("No Chest !");
             setModalMesage("Sorry Guardian, you do not have any chests");
         }
 
         handleModalOpen();
     };
+
+    const handleListItem = async () => {
+
+        if (parseInt(priceValue) <= 0) {
+
+            setModalTitle("Incorrect price !");
+            setModalMesage("Sorry Guardian, you need to specify a correct sell price");
+            handleModalOpen();
+        }
+        else {
+
+            try {
+
+                console.log("Approve marketplace to manage our item");
+                console.log(auctionHouseAddress);
+                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).call({ from: currentAccount });
+                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).send({ from: currentAccount });
+                console.log("Approved");
+
+                let listingFee = await auctionHouseContract.methods.listingPrice().call({ from: currentAccount });
+                listingFee = listingFee.toString();
+                console.log("listing fee: " + listingFee);
+
+                console.log("Listing item");
+                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether'), 1).call({ from: currentAccount, value: listingFee });
+                await auctionHouseContract.methods.listItem(selectedItem.itemID, web3.utils.toWei(priceValue.toString(), 'ether'), 1).send({ from: currentAccount, value: listingFee });
+
+                const title = "Congratulations Guardian !";
+                const message = "You item is now available in the auction house";
+
+                console.log(message);
+                setModalTitle(title);
+                setModalMesage(message);
+                getChestsCount();
+                getBalanceOfGuardiantToken();
+                handleModalOpen();
+            }
+            catch (error) {
+                setModalTitle("Error !");
+                setModalMesage("An error occurred while buying a chest");
+                handleModalOpen();
+
+
+                console.log(error.message);
+            }
+        }
+    }
 
     const style = {
         position: 'absolute',
@@ -300,7 +354,19 @@ const Inventory = () => {
         height: "10%",
         p: 2,
     }
-
+    const detailStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'rgb(29, 28, 26)',
+        border: '1px solid rgba(190, 167, 126, 0.314)',
+        boxShadow: 24,
+        borderRadius: '2px',
+        height: "80%",
+        p: 2,
+    }
     const buttonStyle = {
         border: '1px solid rgb(109, 98, 76)',
         color: 'rgb(241, 242, 242)',
@@ -350,30 +416,119 @@ const Inventory = () => {
                                                 onClose={handleModalClose}>
 
                                                 {
-                                                    inError ?
-                                                        (<>
-                                                            <Box sx={style} className="modal-main-content">
+                                                    <Box sx={style} className="modal-main-content">
 
-                                                                <label className="modal-information-title generic-text-font1-uppercase generic-text-color">
-                                                                    {modalTitle}
-                                                                </label>
-                                                                <label className="modal-information-text generic-text-font generic-text-color" style={{ marginTop: '10px' }}>
-                                                                    {modalMesage}
-                                                                </label>
+                                                        <label className="modal-information-title generic-text-font1-uppercase generic-text-color">
+                                                            {modalTitle}
+                                                        </label>
+                                                        <label className="modal-information-text generic-text-font generic-text-color" style={{ marginTop: '10px' }}>
+                                                            {modalMesage}
+                                                        </label>
 
-                                                                <Button className="modal-submit" onClick={handleModalClose} variant="outlined"
-                                                                    sx={buttonStyle}>
-                                                                    Close
-                                                                </Button>
-                                                            </Box>
-                                                        </>) :
-                                                        (<> </>)
+                                                        <Button className="modal-submit" onClick={handleModalClose} variant="outlined"
+                                                            sx={buttonStyle}>
+                                                            Close
+                                                        </Button>
+                                                    </Box>
+
                                                 }
                                             </Modal>
+
+
+                                            <Modal
+                                                open={openDetailsModal}
+                                                onClose={handleDetailsModalClose}
+                                                aria-labelledby="modal-modal-title"
+                                                aria-describedby="modal-modal-description"
+                                            >
+                                                <Box sx={detailStyle} className="modal-main-content">
+                                                    <div className="header-modal-container" direction="row" display="block" style={{ marginBottom: "5px" }} >
+                                                        <label className="modal-details-text-title">
+                                                            {selectedItem.name}
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="modal-picture-container" style={{ background: "radial-gradient(circle, " + GetColorRarity(selectedItem.rarity) + " 35%, rgba(235, 249, 1, 0) 100%)" }}>
+                                                        <img src={selectedItem.image} />
+                                                    </div>
+
+                                                    <Stack direction="row" justifyContent="center" style={{ marginTop: "10px", marginBottom: "10px" }}>
+
+                                                        <div>
+                                                            <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                                                                style={{ alignContent: "center", marginTop: "5px", marginRight: "5px" }} />
+                                                        </div>
+
+
+                                                        <label className="generic-text-font2 modal-details-text-title"
+                                                            style={{ color: GetColorRarityWithoutTransparency(selectedItem.rarity) }}>
+                                                            {selectedItem.rarity}
+                                                        </label>
+
+
+                                                        <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                                                            style={{ alignContent: "center", rotate: "180deg", marginLeft: "10px" }} />
+
+
+                                                    </Stack>
+
+
+                                                    <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                                        <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                            style={{ marginRight: "5px" }}>
+                                                            Class:
+                                                        </label>
+                                                        <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                            {selectedItem.class}
+                                                        </label>
+                                                    </Stack>
+
+                                                    <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                                        <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                            style={{ marginRight: "5px" }}>
+                                                            Set:
+                                                        </label>
+                                                        <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                            {selectedItem.set}
+                                                        </label>
+                                                    </Stack>
+
+                                                    <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                                        <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                            style={{ marginRight: "5px" }}>
+                                                            Type:
+                                                        </label>
+                                                        <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                            {selectedItem.type}
+                                                        </label>
+                                                    </Stack>
+
+                                                    <div className="text-modal-container generic-text-font2 generic-text-color modal-details-text" style={{ marginTop: "10px" }}>
+                                                        {selectedItem.description}
+                                                    </div>
+
+
+
+                                                    <Stack direction="row" textAlign="center" justifyContent="center">
+                                                        <input type="number" sx={buttonStyle} value={priceValue}
+                                                            onChange={onPriceChange} />
+                                                    </Stack>
+
+                                                    <Button className="modal-submit" sx={buttonStyle} onClick={handleListItem} variant="outlined">
+                                                        Sell
+                                                    </Button>
+
+
+                                                </Box>
+
+                                            </Modal>
+
 
                                             <Stack direction="row" height="100%" width="100%" border="1px solid red">
                                                 <Stack direction="row" height="100%" width="50%" border="1px solid red">
 
+                                                    {/* 
+                                                    // TODO: Manage filters
                                                     <Box
                                                         sx={{
                                                             display: 'flex',
@@ -392,7 +547,7 @@ const Inventory = () => {
                                                         <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
 
 
-                                                    </Box>
+                                                    </Box> */}
 
                                                     <Box
                                                         sx={{
@@ -414,7 +569,7 @@ const Inventory = () => {
 
                                                                     <Box sx={{
                                                                         borderColor: 'rgba(190, 167, 126, 0.125)',
-                                                                        background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity("item.rarity") + ' 100%);'
+                                                                        background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity(item.rarity) + ' 100%);'
                                                                     }}>
 
                                                                         <img onClick={() => handleOwnedItemClick((item))} style={{}} src={item.image} width='60px' height='60px' />

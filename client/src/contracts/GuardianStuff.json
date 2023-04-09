@@ -23238,7 +23238,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-09T06:30:20.216Z",
+  "updatedAt": "2023-04-09T09:38:09.318Z",
   "devdoc": {
     "events": {
       "ApprovalForAll(address,address,bool)": {

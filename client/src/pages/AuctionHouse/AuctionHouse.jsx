@@ -9,8 +9,8 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-
-import DetailsItems from "../../components/DetailsItem";
+import { ChainID, ToFriendlyPrice, GetColorRarity, GetColorRarityWithoutTransparency, ToShortAddress } from "../../Utils/utils";
+import ChangeChain from "../../components/ChangeChain";
 
 const AuctionHouse = () => {
 
@@ -21,6 +21,7 @@ const AuctionHouse = () => {
     const [listedItems, setListedItems] = useState([]);
     const [selectedItem, setSelectedItem] = useState("");
     const [ipfsUrl, setIpfsUrl] = useState("");
+    const [wrongChain, setWrongChain] = useState(true);
 
     const item = {
         id: 0,
@@ -41,23 +42,29 @@ const AuctionHouse = () => {
     };
 
     const {
-        state: { userConnected, currentChainID, currentAccount, auctionHouseContract, guardianStuffContract },
+        state: {
+            userConnected,
+            currentChainID,
+            currentAccount,
+            auctionHouseContract,
+            guardianStuffContract,
+            guardianTokenDecimals,
+        },
     } = useEth();
 
     useEffect(() => {
 
         console.log("Loading page auction house");
 
-        if (userConnected) {
-
-            // TODO: Check the chain id
+        const wrongChainID = currentChainID != ChainID.Local;
+        setWrongChain(wrongChainID);
+        if (!wrongChainID) {
 
             if (auctionHouseContract && guardianStuffContract) {
 
                 getListedItems();
             }
         }
-
     }, [currentAccount, currentChainID, auctionHouseContract, guardianStuffContract]);
 
     const getListedItems = async () => {
@@ -66,30 +73,35 @@ const AuctionHouse = () => {
 
             const uri = await guardianStuffContract.methods.uri(0).call();
             setIpfsUrl(uri);
-            console.log(uri);
-            setIpfsUrl(ipfsUrl);
 
             let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
             console.log(storedListedItems);
-            listedItems = [];
-            setListedItems([]);
+            setListedItems(listedItems => []);
+            console.log("empty ? :" + listedItems);
             storedListedItems.map(async (storedListedItem, index) => {
 
-                const test = uri.replace("{id}", storedListedItem.itemId);
-                const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                const uriWithID = uri.replace("{id}", storedListedItem.itemId);
+                console.log("Item metadata url: " + uriWithID);
+                // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1103.json");
+                const meta = await axios.get(uriWithID);
 
                 let listedItem =
                 {
                     id: index,
                     image: "https://ipfs.io/ipfs/" + meta.data.image,
                     name: meta.data.name,
+                    rarity: meta.data.rarity,
+                    set: meta.data.set,
+                    type: meta.data.type,
+                    class: meta.data.class,
                     description: meta.data.description,
                     itemID: storedListedItem.itemId,
-                    owner: storedListedItem.owner,
-                    seller: storedListedItem.seller,
+                    // owner: storedListedItem.owner,
+                    // seller: storedListedItem.seller,
+                    seller: storedListedItem.owner,
                     buyer: storedListedItem.buyer,
                     price: storedListedItem.price,
-                    deadline: storedListedItem.deadline,
+                    // deadline: storedListedItem.deadline,
                     currentlyListed: storedListedItem.currentlyListed,
                     isSold: storedListedItem.isSold,
                 };
@@ -98,8 +110,6 @@ const AuctionHouse = () => {
                 if (!match) {
                     setListedItems(listedItems => [...listedItems, listedItem]);
                 }
-
-
             });
         } catch (error) {
             console.log(error.message);
@@ -110,13 +120,22 @@ const AuctionHouse = () => {
     const renderDesignationCell = (params) => {
         return (
             <div style={{ display: "contents", alignContent: "center" }}>
-                <img src={params.row.image} height="80%" />
+
+                <Box sx={{
+                    height: "50%",
+                    borderColor: 'rgba(190, 167, 126, 0.125)',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, ' + GetColorRarity(params.row.rarity) + ' 100%);'
+                }}>
+
+
+                    <img src={params.row.image} height="100%" />
+                </Box>
 
                 <label
                     variant="contained"
                     color="primary"
-                    size="small"
-                    sx={{ marginLeft: 16, fontSize: "12px" }}>
+                    fontFamily="Lato"
+                    style={{ marginLeft: "10px" }}>
                     {params.row.name}
                 </label>
             </div>
@@ -143,54 +162,56 @@ const AuctionHouse = () => {
         {
             field: 'designation',
             headerName: 'Designation',
-            minWidth: 200,
+            minWidth: 300,
             flex: 1,
             renderCell: renderDesignationCell
         },
         {
             field: 'rarity',
             headerName: 'Rarity',
-            width: 130,
+            width: 90,
             flex: 1,
         },
         {
             field: 'class',
             headerName: 'Class',
-            width: 130,
+            width: 90,
             flex: 1,
         },
-        {
-            field: 'owner',
-            headerName: 'Owner',
-            width: 130,
-            flex: 1,
-        },
+        // {
+        //     field: 'owner',
+        //     headerName: 'Owner',
+        //     width: 130,
+        //     flex: 1,
+        // },
         {
             field: 'seller',
             headerName: 'Seller',
             width: 90,
             flex: 1,
+            valueGetter: (params) =>
+                `${ToShortAddress(params.value)}`,
         },
-        {
-            field: 'deadline',
-            headerName: 'Dead line',
-            width: 130,
-            flex: 1,
-        },
-        {
-            field: 'currentOffer',
-            headerName: 'Current offer',
-            width: 130,
-            flex: 1,
-        },
+        // {
+        //     field: 'deadline',
+        //     headerName: 'Dead line',
+        //     width: 130,
+        //     flex: 1,
+        // },
+        // {
+        //     field: 'currentOffer',
+        //     headerName: 'Current offer',
+        //     width: 130,
+        //     flex: 1,
+        // },
         {
             field: 'price',
             headerName: 'Price',
             // description: 'This column has a value getter and is not sortable.',
-            width: 160,
+            width: 90,
             flex: 1,
-            // valueGetter: (params) =>
-            //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+            valueGetter: (params) =>
+                `${ToFriendlyPrice(params.value, guardianTokenDecimals)}`,
         },
 
     ];
@@ -206,10 +227,10 @@ const AuctionHouse = () => {
         try {
 
             const price = selectedItem.price.toString();
-            await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: web3.utils.toWei(price, 'ether') });
             console.log(price);
-            console.log(auctionHouseContract.methods);
-            console.log(currentAccount);
+            // price already in ether
+            console.log(price);
+            await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: price });
         }
         catch (error) {
             console.log(error);
@@ -230,265 +251,274 @@ const AuctionHouse = () => {
         p: 2,
     }
 
+    const detailStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'rgb(29, 28, 26)',
+        border: '1px solid rgba(190, 167, 126, 0.314)',
+        boxShadow: 24,
+        borderRadius: '2px',
+        height: "80%",
+        p: 2,
+    }
+    const buttonStyle = {
+        border: '1px solid rgb(109, 98, 76)',
+        color: 'rgb(241, 242, 242)',
+        backgroundColor: 'rgb(29, 28, 26)',
+        cursor: 'pointer',
+        borderRadius: '5px',
+        fontFamily: 'Cinzel, serif',
+        fontWeight: '900',
+        width: "120px",
+        '&:hover': {
+            backgroundColor: 'rgb(39, 36, 32)',
+            color: 'rgb(190, 167, 125)',
+            borderColor: 'rgb(190, 167, 125)'
+        }
+    }
+
     return (
-        <div style={{
-            height: 'calc(100vh - 64px)', display: "grid",
-            gridTemplateColumns: "repeat(3, 70% 30%)",
-            gridGap: "15px",
-            padding: "20px",
-            position: "relative",
-            boxSizing: "border-box",
-            // , maxWidth: "1000px", margin: "20px, auto"
-        }}>
+        <div>
 
-            {/* <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
+            {
+                wrongChain ?
+                    (
+                        <>
+                            <ChangeChain chain="Mumbai" />
+                        </>
+                    ) : (
+                        <>
 
+                            <div style={{
+                                height: 'calc(100vh - 64px)', display: "grid",
+                                gridTemplateColumns: "repeat(2, 80% 20%)",
+                                gridGap: "15px",
+                                padding: "20px",
+                                position: "relative",
+                                boxSizing: "border-box",
+                                // , maxWidth: "1000px", margin: "20px, auto"
+                            }}>
 
+                                <Modal
+                                    open={open}
+                                    onClose={handleClose}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                    <Box sx={detailStyle} className="modal-main-content">
+                                        <div className="header-modal-container" direction="row" display="block" style={{ marginBottom: "5px" }} >
+                                            <label className="modal-details-text-title">
+                                                {selectedItem.name}
+                                            </label>
+                                        </div>
 
-                <DetailsItems
-                    auctionHouseContract={auctionHouseContract}
-                    currentAccount={currentAccount}
-                    selectedItem={selectedItem} />
+                                        <div className="modal-picture-container" style={{ background: "radial-gradient(circle, " + GetColorRarity(selectedItem.rarity) + " 35%, rgba(235, 249, 1, 0) 100%)" }}>
+                                            <img src={selectedItem.image} />
+                                        </div>
 
-            </Modal> */}
+                                        <Stack direction="row" justifyContent="center" style={{ marginTop: "10px", marginBottom: "10px" }}>
 
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style} className="modal-main-content">
-                    <div className="header-modal-container" direction="row" display="block" >
-                        <label>
-                            Object details
-                        </label>
-
-                        <button className="close-bt" color="red" >
-                            X
-                        </button>
-                    </div>
-
-                    <div className="modal-picture-container">
-                        <img src={selectedItem.image} />
-                    </div>
-
-                    <Stack direction="row">
-
-                        <div>
-                            <img src="https://nodeguardians.io/assets/divers/title-decoration.svg" />
-                        </div>
+                                            <div>
+                                                <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                                                    style={{ alignContent: "center", marginTop: "5px", marginRight: "5px" }} />
+                                            </div>
 
 
-                        <label>
-                            {selectedItem.name}
-                        </label>
+                                            <label className="generic-text-font2 modal-details-text-title"
+                                                style={{ color: GetColorRarityWithoutTransparency(selectedItem.rarity) }}>
+                                                {selectedItem.rarity}
+                                            </label>
 
 
-                        <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
-                            style={{ alignContent: "center", rotate: "180deg" }} />
+                                            <img src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                                                style={{ alignContent: "center", rotate: "180deg", marginLeft: "10px" }} />
 
 
-                    </Stack>
+                                        </Stack>
 
-                    <Stack alignContent="center" textAlign="center">
-                        <label>
-                            Legendary
-                        </label>
-                    </Stack>
 
-                    <Stack direction="row">
-                        <label>
-                            {selectedItem.owner}
-                        </label>
-                    </Stack>
-                    <div className="generic-label-container"><span>title:</span> <span>value</span></div>
-                    <div className="generic-label-container"><span>title:</span> <span>value</span></div>
+                                        <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                            <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                style={{ marginRight: "5px" }}>
+                                                Class:
+                                            </label>
+                                            <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                {selectedItem.class}
+                                            </label>
+                                        </Stack>
 
-                    <div className="text-modal-container">
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </div>
+                                        <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                            <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                style={{ marginRight: "5px" }}>
+                                                Set:
+                                            </label>
+                                            <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                {selectedItem.set}
+                                            </label>
+                                        </Stack>
+
+                                        <Stack direction="row" style={{ marginBottom: "5px" }}>
+                                            <label className="generic-text-font2 generic-text-color-yellow modal-details-text"
+                                                style={{ marginRight: "5px" }}>
+                                                Type:
+                                            </label>
+                                            <label className="generic-text-font2 generic-text-color modal-details-text">
+                                                {selectedItem.type}
+                                            </label>
+                                        </Stack>
+
+                                        <div className="text-modal-container generic-text-font2 generic-text-color modal-details-text" style={{ marginTop: "10px" }}>
+                                            {selectedItem.description}
+                                        </div>
 
 
 
-                    <Stack direction="row" textAlign="center">
-                        <label>
-                            {selectedItem.price}
-                        </label>
-                    </Stack>
+                                        <Stack direction="row" textAlign="center" justifyContent="center">
+                                            <input type="number" />
+                                        </Stack>
 
-                    <Button className="modal-submit" onClick={handleBuyItem} variant="outlined" style={{ border: '1px solid rgba(190, 167, 126, 0.5)', backgroundColor: 'rgb(29, 28, 26)', cursor: 'pointer', borderRadius: '5px', fontFamily: 'Cinzel, serif', fontWeight: '900' }}>Buy</Button>
-
-
-                </Box>
-
-            </Modal>
-
-            <DataGrid
-
-                rows={listedItems}
-                columns={columns}
-                // pageSize={5}
-                // rowsPerPageOptions={[5]}
-                onRowClick={handleRowClick}
-                // rowHeight={120}
-                hideFooter
-                hideFooterPagination
-                hideFooterSelectedRowCount
-                disableColumnMenu
-                sx={{
-
-                    // Datagrid root style
-                    '&.MuiDataGrid-root': {
-                        borderRadius: '10px',
-                        border: "1px solid",
-                        borderColor: "rgb(51, 51, 51)",
-                        "&$tableRowSelected, &$tableRowSelected:hover": {
-                            backgroundColor: "rgb(190, 167, 126)"
-                        },
-                    },
-
-                    // Header style
-                    '& .MuiDataGrid-columnHeaders': {
-                        color: "rgb(190, 167, 126)",
-                        fontSize: 16,
-                        paddingLeft: '15px',
-                        border: 0,
-                        borderBottom: 1,
-                        borderColor: "rgb(71, 62, 47)",
-                        backgroundColor: "rgb(29, 28, 26)",
-                    },
-
-                    // Row style 
-                    '& .MuiDataGrid-row': {
-                        backgroundColor: 'rgb(6, 6, 6)',
-                        borderRadius: '15px',
-                        marginTop: '4px',
-                        marginLeft: '10px',
-                        marginRight: '40px',
-                        border: "1px solid",
-                        borderColor: "rgb(51, 51, 51)"
-                    },
-
-                    // Cells border bottom
-                    '& div div div div >.MuiDataGrid-cell': {
-                        borderBottom: 'none',
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                        display: 'none',
-                    },
-
-                    // All cell style
-                    '& div[data-rowIndex][role="row"]:nth-of-type(n)': {
-                        color: "rgb(205, 205, 205)",
-                        fontSize: 18,
-                        //risky sizing code starts here
-                        minHeight: "60px !important",
-                        height: 60,
-                        // "&:hover": {
-                        //     backgroundColor: "purple"
-                        // },
-                        "&.Mui-selected": {
-                            backgroundColor: "rgba(29, 28, 26, 0.7)",
-                        },
-                        "& div": {
-                            minHeight: "60px !important",
-                            height: 60,
-                            lineHeight: "59px !important"
-                        }
-                    },
-
-                    // Remove selected border on cells
-                    '& .MuiDataGrid-cell:focus': {
-                        outline: ' none'
-                    },
-
-                    // Remove selected border on header cells
-                    "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-columnHeader:focus":
-                    {
-                        outline: "none !important",
-                    },
+                                        <Button className="modal-submit" sx={buttonStyle} onClick={handleBuyItem} variant="outlined">
+                                            Buy
+                                        </Button>
 
 
-                    // '& .MuiDataGrid-virtualScrollerContent': {
-                    //     paddingBottom: 6, // to compensate space between rows
-                    //     boxSizing: 'content-box',
-                    // },
+                                    </Box>
 
-                    // Arrow sort icon
-                    '.MuiDataGrid-sortIcon': {
-                        opacity: 'inherit !important',
-                        color: "rgb(190, 167, 126)"
-                    },
+                                </Modal>
 
-                    // Data grid scrollbar
-                    '*::-webkit-scrollbar': {
-                        width: '6px',
-                        height: '6px'
-                    },
-                    '*::-webkit-scrollbar-track': {
-                        'borderRadius': '6px',
-                        'boxShadow': 'rgb(15, 15, 15) 0px 0px 6px inset;'
-                    },
-                    '*::-webkit-scrollbar-thumb': {
+                                <DataGrid
 
-                        'borderRadius': '6px',
-                        'boxShadow': 'rgb(146, 146, 146) 0px 0px 6px inset'
-                    },
-                }}
-            />
+                                    rows={listedItems}
+                                    columns={columns}
+                                    // pageSize={5}
+                                    // rowsPerPageOptions={[5]}
+                                    onRowClick={handleRowClick}
+                                    // rowHeight={120}
+                                    hideFooter
+                                    hideFooterPagination
+                                    hideFooterSelectedRowCount
+                                    disableColumnMenu
+                                    sx={{
 
-            <div sx={{}}>
+                                        // Datagrid root style
+                                        '&.MuiDataGrid-root': {
+                                            borderRadius: '10px',
+                                            border: "1px solid",
+                                            borderColor: "rgb(51, 51, 51)",
+                                            "&$tableRowSelected, &$tableRowSelected:hover": {
+                                                backgroundColor: "rgb(190, 167, 126)"
+                                            },
+                                        },
 
-            </div>
+                                        // Header style
+                                        '& .MuiDataGrid-columnHeaders': {
+                                            color: "rgb(190, 167, 126)",
+                                            fontSize: 16,
+                                            paddingLeft: '15px',
+                                            border: 0,
+                                            borderBottom: 1,
+                                            borderColor: "rgb(71, 62, 47)",
+                                            backgroundColor: "rgb(29, 28, 26)",
+                                        },
 
+                                        // Row style 
+                                        '& .MuiDataGrid-row': {
+                                            backgroundColor: 'rgb(6, 6, 6)',
+                                            borderRadius: '15px',
+                                            marginTop: '4px',
+                                            marginLeft: '10px',
+                                            marginRight: '40px',
+                                            border: "1px solid",
+                                            borderColor: "rgb(51, 51, 51)"
+                                        },
+
+                                        // Cells border bottom
+                                        '& div div div div >.MuiDataGrid-cell': {
+                                            borderBottom: 'none',
+                                        },
+                                        '& .MuiDataGrid-columnSeparator': {
+                                            display: 'none',
+                                        },
+
+                                        // All cell style
+                                        '& div[data-rowIndex][role="row"]:nth-of-type(n)': {
+                                            color: "rgb(205, 205, 205)",
+                                            fontSize: 18,
+                                            //risky sizing code starts here
+                                            minHeight: "60px !important",
+                                            height: 60,
+                                            fontFamily: "Lato",
+                                            fontSize: "16px",
+                                            // "&:hover": {
+                                            //     backgroundColor: "purple"
+                                            // },
+                                            "&.Mui-selected": {
+                                                backgroundColor: "rgba(29, 28, 26, 0.7)",
+                                            },
+                                            "& div": {
+                                                minHeight: "60px !important",
+                                                height: 60,
+                                                lineHeight: "59px !important"
+                                            }
+                                        },
+
+                                        // Remove selected border on cells
+                                        '& .MuiDataGrid-cell:focus': {
+                                            outline: ' none'
+                                        },
+
+                                        // Remove selected border on header cells
+                                        "& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-columnHeader:focus":
+                                        {
+                                            outline: "none !important",
+                                        },
+
+
+                                        // '& .MuiDataGrid-virtualScrollerContent': {
+                                        //     paddingBottom: 6, // to compensate space between rows
+                                        //     boxSizing: 'content-box',
+                                        // },
+
+                                        // Arrow sort icon
+                                        '.MuiDataGrid-sortIcon': {
+                                            opacity: 'inherit !important',
+                                            color: "rgb(190, 167, 126)"
+                                        },
+
+                                        // Data grid scrollbar
+                                        '*::-webkit-scrollbar': {
+                                            width: '6px',
+                                            height: '6px'
+                                        },
+                                        '*::-webkit-scrollbar-track': {
+                                            'borderRadius': '6px',
+                                            'boxShadow': 'rgb(15, 15, 15) 0px 0px 6px inset;'
+                                        },
+                                        '*::-webkit-scrollbar-thumb': {
+
+                                            'borderRadius': '6px',
+                                            'boxShadow': 'rgb(146, 146, 146) 0px 0px 6px inset'
+                                        },
+                                    }}
+                                />
+
+
+                                {/* <div sx={{ backgroundColor: "red" }}>
+                                    <label style={{ color: "white" }}>
+                                        TEST
+                                    </label>
+                                </div> */}
+                            </div>
+
+                        </>
+                    )}
         </div>
 
     )
 }
+
 
 export default AuctionHouse

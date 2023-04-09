@@ -28,6 +28,7 @@ function EthProvider({ children }) {
         let guardianTokenContract;
         let guardianTokenDecimals;
         let auctionHouseContract;
+        let auctionHouseAddress;
         let deployBlock;
         let currentBlock;
 
@@ -55,9 +56,8 @@ function EthProvider({ children }) {
             console.log("Guardian token address: " + guardianTokenAddress);
 
             // Auction house contract
-            const auctionHouseAddress = auctionHouseArtifact.networks[networkID].address;
+            auctionHouseAddress = auctionHouseArtifact.networks[networkID].address;
             auctionHouseContract = new web3.eth.Contract(auctionHouseArtifact.abi, auctionHouseAddress);
-
             console.log("Successfully loaded contracts");
           } catch (err) {
             console.log("Error when loading contracts");
@@ -79,7 +79,8 @@ function EthProvider({ children }) {
             guardianStuffContract,
             guardianTokenContract,
             guardianTokenDecimals,
-            auctionHouseContract
+            auctionHouseContract,
+            auctionHouseAddress
           }
         });
       }

@@ -42,32 +42,6 @@ export default function Header({ }) {
                 break;
         }
     }
-    // const {
-    //   state: { accounts },
-    //   tryInit
-    // } = useEth();
-    // const [address, setAddress] = useState('');
-
-    // useEffect(() => {
-    //   if (accounts) {
-    //     let _address = accounts[0];
-
-    //     setAddress(_address.substring(0, 5) + '...' + _address.substring(_address.length - 4));
-    //   }
-    // }, [accounts]);
-
-    // useEffect(() => {
-    //   if (window.ethereum && window.ethereum.isConnected()) {
-    //     tryInit();
-    //   }
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
-
-    // useEffect(() => {
-    //     if (window.ethereum && window.ethereum.isConnected()) {
-    //         tryInit();
-    //     }
-    // }, []);
 
     const handleWalletClick = (() => {
 

@@ -22,20 +22,39 @@ export const ToFriendlyPrice = (price, decimals) => {
     return parseFloat(price * 10 ** -decimals).toFixed(2);
 }
 
+
 export const GetColorRarity = (rarity) => {
 
     switch (rarity) {
-        case "common":
+        case "Common":
             return "rgba(255, 255, 244, 0.314)";
-        case "uncommon":
+        case "Uncommon":
             return "rgba(30, 255, 0, 0.314)";
-        case "rare":
+        case "Rare":
             return "rgba(0, 112, 221, 0.314)";
-        case "epic":
+        case "Epic":
             return "rgba(163, 53, 238, 0.314)";
-        case "legendary":
+        case "Legendary":
             return "rgba(255, 128, 0, 0.314)";
         default:
             return "rgba(255, 255, 244, 0.314)";
+    }
+}
+
+export const GetColorRarityWithoutTransparency = (rarity) => {
+
+    switch (rarity) {
+        case "Common":
+            return "rgba(255, 255, 244, 1)";
+        case "Uncommon":
+            return "rgba(30, 255, 0, 11)";
+        case "Rare":
+            return "rgba(0, 112, 221, 1)";
+        case "Epic":
+            return "rgba(163, 53, 238, 1)";
+        case "Legendary":
+            return "rgba(255, 128, 0, 1)";
+        default:
+            return "rgba(255, 255, 244, 1)";
     }
 }

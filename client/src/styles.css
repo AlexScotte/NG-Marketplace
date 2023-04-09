@@ -242,10 +242,6 @@ label {
   text-transform: uppercase !important;
 }
 
-.generic-text-font2 {
-  font-family: Lato;
-}
-
 .generic-text-color {
 
   color: rgb(142, 142, 142);
@@ -274,6 +270,14 @@ label {
 
 
 /***** MODAL *****/
+.modal-details-text-title {
+  font-size: 16px;
+}
+
+.modal-details-text {
+  font-size: 14px;
+}
+
 .modal-information-text {
   text-align: center;
   font-size: 16px;
@@ -323,7 +327,7 @@ label {
   opacity: 0.5;
   display: block;
   position: absolute;
-  background: radial-gradient(circle, rgba(235, 249, 1, 1) 35%, rgba(235, 249, 1, 0) 100%);
+  /* background: radial-gradient(circle, rgba(235, 249, 1, 1) 35%, rgba(235, 249, 1, 0) 100%); */
   filter: blur(32px);
 }
 
@@ -352,7 +356,6 @@ label {
   text-align: justify;
   flex: 1;
   overflow-y: auto;
-  color: #fff;
 }
 
 .modal-submit {
