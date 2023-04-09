@@ -73,6 +73,7 @@ const AuctionHouse = () => {
 
             const uri = await guardianStuffContract.methods.uri(0).call();
             setIpfsUrl(uri);
+            console.log(uri);
 
             let storedListedItems = await auctionHouseContract.methods.getListedItems(false, true, false).call();
             console.log(storedListedItems);
@@ -81,7 +82,7 @@ const AuctionHouse = () => {
             storedListedItems.map(async (storedListedItem, index) => {
 
                 const uriWithID = uri.replace("{id}", storedListedItem.itemId);
-                console.log("Item metadata url: " + uriWithID);
+                // console.log("Item metadata url: " + uriWithID);
                 // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1103.json");
                 const meta = await axios.get(uriWithID);
 
@@ -377,7 +378,9 @@ const AuctionHouse = () => {
 
 
                                         <Stack direction="row" textAlign="center" justifyContent="center">
-                                            <input type="number" />
+                                            <label className="generic-text-font2 generic-text-color-white modal-details-text">
+                                                {ToFriendlyPrice(selectedItem.price, guardianTokenDecimals)}
+                                            </label>
                                         </Stack>
 
                                         <Button className="modal-submit" sx={buttonStyle} onClick={handleBuyItem} variant="outlined">

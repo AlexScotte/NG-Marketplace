@@ -14,8 +14,10 @@ import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
 import TextField from '@mui/material/TextField';
+import Web3 from "web3";
 
 const Inventory = () => {
+
     const {
         state: {
             userConnected,
@@ -175,7 +177,11 @@ const Inventory = () => {
                         const match = loadedItems.find(x => x.id === itemId);
                         if (!match) {
 
-                            const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                            const uri = await guardianStuffContract.methods.uri(0).call({ from: currentAccount });
+                            const uriWithID = uri.replace("{id}", itemId);
+                            const meta = await axios.get(uriWithID);
+                            // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
+                            console.log(meta.data);
                             let ownedItem =
                             {
                                 id: index,
@@ -229,17 +235,15 @@ const Inventory = () => {
         else {
 
             try {
-                console.log("Approve treasure guardian contract");
-                // await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).call({ from: currentAccount });
-                console.log("Approved");
-                console.log(currentAccount);
-                console.log(treasureGuardianAddress);
-                console.log(chestPrice);
-                await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount, gasLimit: 1000000000 });
+                const price = Web3.utils.BN(await treasureGuardianContract.methods.chestPrice().call());
+                console.log(price)
+                    ; console.log("Approve treasure guardian contract");
+                // await guardianTokenContract.methods.approve(treasureGuardianAddress, price).call({ from: currentAccount });
+                // await guardianTokenContract.methods.approve(treasureGuardianAddress, chestPrice).send({ from: currentAccount });
                 console.log("Approve treasure succeeded");
 
                 console.log("Buying chest ... ");
-                // await treasureGuardianContract.methods.buyChekst(1).call({ from: currentAccount });
+                // await treasureGuardianContract.methods.buyChest(1).call({ from: currentAccount });
                 await treasureGuardianContract.methods.buyChest(1).send({ from: currentAccount });
 
                 const title = "Congratulations Guardian !";
@@ -267,9 +271,8 @@ const Inventory = () => {
 
             try {
 
-                // const ttt = await guardianStuffContract.methods.owner().call({ from: currentAccount });
-                // await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
-                await treasureGuardianContract.methods.openChest().send({ from: currentAccount, gasLimit: 100000000000 });
+                await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
+                await treasureGuardianContract.methods.openChest().send({ from: currentAccount });
 
                 getOldEvents();
                 getChestsCount();
@@ -312,8 +315,7 @@ const Inventory = () => {
                 await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).send({ from: currentAccount });
                 console.log("Approved");
 
-                let listingFee = await auctionHouseContract.methods.listingPrice().call({ from: currentAccount });
-                listingFee = listingFee.toString();
+                let listingFee = web3.utils.BN(await auctionHouseContract.methods.listingPrice().call({ from: currentAccount }));
                 console.log("listing fee: " + listingFee);
 
                 console.log("Listing item");

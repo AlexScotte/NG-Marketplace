@@ -11,7 +11,7 @@ contract GuardianStuff is ERC1155, Ownable {
 
     constructor()
         ERC1155(
-            "https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/{id}.json"
+            "https://ipfs.io/ipfs/QmY5EtD5MkAf7E3KX5EcD8GWJSFEte8ZoWviHAJezMgQ6H/{id}.json"
         )
     {}
 
@@ -20,16 +20,17 @@ contract GuardianStuff is ERC1155, Ownable {
         uint256 supply;
 
         // Class: knight, mage, rogue
-        for (uint class = 1; class <= 4; class++) {
+        // Use only the class 1 for now because I do not upload all the other files
+        for (uint class = 1; class <= 1; class++) {
             // There is 2 sets of armor for the knight class
-            if (class == 0) {
-                setCount = 2;
-            }
+            // if (class == 0) {
+            //     setCount = 2;
+            // }
 
             // Armor set
             for (uint set = 1; set <= setCount; set++) {
                 // Armor parts: head, body, legs, hands, weapon right, weapon left
-                for (uint part = 0; part < 7; part++) {
+                for (uint part = 1; part < 7; part++) {
                     // Item rarity: Common, uncommon, rare, epic, legendary
                     for (uint rarity = 0; rarity < 5; rarity++) {
                         uint itemID = (class * 1000) +

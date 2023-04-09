@@ -10,9 +10,8 @@ module.exports = async (deployer, network) => {
 
     var accounts = await web3.eth.getAccounts();
     var owner = accounts[0];
-    var a1 = accounts[1];
-    var a1 = accounts[2];
-    var a3 = accounts[3];
+    var account1 = accounts[1];
+    var account2 = accounts[2];
 
     const treasureGuardianInstance = await TreasureGuardian.deployed();
     const auctionHouseInstance = await AuctionHouse.deployed();
@@ -42,21 +41,21 @@ module.exports = async (deployer, network) => {
     // // console.log(auctionHouseInstance.address);
 
     //  await guardianStuff.safeTransferFrom(treasureGuardianInstance.address, a1, 10, 10, [], { from: owner });
-    await treasureGuardianInstance.safeTransferFrom(treasureGuardianInstance.address, a1, 1100, 10, []);
-    console.log((await guardianStuff.balanceOf(treasureGuardianInstance.address, 1100)).toNumber());
-    console.log((await guardianStuff.balanceOf(a1, 1100)).toNumber());
+    // await treasureGuardianInstance.safeTransferFrom(treasureGuardianInstance.address, a1, 1100, 10, []);
+    // console.log((await guardianStuff.balanceOf(treasureGuardianInstance.address, 1100)).toNumber());
+    // console.log((await guardianStuff.balanceOf(a1, 1100)).toNumber());
 
 
-    await guardianStuff.setApprovalForAll(auctionHouseInstance.address, true, { from: a1 });
+    await guardianStuff.setApprovalForAll(auctionHouseInstance.address, true, { from: account2 });
     console.log("tezst");
 
-    let listingFee = await auctionHouseInstance.listingPrice();
-    listingFee = listingFee.toString();
-    console.log("listing fee: " + listingFee);
+    // let listingFee = await auctionHouseInstance.listingPrice();
+    // listingFee = listingFee.toString();
+    // console.log("listing fee: " + listingFee);
 
-    await auctionHouseInstance.listItem(1100, web3.utils.toWei('1', 'ether'), 11, { from: a1, value: listingFee });
-    console.log((await guardianStuff.balanceOf(a1, 1100)).toNumber());
-    console.log((await guardianStuff.balanceOf(auctionHouseInstance.address, 1100)).toNumber());
+    // await auctionHouseInstance.listItem(1100, web3.utils.toWei('1', 'ether'), 11, { from: a1, value: listingFee });
+    // console.log((await guardianStuff.balanceOf(a1, 1100)).toNumber());
+    // console.log((await guardianStuff.balanceOf(auctionHouseInstance.address, 1100)).toNumber());
 
     console.log("achat");
 
