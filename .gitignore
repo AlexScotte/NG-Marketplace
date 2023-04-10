@@ -8,6 +8,8 @@ node_modules
 # Testing
 coverage
 
+build
+
 # Env
 .env
 .env.local

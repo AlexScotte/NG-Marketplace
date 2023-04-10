@@ -63,7 +63,7 @@ contract GuardianStuff is ERC1155, Ownable {
         _mint(itemOwner, chestItemID, 10 ** 12, "");
     }
 
-    function getTokenIDs() external view returns (uint256[] memory tokenId) {
+    function getItemIDs() external view returns (uint256[] memory itemIDs) {
         return _itemIDs;
     }
 }

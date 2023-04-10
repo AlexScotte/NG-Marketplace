@@ -9,15 +9,16 @@ import "../../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./GuardianStuff.sol";
 
 contract ForgeMaster is Ownable, ERC1155Holder {
+    string public collectionName;
     address public collectionAddress;
 
     function createCollection(
-        string memory collectionName
+        string memory newCollectionName
     ) external returns (address newCollectionAddress) {
         // Import the bytecode of the contract to deploy
         bytes memory collectionBytecode = type(GuardianStuff).creationCode;
         // Make a random salt based on the artist name
-        bytes32 salt = keccak256(abi.encodePacked(collectionName));
+        bytes32 salt = keccak256(abi.encodePacked(newCollectionName));
 
         assembly {
             newCollectionAddress := create2(
@@ -32,6 +33,7 @@ contract ForgeMaster is Ownable, ERC1155Holder {
             }
         }
 
+        collectionName = newCollectionName;
         collectionAddress = newCollectionAddress;
         return (newCollectionAddress);
     }

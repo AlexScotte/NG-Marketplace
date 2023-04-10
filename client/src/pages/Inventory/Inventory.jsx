@@ -267,6 +267,12 @@ const Inventory = () => {
 
             try {
 
+                console.log("Approve treasure guardian to take back the chest");
+                console.log(auctionHouseAddress);
+                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).call({ from: currentAccount });
+                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).send({ from: currentAccount });
+                console.log("Approved");
+
                 await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
                 await treasureGuardianContract.methods.openChest().send({ from: currentAccount });
 

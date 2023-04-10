@@ -56,7 +56,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     ) external onlyOwner {
         require(
             guardianToken.balanceOf(address(this)) > amount,
-            "Sorry Guardian, the tresure is empty :'( "
+            "Sorry Guardian, there is no more money in the treasure"
         );
 
         guardianToken.transfer(guardianAddress, amount);
@@ -147,14 +147,14 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
             }
         }
 
-        // Burn chest
-        // guardianStuff.safeTransferFrom(
-        //     msg.sender,
-        //     address(0),
-        //     chestItemID,
-        //     1,
-        //     ""
-        // );
+        // Give the chest back to treasure
+        guardianStuff.safeTransferFrom(
+            msg.sender,
+            address(this),
+            chestItemID,
+            1,
+            ""
+        );
 
         emit onStuffTransferedTo(msg.sender, itemIDs, missingItemIDs);
 

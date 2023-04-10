@@ -27090,10 +27090,112 @@
       "links": {},
       "address": "0xddF1EE9f35eAFB10E1C9DBA7Baddd60f114a5489",
       "transactionHash": "0x54c9fb36d65ae843a2161cbb10bbc6d0c9d2f37d164cf14a39580a1f5369497e"
+    },
+    "1681074810911": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x1ab84bce784ba927df23bef9279723d9bbad6dec82728fb92e2aebfac01f666d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "ids",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "missingIds",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "onStuffTransferedTo",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xD8EB8161eFFe5980EC5a089D5BF0e11A6987D80B",
+      "transactionHash": "0xf8827c958f96c74e4556e477057e2a5b02ae9ad374a925b1f425a553f3593661"
+    },
+    "1681077074122": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x1ab84bce784ba927df23bef9279723d9bbad6dec82728fb92e2aebfac01f666d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "ids",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "missingIds",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "onStuffTransferedTo",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xddF1EE9f35eAFB10E1C9DBA7Baddd60f114a5489",
+      "transactionHash": "0x54c9fb36d65ae843a2161cbb10bbc6d0c9d2f37d164cf14a39580a1f5369497e"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-09T19:18:29.256Z",
+  "updatedAt": "2023-04-09T21:52:03.722Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
