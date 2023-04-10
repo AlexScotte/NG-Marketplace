@@ -143,17 +143,35 @@ const Inventory = () => {
 
     const getOldEvents = async () => {
 
+
+        console.log("loading old event");
         let onStuffTransferedToEvents = await treasureGuardianContract.getPastEvents('onStuffTransferedTo', {
             fromBlock: deployBlock,
             toBlock: currentBlock
         });
 
+        let itemSoldSuccessEvents = await auctionHouseContract.getPastEvents('ItemSoldSuccess', {
+            fromBlock: deployBlock,
+            toBlock: currentBlock
+        });
+
         let ids = [];
+
+        // Get struff transfered to the user
         onStuffTransferedToEvents.map((event) => {
 
             if (event.returnValues.to.toUpperCase() == currentAccount.toUpperCase()) {
 
                 ids = ids.concat(event.returnValues.ids);
+            }
+        });
+
+        // Get stuff that user bought
+        itemSoldSuccessEvents.map((event) => {
+
+            if (event.returnValues.buyer.toUpperCase() == currentAccount.toUpperCase()) {
+
+                ids = ids.concat(event.returnValues.itemId);
             }
         });
 
@@ -195,9 +213,14 @@ const Inventory = () => {
                             amount: balanceItems[index]
                         };
                     }
+                    else{
+                        // User do not have the item anymore (listing etc)
+                        return {
+                            id: -1,
+                        };
+                    }
                 }
             }));
-            
             setOwnedItems(items);
         }
         catch (error) {
@@ -268,9 +291,8 @@ const Inventory = () => {
             try {
 
                 console.log("Approve treasure guardian to take back the chest");
-                console.log(auctionHouseAddress);
-                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).call({ from: currentAccount });
-                await guardianStuffContract.methods.setApprovalForAll(auctionHouseAddress, true).send({ from: currentAccount });
+                await guardianStuffContract.methods.setApprovalForAll(treasureGuardianAddress, true).call({ from: currentAccount });
+                await guardianStuffContract.methods.setApprovalForAll(treasureGuardianAddress, true).send({ from: currentAccount });
                 console.log("Approved");
 
                 await treasureGuardianContract.methods.openChest().call({ from: currentAccount });
@@ -332,13 +354,15 @@ const Inventory = () => {
                 setModalMesage(message);
                 getChestsCount();
                 getBalanceOfGuardiantToken();
+                setSelectedItem("");
                 handleModalOpen();
+                handleDetailsModalClose();
+                
             }
             catch (error) {
                 setModalTitle("Error !");
                 setModalMesage("An error occurred while buying a chest");
                 handleModalOpen();
-
 
                 console.log(error.message);
             }
@@ -568,7 +592,7 @@ const Inventory = () => {
                                                     >
 
                                                         {
-                                                            ownedItems.map((item, index) => {
+                                                            ownedItems.filter(i => i.id != -1).map((item, index) => {
                                                                 return (
                                                                     <div key={index}>
                                                                         <Box sx={{

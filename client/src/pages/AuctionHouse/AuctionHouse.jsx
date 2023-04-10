@@ -65,9 +65,6 @@ const AuctionHouse = () => {
 
             const items = await Promise.all(storedListedItems.map(async (storedListedItem, index) => {
 
-                if (storedListedItem.isSold) {
-                    return;
-                }
                 const uriWithID = uri.replace("{id}", storedListedItem.itemId);
                 // console.log("Item metadata url: " + uriWithID);
                 // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1103.json");
@@ -94,7 +91,7 @@ const AuctionHouse = () => {
                 });
             }));
 
-            setListedItems(items);
+            setListedItems(items.filter(i => !i.isSold));
 
         } catch (error) {
             console.log(error.message);
@@ -218,10 +215,10 @@ const AuctionHouse = () => {
 
             try {
 
-                console.log("liste id" + selectedItem.listedItemId);
                 // price already in ether
                 console.log(selectedItem.price);
-                await auctionHouseContract.methods.executeSale(0).send({ from: currentAccount, value: selectedItem.price });
+                console.log(selectedItem.listedItemId);
+                await auctionHouseContract.methods.executeSale(selectedItem.listedItemId).send({ from: currentAccount, value: selectedItem.price });
 
 
                 const title = "Congratulations Guardian !";
@@ -230,6 +227,7 @@ const AuctionHouse = () => {
                 setModalMesage(message);
                 await getListedItems();
                 handleModalOpen();
+                handleDetailsModalClose();
             }
             catch (error) {
                 setModalTitle("Error !");

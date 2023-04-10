@@ -11,6 +11,11 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     using Counters for Counters.Counter;
 
     /**
+     * @notice Use to store the fees
+     */
+    uint256 public auctionHouseFunds;
+
+    /**
      * @notice The fee charged to be able to list an item
      */
     uint256 public listingFee = 0.01 ether;
@@ -133,6 +138,9 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
             false
         );
 
+        // Transfer fee to the contract
+        auctionHouseFunds += msg.value;
+
         //Update the mapping of tokenId's to Item details, useful for retrieval functions
         idToListedItem[listedItemCount] = newListedItem;
         listedItems.push(newListedItem);
@@ -182,9 +190,9 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
             "0x0"
         );
 
-        // // TODO
-        // //Transfer the listing fee to the marketplace creator
-        // // payable(owner).transfer(listPrice);
+        // // TODO - improvment
+        // // Add a taxe on all the item sold (royalties ?)
+        // // payable(address(this)).transfer(fee to define);
 
         // // Transfer money to the seller
         payable(idToListedItem[listedItemId].seller).transfer(msg.value);
