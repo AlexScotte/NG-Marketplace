@@ -72,7 +72,7 @@ const Inventory = () => {
         console.log("Loading page inventory");
         if (userConnected) {
 
-            const wrongChainID = currentChainID != ChainID.Local;
+            const wrongChainID = currentChainID != ChainID.Mumbai;
             setWrongChain(wrongChainID);
             if (!wrongChainID) {
 

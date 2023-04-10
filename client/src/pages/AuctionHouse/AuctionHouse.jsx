@@ -44,7 +44,7 @@ const AuctionHouse = () => {
 
         console.log("Loading page auction house");
 
-        const wrongChainID = currentChainID != ChainID.Local;
+        const wrongChainID = currentChainID != ChainID.Mumbai;
         setWrongChain(wrongChainID);
         if (!wrongChainID) {
 
