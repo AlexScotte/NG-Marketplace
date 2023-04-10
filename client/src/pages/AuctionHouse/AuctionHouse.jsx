@@ -123,6 +123,25 @@ const AuctionHouse = () => {
         )
     }
 
+    const renderPriceCell = (params) => {
+        return (
+            
+            // <Stack direction="row" textAlign="center" justifyContent="center">
+            <div style={{ display: "contents", alignContent: "center" }}>
+
+                <label
+                    variant="contained"
+                    color="primary"
+                    fontFamily="Lato"
+                    style={{ marginLeft: "10px" }}>
+                    {ToFriendlyPrice(params.value, guardianTokenDecimals)}
+                </label>
+
+                {/* <img src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"/> */}
+            </div>
+            //</Stack>
+        )
+    }
     const renderCells = (params) => {
 
         return (
@@ -191,8 +210,7 @@ const AuctionHouse = () => {
             // description: 'This column has a value getter and is not sortable.',
             width: 90,
             flex: 1,
-            valueGetter: (params) =>
-                `${ToFriendlyPrice(params.value, guardianTokenDecimals)}`,
+            renderCell: renderPriceCell,
         },
 
     ];
@@ -295,9 +313,9 @@ const AuctionHouse = () => {
 
                             <div style={{
                                 height: 'calc(100vh - 64px)', display: "grid",
-                                gridTemplateColumns: "repeat(2, 80% 20%)",
+                                gridTemplateColumns: "repeat(2, 100% 20%)",
                                 gridGap: "15px",
-                                padding: "20px",
+                                padding: "40px, 40px",
                                 position: "relative",
                                 boxSizing: "border-box",
                                 // , maxWidth: "1000px", margin: "20px, auto"
@@ -401,9 +419,17 @@ const AuctionHouse = () => {
 
 
                                         <Stack direction="row" textAlign="center" justifyContent="center">
-                                            <label className="generic-text-font2 generic-text-color-white modal-details-text">
+
+                                            <Stack direction="row" textAlign="center" justifyContent="center">
+
+                                            <label className="generic-text-font2 modal-details-text"  style={{
+                                                            color: "rgb(159, 140, 108)"
+                                                        }}>
                                                 {ToFriendlyPrice(selectedItem.price, guardianTokenDecimals)}
                                             </label>
+
+                                                            <img style={{width: "30px", marginLeft: "10px"}} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"/>
+                                                    </Stack>
                                         </Stack>
 
                                         <Button className="modal-submit" sx={buttonStyle} onClick={handleBuyItem} variant="outlined">

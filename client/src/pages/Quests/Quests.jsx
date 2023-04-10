@@ -157,7 +157,7 @@ const Quests = () => {
 
                                         <Button className="modal-submit" onClick={handleClick} variant="outlined"
                                             sx={buttonStyle}>
-                                            Quests
+                                            Validate Quest
                                         </Button>
 
                                     </>

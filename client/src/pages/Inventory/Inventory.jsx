@@ -436,7 +436,8 @@ const Inventory = () => {
                                             padding: "20px 40px",
                                             position: "relative",
                                             boxSizing: "border-box",
-                                            width: "100%",
+                                            width: "100%",    
+                                                                                     
                                         }}>
 
                                             <Modal
@@ -538,8 +539,16 @@ const Inventory = () => {
 
 
                                                     <Stack direction="row" textAlign="center" justifyContent="center">
-                                                        <input type="number" sx={buttonStyle} value={priceValue}
+                                                        <input type="number"
+                                                        style={{
+                                                            border: '1px solid rgb(159, 140, 108)',
+                                                            backgroundColor: "rgb(29, 28, 26)",
+                                                            color: "rgb(159, 140, 108)",
+                                                            borderRadius: "2px"
+                                                        }}
                                                             onChange={onPriceChange} />
+
+                                                            <img style={{width: "30px", marginLeft: "10px"}} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"/>
                                                     </Stack>
 
                                                     <Button className="modal-submit" sx={buttonStyle} onClick={handleListItem} variant="outlined">
@@ -552,8 +561,8 @@ const Inventory = () => {
                                             </Modal>
 
 
-                                            <Stack direction="row" height="100%" width="100%" border="1px solid red">
-                                                <Stack direction="row" height="100%" width="50%" border="1px solid red">
+                                            <Stack direction="row" height="100%" width="100%" >
+                                                <Stack direction="row" height="100%" width="50%" >
 
                                                     {/* 
                                                     // TODO: Manage filters
@@ -583,11 +592,25 @@ const Inventory = () => {
                                                             flexWrap: 'wrap',
                                                             // p: 1,
                                                             // m: 1,
-                                                            // maxWidth: 300,
+                                                            width: 200,
                                                             height: '70vh',
-                                                            overflow: 'scroll',
                                                             alignContent: 'flex-start',
                                                             borderRadius: 1,
+                                                            // TODO: How to change the scroll bar style ? 
+                                                            
+                                                            WebkitScrollbar: {
+                                                                width: '6px',
+                                                                height: '6px '
+                                                            },
+                                                            WebkitScrollbarTrack: {
+                                                                borderRadius: '6px' ,
+                                                                boxShadow: 'rgb(15, 15, 15) 0px 0px 6px inset; !important'
+                                                            },
+                                                            WebkitScrollbarThumb: {
+                    
+                                                                borderRadius: '6px',
+                                                                boxShadow: 'rgb(146, 146, 146) 0px 0px 6px inset'
+                                                            },
                                                         }}
                                                     >
 
@@ -612,8 +635,8 @@ const Inventory = () => {
 
                                                 </Stack>
 
-                                                <Stack direction="row" height="100%" width="90%" border="1px solid red" justifyContent="center">
-                                                    <Stack direction="column" height="100%" width="50%" border="1px solid red" justifyContent="center">
+                                                <Stack direction="row" height="100%" width="90%"  justifyContent="center">
+                                                    <Stack direction="column" height="100%" width="50%"  justifyContent="center">
 
                                                         <Stack direction="row" sx={{ justifyContent: "center", marginBottom: "40px" }}>
 
@@ -623,9 +646,9 @@ const Inventory = () => {
                                                             <img style={{ height: "30px", marginTop: "5px" }} alt="logo" src={logoWhite} />
                                                         </Stack>
 
-                                                        <div style={{ justifyContent: "center" }}>
+                                                        <div style={{ justifyContent: "center", marginLeft: "50px"  }}>
 
-                                                            <img style={{ width: "80%", marginBottom: "50px" }} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Fchests%2Fchest.png&w=1800&q=75" />
+                                                            <img style={{ width: "80%", marginBottom: "50px", }} src="https://nodeguardians.io/_next/image?url=%2Fassets%2Fchests%2Fchest.png&w=1800&q=75" />
                                                         </div>
 
                                                         <Stack direction="row" height="40px" width="100%" justifyContent="center">
@@ -643,8 +666,8 @@ const Inventory = () => {
                                                     </Stack>
                                                 </Stack>
 
-                                                <Stack direction="row" height="100%" width="10%" border="1px solid red">
-                                                    <Stack direction="column" border="1px solid red">
+                                                <Stack direction="row" height="100%" width="10%" >
+                                                    <Stack direction="column" >
                                                         <Stack direction="row" sx={{ justifyContent: "end" }}>
                                                             <label className="generic-text-color-white generic-text-font2 inventory-text-info">{ToFriendlyPrice(guardianTokens, guardianTokenDecimals)}</label>
                                                             <img style={{ width: "40px" }} alt="logo" src={logoWhite} />
