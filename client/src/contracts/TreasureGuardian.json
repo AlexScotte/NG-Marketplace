@@ -26753,11 +26753,36 @@
           ],
           "name": "onStuffTransferedTo",
           "type": "event"
+        },
+        "0x1ab84bce784ba927df23bef9279723d9bbad6dec82728fb92e2aebfac01f666d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "ids",
+              "type": "uint256[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "missingIds",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "onStuffTransferedTo",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x1b159797C6770769051309eE6e6cB9fe74456b63",
-      "transactionHash": "0x65e556e84cf907ca5a457f1d5cf028c61f86fbd0b5d9508496e939697d9a4503"
+      "address": "0xb339bd2d44fE7925dfc599563d4Df3dCBAAA1E0e",
+      "transactionHash": "0x1f31bc0668a5fc18631b374e18b89be8e224100854e813dede93f7410978287e"
     },
     "1680418702420": {
       "events": {},
@@ -27995,7 +28020,7 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-10T16:24:12.050Z",
+  "updatedAt": "2023-04-10T17:17:07.618Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

@@ -106,7 +106,7 @@ function EthProvider({ children }) {
     let guardianTokenArtifact;
     let web3;
 
-    if (currentChainID == ChainID.Local) {
+    if (currentChainID == ChainID.Mumbai) {
 
       try {
 

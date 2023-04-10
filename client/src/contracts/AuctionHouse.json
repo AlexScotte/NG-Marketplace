@@ -18189,11 +18189,67 @@
           ],
           "name": "OwnershipTransferred",
           "type": "event"
+        },
+        "0xd31b349e5e268b6e7a8cc3b703e827bb3854e2763ec42a7300faf5d9c3e9c3f6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "itemId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "price",
+              "type": "uint256"
+            }
+          ],
+          "name": "ItemListedSuccess",
+          "type": "event"
+        },
+        "0xec7b3e53b13d8aed24b32d71dabfb6afd1ee879d5c762345fb58ef82ce95cf8a": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "itemId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "seller",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "buyer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "price",
+              "type": "uint256"
+            }
+          ],
+          "name": "ItemSoldSuccess",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0xead5934DF81710fCc5aD4b594e24c2d1C1Fb8218",
-      "transactionHash": "0x54e2f102169dced596208df90b6d11ec72b1ab9079f8ac213dfd80176bd546a2"
+      "address": "0x97A41F3E941a79596582D12100d5D70C2b93686d",
+      "transactionHash": "0x4f444e601206f1f2ec5871147248f767c9adf3f207c2a2625e6dbe566fcbfa82"
     },
     "1680418702420": {
       "events": {},
@@ -19325,7 +19381,7 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2023-04-10T16:24:12.087Z",
+  "updatedAt": "2023-04-10T17:17:07.643Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
