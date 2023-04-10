@@ -25,21 +25,38 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     uint8 private _dropRateEpic = 4;
     uint8 private _dropRateLegendary = 1;
 
+    /**
+     * @notice Event emit when the item is transfered to the marketplace
+     */
     event onStuffTransferedTo(address to, uint256[] ids, uint256[] missingIds);
 
+    /**
+     * @notice Create also the ERC20 token and the factory
+     */
     constructor() {
         guardianToken = new GuardianToken();
         factory = new ForgeMaster();
     }
 
+    /**
+     * @notice Create the collection of all the ERC1155 tokens
+     */
     function createCollection() external onlyOwner {
         address collectionAddress = factory.createCollection(
-            "Node Guardians genesis collection"
+            "Node Guardians Alyra Collection"
         );
         factory.forgeCollection();
         guardianStuff = GuardianStuff(collectionAddress);
     }
 
+    /**
+     * @notice Allow the owner of the treasure to tranfer a specific item
+     * It was usefull to test
+     * @param from: Address which send the item
+     * @param to: Address of the new owner
+     * @param id: id of the ERC1155 token
+     * @param amount: Number of ERC1155 transfered
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -50,6 +67,11 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         guardianStuff.safeTransferFrom(from, to, id, amount, data);
     }
 
+    /**
+     * @notice Allow the owner to send ERC20 token
+     * @param guardianAddress: Address which receive the token
+     * @param amount: Number of ERC20 transfered
+     */
     function rewardGuardianWithToken(
         address guardianAddress,
         uint256 amount
@@ -62,6 +84,10 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         guardianToken.transfer(guardianAddress, amount);
     }
 
+    /**
+     * @notice Allow a user to buy a chest item (ERC1155)
+     * @param amount: amount of ERC20 token sent to exchange with the chest
+     */
     function buyChest(uint amount) external {
         uint8 chestItemID = guardianStuff.chestItemID();
 
@@ -89,6 +115,10 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         );
     }
 
+    /**
+     * @notice Allow owner to modify the drop rate of the ERC115 item
+     * Sum must be egal to 100
+     */
     function modifyDropRate(
         uint8 dropRateCommon,
         uint8 dropRateUncommon,
@@ -112,6 +142,11 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         _dropRateLegendary = dropRateLegendary;
     }
 
+    /**
+     * @notice Allow a user to open a chest and get ERC1155 in exchange
+     * Rarity and type of the item sent are random in function of the drop rate
+     * return List of generated IDs
+     */
     function openChest() external returns (uint256[] memory ids) {
         uint8 chestItemID = guardianStuff.chestItemID();
 
@@ -161,6 +196,11 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         return itemIDs;
     }
 
+    /**
+     * @notice Allow to generate an item ID to know which ERC1155 to send
+     * All number of the item is generated with a random number
+     * The drop rate determine which number to select
+     */
     function _generateItemID() private returns (uint256) {
         // Get the rarity random number in function fo the drop rate
         uint256 random = _random();
@@ -243,7 +283,12 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         return itemID;
     }
 
-    /// improve: use chain link
+    /**
+     * @notice Allow to generate a number between 0 and 99
+     * return the generated random number
+     * Improvment: Use chainlink for more security
+     *
+     */
     function _random() private returns (uint256) {
         _nonce++;
         return

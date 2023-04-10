@@ -9,12 +9,19 @@ contract GuardianStuff is ERC1155, Ownable {
     uint256[] private _itemIDs;
     uint8 public chestItemID = 0;
 
+    /**
+     * @notice Specify the ipfs url to retrieve all ERC1155 token informations
+     */
     constructor()
         ERC1155(
             "https://ipfs.io/ipfs/QmY5EtD5MkAf7E3KX5EcD8GWJSFEte8ZoWviHAJezMgQ6H/{id}.json"
         )
     {}
 
+    /**
+     * @notice Allow to create all item ID in function of the class, set, armor, parts and rarity
+     * @param itemOwner: Address which will receive all the ERC1155 tokens
+     */
     function forgeStuff(address itemOwner) external {
         uint setCount = 1;
         uint256 supply;
@@ -58,11 +65,18 @@ contract GuardianStuff is ERC1155, Ownable {
         }
     }
 
+    /**
+     * @notice Allow to create all the chest item ID
+     * For now the supply is arbitrary but we can improve it with calculation
+     */
     function forgeChests(address itemOwner) external {
         // Chests - TODO: calculate in function of the item supply and the number of item in a chest
         _mint(itemOwner, chestItemID, 10 ** 12, "");
     }
 
+    /**
+     * @notice Return all the item IDs possible
+     */
     function getItemIDs() external view returns (uint256[] memory itemIDs) {
         return _itemIDs;
     }

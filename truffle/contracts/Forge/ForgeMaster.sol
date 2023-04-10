@@ -12,6 +12,10 @@ contract ForgeMaster is Ownable, ERC1155Holder {
     string public collectionName;
     address public collectionAddress;
 
+    /**
+     * @notice Allow to create a new collection
+     * @param newCollectionName: Name of the new collection
+     */
     function createCollection(
         string memory newCollectionName
     ) external returns (address newCollectionAddress) {
@@ -38,6 +42,9 @@ contract ForgeMaster is Ownable, ERC1155Holder {
         return (newCollectionAddress);
     }
 
+    /**
+     * @notice Allow the owner to trigger the generation of all the ERC115 tokens
+     */
     function forgeCollection() external onlyOwner {
         GuardianStuff guardianStuff = GuardianStuff(collectionAddress);
         guardianStuff.forgeStuff(msg.sender);
