@@ -49,8 +49,7 @@ const Quests = () => {
             const networkID = await web3.eth.net.getId();
 
             // Get wallet of the Node Guardian admin
-            // const signer = web3.eth.accounts.privateKeyToAccount(process.env.REACT_APP_PRIVATE_KEY);
-            const signer = web3.eth.accounts.privateKeyToAccount("0xb50e0d2b3377efcb5e7764035741a1c24e177312418c9398f0097aa67b4f568d");
+            const signer = web3.eth.accounts.privateKeyToAccount(process.env.REACT_APP_PRIVATE_KEY);
             console.log("Admin Node Guardian address: " + signer.address);
             web3.eth.accounts.wallet.add(signer);
 
