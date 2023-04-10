@@ -1,5 +1,5 @@
 Lien vers l'application déployée sur Vercel:
-https://ng-marketplace-git-master-alexscotte.vercel.app/
+https://ng-marketplace-git-master-alexscotte.vercel.app/#/quests
 
 Vidéo de présentation de Node Guardians pour plus de contexte:
 https://www.loom.com/share/1d6defa0b70b45bfb236d8404ae338ed
