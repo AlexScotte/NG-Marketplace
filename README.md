@@ -19,3 +19,8 @@ Aperçu de l'application:
 <img width="950" alt="Inventory details" src="https://user-images.githubusercontent.com/53000621/230975171-0b243f64-c37e-4e1a-8241-a86189838d70.png">
 <img width="952" alt="Marketplace" src="https://user-images.githubusercontent.com/53000621/230975190-ce387fb1-b450-497c-9dd6-e96a40454953.png">
 <img width="950" alt="Marketplace details" src="https://user-images.githubusercontent.com/53000621/230975207-77fbca59-2374-4fb7-9a66-33627d621152.png">
+
+Test unitaires:
+
+![image](https://user-images.githubusercontent.com/53000621/230996049-54a162c6-437f-4ace-80c9-5fff5417f84b.png)
+
