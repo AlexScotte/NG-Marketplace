@@ -1,7 +1,6 @@
 // const Factory = artifacts.require("../contracts/Forge/ForgeMaster.sol");
 // const ERC1155Token = artifacts.require("../contracts/Forge/GuardianStuff.sol");
 
-// const Stuff = artifacts.require("../contracts/Forge/Stuff.sol");
 // const { BN, expectRevert, expectEvent } = require("@openzeppelin/test-helpers");
 // const { ZERO_ADDRESS } = require("@openzeppelin/test-helpers/src/constants");
 
