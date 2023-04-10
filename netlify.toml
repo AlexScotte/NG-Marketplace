@@ -1,7 +1,4 @@
-[template]
+[build]
   base = "client/"
   publish="/build"
   command="npm run build"
-
-[template.environment]
-  REACT_APP_PRIVATE_KEY="0xb50e0d2b3377efcb5e7764035741a1c24e177312418c9398f0097aa67b4f568d"
