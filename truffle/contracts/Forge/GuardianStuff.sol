@@ -14,7 +14,7 @@ contract GuardianStuff is ERC1155, Ownable {
      */
     constructor()
         ERC1155(
-            "https://ipfs.io/ipfs/QmY5EtD5MkAf7E3KX5EcD8GWJSFEte8ZoWviHAJezMgQ6H/{id}.json"
+            "https://ipfs.io/ipfs/QmZViwAm9a9mjm9SEaBKgeyWEpdZzbfbWb5gD4vJ3oiA8J/{id}.json"
         )
     {}
 
@@ -27,8 +27,7 @@ contract GuardianStuff is ERC1155, Ownable {
         uint256 supply;
 
         // Class: knight, mage, rogue
-        // Use only the class 1 for now because I do not upload all the other files
-        for (uint class = 1; class <= 1; class++) {
+        for (uint class = 1; class <= 3; class++) {
             // There is 2 sets of armor for the knight class
             // if (class == 0) {
             //     setCount = 2;

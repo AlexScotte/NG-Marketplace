@@ -8,7 +8,7 @@ const NotConnected = () => {
         <div style={{
             position: 'absolute',
             top: '40%',
-            left: '35%',
+            left: '34%',
         }}>
             <Box className="modal-main-content">
                 <label className="modal-information-title generic-text-font1-uppercase generic-text-color-white">

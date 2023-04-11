@@ -7,6 +7,9 @@ import Button from '@mui/material/Button';
 import NotConnected from "../../components/NotConnected";
 import { ChainID } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
+import Stack from '@mui/material/Stack';
+import Quest1 from "../../assets/DiamondQuest1.png";
+import Quest2 from "../../assets/DiamondQuest2.png";
 
 
 import BigNumber from 'bignumber.js';
@@ -118,9 +121,9 @@ const Quests = () => {
 
         <div style={{
             height: 'calc(100vh - 64px)', display: "grid",
-            gridTemplateColumns: "repeat(3, 70% 30%)",
+            gridTemplateColumns: "repeat(1, 100%)",
             gridGap: "15px",
-            padding: "20px",
+            padding: "10px",
             position: "relative",
             boxSizing: "border-box",
             // , maxWidth: "1000px", margin: "20px, auto"
@@ -159,10 +162,19 @@ const Quests = () => {
 
                                         </Modal>
 
-                                        <Button className="modal-submit" onClick={handleClick} variant="outlined"
-                                            sx={buttonStyle}>
-                                            Validate Quest
-                                        </Button>
+                                        <Stack direction="colum" justifyContent="center">
+                                            <div >
+                                                <img src={Quest1} style={{height: "490px"}}/>
+                                            </div>   
+                                            <div >
+                                                <img src={Quest2} style={{height: "90px", marginTop: "9px"}}/>
+                                            </div>
+                                            <Button onClick={handleClick} variant="outlined"
+                                                sx={buttonStyle}
+                                                style={{position: "absolute", marginRight: "-377px", marginTop:"110px"}}>
+                                                Validate Quest
+                                            </Button>
+                                         </Stack>
 
                                     </>
                                 )

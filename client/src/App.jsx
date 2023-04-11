@@ -2,6 +2,7 @@ import { EthProvider } from "./contexts/EthContext";
 import Header from "./components/Header";
 import Quests from "./pages/Quests";
 import Inventory from "./pages/Inventory";
+import Home from "./pages/Home";
 import {
   BrowserRouter as Router,
   HashRouter,
@@ -18,6 +19,7 @@ function App() {
       <HashRouter>
         <Header />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/quests" element={<Quests />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/auction-house" element={<AuctionHouse />} />

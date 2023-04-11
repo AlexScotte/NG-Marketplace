@@ -8,7 +8,7 @@ const ChangeChain = ({ chain }) => {
         <div style={{
             position: 'absolute',
             top: '40%',
-            left: '33%',
+            left: '27%',
         }}>
             <Box className="modal-main-content">
                 <label className="modal-information-title generic-text-font1-uppercase generic-text-color-white">

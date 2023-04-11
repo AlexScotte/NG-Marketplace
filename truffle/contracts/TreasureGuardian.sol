@@ -243,15 +243,13 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
 
         random = _random();
         uint8 class = 1;
-        // Use only the class 1 for now because I do not upload all the other files
-
-        // if (random < 33) {
-        //     class = 1;
-        // } else if (random >= 33 && random < 66) {
-        //     class = 2;
-        // } else if (random >= 66) {
-        //     class = 3;
-        // }
+        if (random < 33) {
+            class = 1;
+        } else if (random >= 33 && random < 66) {
+            class = 2;
+        } else if (random >= 66) {
+            class = 3;
+        }
 
         uint8 set = 1;
         // Use only the set 1 for now because I do not upload all the other files
