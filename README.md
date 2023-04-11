@@ -1,15 +1,27 @@
+Amélioration faite après rendu projet:
+
+- Ajout d'image sur la page principale et la page quest pour une meilleure présentation
+- Ajout de nouveau fichier JSON sur IPFS pour avoir plus d'équipement à looter !
+- MAJ du workflow pour faire apparaitre le stockage décentralisé
+- Réalisation d'une vidéo sur blockchain locale pour pouvoir montrer plus de choses plus rapidement sans avoir à attendre la validation des transactions
+
+
+
 Lien vers l'application déployée sur Vercel:
 https://ng-marketplace-git-master-alexscotte.vercel.app/#/quests
 
 Vidéo de présentation de Node Guardians pour plus de contexte:
 https://www.loom.com/share/1d6defa0b70b45bfb236d8404ae338ed
 
-Vidéo de présentation du projet:
+Vidéo de présentation du projet en LOCAL:
+https://www.loom.com/share/fc2acebf33d9400389fb6d970d3d7d87
+
+Vidéo de présentation du projet sur TEST NET:
 https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
 
 
 Workflow du projet:
-![image](https://user-images.githubusercontent.com/53000621/230970653-b3dd9eb2-df8f-4dea-9ca7-914d15d3d8e9.png)
+![image](https://user-images.githubusercontent.com/53000621/231284989-c78d0cd8-b8a8-4dd7-b4b5-fdbf2245e61b.png)
 
 
 
