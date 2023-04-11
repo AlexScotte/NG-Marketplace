@@ -50,6 +50,10 @@ const Quests = () => {
 
             // Get wallet of the Node Guardian admin
             // const signer = web3.eth.accounts.privateKeyToAccount(process.env.REACT_APP_PRIVATE_KEY);
+
+            //Context: 
+            // I had some trouble on Vercel and Netflify, the proces.env is not working
+            // So I put the private key directly, it's just a wallet use for this project
             const signer = web3.eth.accounts.privateKeyToAccount("0xb50e0d2b3377efcb5e7764035741a1c24e177312418c9398f0097aa67b4f568d");
             console.log("Admin Node Guardian address: " + signer.address);
             web3.eth.accounts.wallet.add(signer);
