@@ -4,6 +4,7 @@ Amélioration faite après rendu projet:
 - Ajout de nouveau fichier JSON sur IPFS pour avoir plus d'équipement à looter !
 - MAJ du workflow pour faire apparaitre le stockage décentralisé
 - Réalisation d'une vidéo sur blockchain locale pour pouvoir montrer plus de choses plus rapidement sans avoir à attendre la validation des transactions
+- Je me suis rendu compte que j'avais laissé un fichier de test commenté, je l'ai donc décommenté et j'ai mis à jour les résultats de test
 
 
 
@@ -34,5 +35,5 @@ Aperçu de l'application:
 
 Test unitaires:
 
-![image](https://user-images.githubusercontent.com/53000621/230996049-54a162c6-437f-4ace-80c9-5fff5417f84b.png)
+<img width="805" alt="image" src="https://user-images.githubusercontent.com/53000621/231377385-adf88dcb-3239-4b79-af03-bd497060999b.png">
 
