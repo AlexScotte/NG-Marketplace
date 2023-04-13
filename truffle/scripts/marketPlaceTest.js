@@ -72,6 +72,10 @@ module.exports = async (deployer, network) => {
     "account1 balance: " +
       (await guardianStuffInstance.balanceOf(account1, itemId1)).toNumber()
   );
+  console.log(
+    "account2 balance: " +
+      (await guardianStuffInstance.balanceOf(account2, itemId1)).toNumber()
+  );
 
   console.log("Give approval to the marketplace to list items of account1");
   await guardianStuffInstance.setApprovalForAll(
@@ -88,6 +92,12 @@ module.exports = async (deployer, network) => {
     from: account1,
     value: listingFee,
   });
+
+  console.log("Get ether balance of Marketplace");
+  console.log(
+    "Marketplace ether balance:" +
+      (await auctionHouseInstance.auctionHouseFunds())
+  );
 
   console.log("Get new balance after listing");
   console.log(

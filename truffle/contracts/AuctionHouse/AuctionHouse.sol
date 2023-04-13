@@ -160,7 +160,7 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
         emit ItemListedSuccess(itemId, msg.sender, sellingPrice);
     }
 
-    function executeSale(uint256 listedItemId) external payable {
+    function executeSale(uint256 listedItemId) external payable nonReentrant {
         uint itemPrice = idToListedItem[listedItemId].price;
         address seller = idToListedItem[listedItemId].seller;
 
@@ -195,7 +195,9 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
         // // payable(address(this)).transfer(fee to define);
 
         // // Transfer money to the seller
-        payable(idToListedItem[listedItemId].seller).transfer(msg.value);
+        (bool success, ) = payable(idToListedItem[listedItemId].seller).call{
+            value: msg.value
+        }("");
 
         emit ItemSoldSuccess(
             listedItem.itemId,

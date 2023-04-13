@@ -55,7 +55,7 @@ module.exports = async (deployer, network) => {
   await guardianTokenInstance.approve(
     treasureGuardianInstance.address,
     chestPrice,
-    { from: a2 }
+    { from: a1 }
   );
 
   const itemChestID = (await guardianStuffInstance.chestItemID()).toNumber();
@@ -102,9 +102,14 @@ module.exports = async (deployer, network) => {
   // Opening chest
   console.log("Opening chest");
   let itemIDs = [];
+  console.log("Approve to treasure guardian to take back the chest");
+  await guardianStuffInstance.setApprovalForAll(
+    treasureGuardianInstance.address,
+    true,
+    { from: a1 }
+  );
+  console.log("Open chest");
   itemIDs = await treasureGuardianInstance.openChest({ from: a1 });
-  const test = await guardianStuffInstance.getItemIDs();
-  console.log(test);
   console.log(
     "user1 chest item balance after opening chest: " +
       (await guardianStuffInstance.balanceOf(a1, itemChestID)).toNumber()
