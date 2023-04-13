@@ -14,7 +14,7 @@ contract GuardianStuff is ERC1155, Ownable {
      */
     constructor()
         ERC1155(
-            "https://ipfs.io/ipfs/QmZViwAm9a9mjm9SEaBKgeyWEpdZzbfbWb5gD4vJ3oiA8J/{id}.json"
+            "https://ipfs.io/ipfs/QmaYXNwqJSbJ8de65ncqo2z8hZBJA7XPZiS4bnscNdD1EP/{id}.json"
         )
     {}
 
