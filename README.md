@@ -5,6 +5,7 @@ Amélioration faite après rendu projet:
 - MAJ du workflow pour faire apparaitre le stockage décentralisé
 - Réalisation d'une vidéo sur blockchain locale pour pouvoir montrer plus de choses plus rapidement sans avoir à attendre la validation des transactions
 - Je me suis rendu compte que j'avais laissé un fichier de test commenté, je l'ai donc décommenté et j'ai mis à jour les résultats de test
+- Securité: Utilisation du call plutôt que du transfer
 
 
 
