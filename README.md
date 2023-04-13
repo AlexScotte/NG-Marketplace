@@ -23,7 +23,7 @@ https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
 
 
 Workflow du projet:
-![image](https://user-images.githubusercontent.com/53000621/231284989-c78d0cd8-b8a8-4dd7-b4b5-fdbf2245e61b.png)
+![image](https://user-images.githubusercontent.com/53000621/231868500-04e640ce-2ae1-47c0-95e7-7b558dc5fa5e.png)
 
 
 
