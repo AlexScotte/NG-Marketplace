@@ -211,12 +211,12 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
             random >= _dropRateCommon &&
             random < (_dropRateCommon + _dropRateUncommon)
         ) {
-            rarity = 2;
+            rarity = 1;
         } else if (
             random >= (_dropRateCommon + _dropRateUncommon) &&
             random < (_dropRateCommon + _dropRateUncommon + _dropRateRare)
         ) {
-            rarity = 3;
+            rarity = 2;
         } else if (
             random >= (_dropRateCommon + _dropRateUncommon + _dropRateRare) &&
             random <
@@ -225,7 +225,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
                 _dropRateRare +
                 _dropRateEpic)
         ) {
-            rarity = 4;
+            rarity = 3;
         } else if (
             random >=
             (_dropRateCommon +
@@ -238,7 +238,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
                 _dropRateRare +
                 _dropRateLegendary)
         ) {
-            rarity = 5;
+            rarity = 4;
         }
 
         random = _random();
