@@ -194,10 +194,11 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
         // // Add a taxe on all the item sold (royalties ?)
         // // payable(address(this)).transfer(fee to define);
 
-        // // Transfer money to the seller
+        // Transfer money to the seller
         (bool success, ) = payable(idToListedItem[listedItemId].seller).call{
             value: msg.value
         }("");
+        require(success, "Failed to send money to the seller");
 
         emit ItemSoldSuccess(
             listedItem.itemId,
