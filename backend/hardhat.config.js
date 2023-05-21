@@ -7,6 +7,10 @@ const INFURA_ID = process.env.INFURA_ID || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  // paths: {
+  //   artifacts: "../frontend/src/contracts",
+  // },
+
   defaultNetwork: "hardhat",
   etherscan: {
     apiKey: `${ETHERSCAN_API_KEY}`,
@@ -23,6 +27,14 @@ module.exports = {
         mnemonic: `${process.env.MNEMONIC}`,
       },
       chainId: 5,
+    },
+    mumbai: {
+      network_id: 80001,
+      url: `https://polygon-mumbai.infura.io/v3/${INFURA_ID}`,
+      accounts: {
+        mnemonic: `${process.env.MNEMONIC}`,
+      },
+      chainId: 80001,
     },
 
     // TRUFFLE

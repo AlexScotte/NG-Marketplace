@@ -46,9 +46,9 @@ const Quests = () => {
 
 
             // Create Local RPC
-            //const web3 = new Web3("ws://localhost:8545");
+            const web3 = new Web3("ws://localhost:8545");
             // Create Mumbai RPC
-            const web3 = new Web3("https://rpc.ankr.com/polygon_mumbai");
+            // const web3 = new Web3("https://rpc.ankr.com/polygon_mumbai");
             const networkID = await web3.eth.net.getId();
 
             // Get wallet of the Node Guardian admin
