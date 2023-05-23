@@ -6,12 +6,12 @@ import NotConnected from "../../components/NotConnected";
 import { ChainID } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import Stack from "@mui/material/Stack";
+import Image from "next/image";
 import Quest1 from "../../assets/DiamondQuest1.png";
 import Quest2 from "../../assets/DiamondQuest2.png";
 import { useAccount, useNetwork } from "wagmi";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-
 const Quests = () => {
   const QuestReward = 1500;
   const [open, setOpen] = useState(false);
@@ -125,18 +125,7 @@ const Quests = () => {
     },
   };
   return (
-    <div
-      style={{
-        height: "calc(100vh - 64px)",
-        display: "grid",
-        gridTemplateColumns: "repeat(1, 100%)",
-        gridGap: "15px",
-        padding: "10px",
-        position: "relative",
-        boxSizing: "border-box",
-        // , maxWidth: "1000px", margin: "20px, auto"
-      }}
-    >
+    <div className="div-full-screen">
       {isConnected ? (
         <>
           {wrongChain ? (
@@ -169,23 +158,24 @@ const Quests = () => {
               </Modal>
 
               <Stack direction="colum" justifyContent="center">
-                <div>
-                  <img src={Quest1} style={{ height: "490px" }} />
-                </div>
-                <div>
-                  <img
-                    src={Quest2}
-                    style={{ height: "90px", marginTop: "9px" }}
-                  />
-                </div>
+                <Image
+                  src={Quest1}
+                  alt="me"
+                  style={{ height: "calc(100vh - 80px)", width: "auto" }}
+                />
+                <Image
+                  src={Quest2}
+                  alt="me"
+                  style={{ height: "15vh", width: "auto", marginTop: "0px" }}
+                />
                 <Button
                   onClick={handleClick}
                   variant="outlined"
                   sx={buttonStyle}
                   style={{
                     position: "absolute",
-                    marginRight: "-377px",
-                    marginTop: "110px",
+                    marginRight: "-75vh",
+                    marginTop: "20vh",
                   }}
                 >
                   Validate Quest

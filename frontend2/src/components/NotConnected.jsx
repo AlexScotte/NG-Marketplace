@@ -1,25 +1,14 @@
-import { Box } from '@mui/material';
+import { Stack, Typography } from "@mui/material";
 
 const NotConnected = () => {
+  return (
+    <Stack className="div-centered" direction="column">
+      <Typography variant="h6">Not connected</Typography>
+      <Typography variant="subtitle1">
+        Guardian, you need to connect to accesss this section.
+      </Typography>
+    </Stack>
+  );
+};
 
-    return (
-
-
-        <div style={{
-            position: 'absolute',
-            top: '40%',
-            left: '34%',
-        }}>
-            <Box className="modal-main-content">
-                <label className="modal-information-title generic-text-font1-uppercase generic-text-color-white">
-                    Not connected
-                </label>
-                <label className="modal-information-text generic-text-font generic-text-color" style={{ marginTop: '10px' }}>
-                    Guardian, you need to connect to accesss this section
-                </label>
-            </Box>
-        </div>
-    )
-}
-
-export default NotConnected
+export default NotConnected;
