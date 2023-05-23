@@ -93,6 +93,9 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+    background-image: url('https://nodeguardians.io/_next/image?url=%2Fassets%2Ftextures%2Fbackground-3.webp&w=1800&q=100');
+    background-size: 100% 100%;
+  
 }
 
 a {

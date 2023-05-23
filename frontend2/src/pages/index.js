@@ -1,9 +1,11 @@
-import Header from "@/components/Header";
+import HomePage from "../assets/Home.png";
 
-export default function Home() {
+const Home = () => {
   return (
-    <>
-      <Header />
-    </>
+    <div>
+      <img src={HomePage} style={{ width: "100%" }} />
+    </div>
   );
-}
+};
+
+export default Home;

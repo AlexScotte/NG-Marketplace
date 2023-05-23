@@ -631,8 +631,8 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Token\\GuardianToken.sol": {
-      "lastModificationDate": 1680984390046,
-      "contentHash": "d2de71743908ece9ab66d281df74a9ec",
+      "lastModificationDate": 1684703026397,
+      "contentHash": "c3aabc4ffb71b0a29b5653cfe8efa172",
       "sourceName": "contracts/Token/GuardianToken.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -658,7 +658,8 @@
         }
       },
       "imports": [
-        "../../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "../../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "../../node_modules/@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.18"
@@ -668,8 +669,8 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\TreasureGuardian.sol": {
-      "lastModificationDate": 1681419353073,
-      "contentHash": "96739f1f93162763e99791d0d7fc00d9",
+      "lastModificationDate": 1684736823494,
+      "contentHash": "0297c7d3c11f0ed2b10d898f432219fe",
       "sourceName": "contracts/TreasureGuardian.sol",
       "solcConfig": {
         "version": "0.8.18",

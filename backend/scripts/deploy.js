@@ -19,16 +19,19 @@ async function main() {
   );
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
+  // Deploy TreasureGuardian
   const treasureGuardianName = "TreasureGuardian";
-  const TreasureGuardian = await ethers.getContractFactory(
-    treasureGuardianName
-  );
-  const treasureGuardian = await TreasureGuardian.deploy();
-  await treasureGuardian.deployed();
+  const treasureGuardian = await deployContract(treasureGuardianName);
 
-  console.log("Contract Deployed");
-  console.log("Contract name:", treasureGuardianName);
-  console.log("Contract address:", treasureGuardian.address);
+  // Deploy ERC20
+  const guardianTokenName = "GuardianToken";
+  const guardianToken = await deployContract(guardianTokenName);
+
+  // Mint ERC20 for TreasureGuardian
+  guardianToken.mint(treasureGuardian.address);
+
+  // Initialize TreasureGuardianToken
+  treasureGuardian.initialize(guardianToken.address);
 
   console.log("Create collection...");
   // Create ERC1155 collection
@@ -37,19 +40,36 @@ async function main() {
 
   // Deploy the Marketplace
   const auctionHouseName = "AuctionHouse";
-  const AuctionHouse = await ethers.getContractFactory(auctionHouseName);
-  const auctionHouse = await AuctionHouse.deploy(
-    await treasureGuardian.guardianStuff()
+  const guardianStuffAddr = await treasureGuardian.guardianStuff();
+  const auctionHouse = await deployContract(
+    auctionHouseName,
+    guardianStuffAddr
   );
-  await auctionHouse.deployed();
-
-  console.log("Contract Deployed");
-  console.log("Contract name:", auctionHouseName);
-  console.log("Contract address:", auctionHouse.address);
 
   // Save the contract's artifacts and address in the FRONTEND directory
   await saveFrontendFiles(treasureGuardianName, treasureGuardian);
+  await saveFrontendFiles(guardianTokenName, guardianToken);
   await saveFrontendFiles(auctionHouseName, auctionHouse);
+}
+
+async function deployContract(contractName, args) {
+  console.log("Deploying contract:", contractName);
+
+  const Contract = await ethers.getContractFactory(contractName);
+  let contract;
+  if (args) {
+    contract = await Contract.deploy(args);
+  } else {
+    contract = await Contract.deploy();
+  }
+
+  await contract.deployed();
+
+  console.log("Contract Deployed");
+  console.log("Contract name:", contractName);
+  console.log("Contract address:", contract.address);
+
+  return contract;
 }
 
 async function saveFrontendFiles(contractName, contract) {

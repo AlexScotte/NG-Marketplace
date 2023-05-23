@@ -34,8 +34,11 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
      * @notice Create also the ERC20 token and the factory
      */
     constructor() {
-        guardianToken = new GuardianToken();
         factory = new ForgeMaster();
+    }
+
+    function initialize(address guardianTokenAddr) external onlyOwner {
+        guardianToken = GuardianToken(guardianTokenAddr);
     }
 
     /**

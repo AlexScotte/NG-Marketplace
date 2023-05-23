@@ -65,13 +65,13 @@ export default function Header({}) {
               width="100%"
               marginLeft="100px"
             >
-              <Link href="/quests">
-                <Typography className="item-menu">Quests</Typography>
+              <Link className="item-menu" href="/Quests">
+                Quests
               </Link>
-              <Link className="item-menu" href="/inventory">
+              <Link className="item-menu" href="/Inventory">
                 Inventory
               </Link>
-              <Link className="item-menu" href="/auction-house">
+              <Link className="item-menu" href="/AuctionHouse">
                 Auction House
               </Link>
             </Stack>
