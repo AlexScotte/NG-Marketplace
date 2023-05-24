@@ -5,13 +5,15 @@ import useEth from "../contexts/EthContext/useEth";
 import { Pages, ToShortAddress } from "../Utils/utils";
 import Link from "next/link";
 import { useAccount } from "wagmi";
+import { useRouter } from "next/router";
 
 export default function Header({}) {
   const { isConnected, address } = useAccount();
-
   const { connectWallet } = useEth();
-
   const [connectedWallet, setConnectedWallet] = useState("");
+  const router = useRouter();
+
+  const currentRoute = router.pathname;
 
   useEffect(() => {
     if (isConnected) {
@@ -64,13 +66,37 @@ export default function Header({}) {
             width="100%"
             marginLeft="100px"
           >
-            <Link className="item-menu" href="/Quests">
+            <Link
+              className={
+                "item-menu " +
+                (currentRoute === "/Quests"
+                  ? "item-menu-active"
+                  : "item-menu-non-active")
+              }
+              href="/Quests"
+            >
               Quests
             </Link>
-            <Link className="item-menu" href="/Inventory">
+            <Link
+              className={
+                "item-menu " +
+                (currentRoute === "/Inventory"
+                  ? "item-menu-active"
+                  : "item-menu-non-active")
+              }
+              href="/Inventory"
+            >
               Inventory
             </Link>
-            <Link className="item-menu" href="/AuctionHouse">
+            <Link
+              className={
+                "item-menu " +
+                (currentRoute === "/AuctionHouse"
+                  ? "item-menu-active"
+                  : "item-menu-non-active")
+              }
+              href="/AuctionHouse"
+            >
               Auction House
             </Link>
           </Stack>

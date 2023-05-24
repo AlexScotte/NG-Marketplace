@@ -56,6 +56,13 @@ a {
   font-family: Cinzel;
 }
 
+.item-menu-non-active {
+  color: rgb(142, 142, 142);
+}
+
+.item-menu-active {
+  color: rgba(190, 167, 126, 0.973);
+}
 
 .item-menu:hover {
   transform: translateY(-2px);

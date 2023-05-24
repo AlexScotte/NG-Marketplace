@@ -12,6 +12,7 @@ import Quest2 from "../../assets/DiamondQuest2.png";
 import { useAccount, useNetwork } from "wagmi";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+
 const Quests = () => {
   const QuestReward = 1500;
   const [open, setOpen] = useState(false);
@@ -22,6 +23,7 @@ const Quests = () => {
   const handleModalClose = () => setOpen(false);
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
+
   useEffect(() => {
     console.log("Loading page auction house");
 
