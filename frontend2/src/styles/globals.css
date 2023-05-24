@@ -125,3 +125,42 @@ a {
 }
 
 /* *********************** */
+
+.generic-button{
+  border: 1px solid rgb(109, 98, 76);
+  color: rgb(241, 242, 242);
+  background-color: rgb(29, 28, 26);
+  cursor: pointer;
+  border-radius: 5px;
+  font-family: Cinzel, serif;
+  font-weight: 900;
+}
+
+
+.modal-submit {
+  margin-top: 20px;
+}
+
+.generic-button:hover{
+  background-color: rgb(39, 36, 32);
+  color: rgb(190, 167, 125);
+  border-color: rgb(190, 167, 125);
+}
+
+.modal-main-content {
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: rgb(29, 28, 26);
+  border: 1px solid rgb(159, 140, 108);
+  /* box-shadow: 24px; */
+  border-radius: 2px;
+  padding: 10px 20px;
+
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+}

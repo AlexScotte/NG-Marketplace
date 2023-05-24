@@ -12,6 +12,7 @@ import Quest2 from "../../assets/DiamondQuest2.png";
 import { useAccount, useNetwork } from "wagmi";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import { Typography } from "@mui/material";
 
 const Quests = () => {
   const QuestReward = 1500;
@@ -88,44 +89,16 @@ const Quests = () => {
       await transaction.wait();
 
       setModalTitle("Congratulations !");
-      setModalMesage("Your rewards have been sent to your wallet");
+      setModalMesage("Your rewards have been sent to your wallet.");
       console.log("Reward sent on Mumbai with success");
       handleModalOpen();
     } catch (err) {
       setModalTitle("Error !");
-      setModalMesage("An error occurred while transferring your reward");
+      setModalMesage("An error occurred while transferring your reward.");
       console.error(err.message);
     }
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "rgb(29, 28, 26)",
-    border: "1px solid rgb(159, 140, 108)",
-    boxShadow: 24,
-    borderRadius: "2px",
-    height: "10%",
-    p: 2,
-  };
-
-  const buttonStyle = {
-    border: "1px solid rgb(109, 98, 76)",
-    color: "rgb(241, 242, 242)",
-    backgroundColor: "rgb(29, 28, 26)",
-    cursor: "pointer",
-    borderRadius: "5px",
-    fontFamily: "Cinzel, serif",
-    fontWeight: "900",
-    "&:hover": {
-      backgroundColor: "rgb(39, 36, 32)",
-      color: "rgb(190, 167, 125)",
-      borderColor: "rgb(190, 167, 125)",
-    },
-  };
   return (
     <div className="div-full-screen">
       {isConnected ? (
@@ -137,29 +110,20 @@ const Quests = () => {
           ) : (
             <>
               <Modal open={open} onClose={handleModalClose}>
-                <Box sx={style} className="modal-main-content">
-                  <label className="modal-information-title generic-text-font1-uppercase generic-text-color">
-                    {modalTitle}
-                  </label>
-                  <label
-                    className="modal-information-text generic-text-font generic-text-color"
-                    style={{ marginTop: "10px" }}
-                  >
-                    {modalMesage}
-                  </label>
-
+                <Box className="modal-main-content">
+                  <Typography variant="h6">{modalTitle}</Typography>
+                  <Typography variant="subtitle1">{modalMesage}</Typography>
                   <Button
-                    className="modal-submit"
+                    className="generic-button modal-submit"
                     onClick={handleModalClose}
                     variant="outlined"
-                    sx={buttonStyle}
                   >
                     Close
                   </Button>
                 </Box>
               </Modal>
 
-              <Stack direction="colum" justifyContent="center">
+              <Stack direction="row" justifyContent="center">
                 <Image
                   src={Quest1}
                   alt="me"
@@ -173,7 +137,7 @@ const Quests = () => {
                 <Button
                   onClick={handleClick}
                   variant="outlined"
-                  sx={buttonStyle}
+                  className="generic-button"
                   style={{
                     position: "absolute",
                     marginRight: "-75vh",

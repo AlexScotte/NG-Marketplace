@@ -25,19 +25,18 @@ export default function App({ Component, pageProps }) {
   let theme = createTheme({
     typography: {
       h6: {
-        fontFamily: "Lato",
+        fontFamily: "Cinzel",
         textTransform: "uppercase !important",
         color: "rgb(159, 140, 108)",
+        textAlign: "center",
       },
       subtitle1: {
         fontFamily: "Cinzel",
         color: "rgb(142, 142, 142)",
+        textAlign: "center",
       },
       body1: {
         fontWeight: 500,
-      },
-      button: {
-        fontStyle: "italic",
       },
     },
   });
