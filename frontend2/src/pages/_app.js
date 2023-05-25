@@ -2,7 +2,7 @@
 import "@/styles/globals.css";
 
 import { WagmiConfig, createClient, configureChains } from "wagmi";
-import { hardhat } from "wagmi/chains";
+import { hardhat, goerli } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { EthProvider } from "../contexts/EthContext";
@@ -13,7 +13,10 @@ import {
   ThemeProvider,
 } from "@mui/material/styles";
 
-const { chains, provider } = configureChains([hardhat], [publicProvider()]);
+const { chains, provider } = configureChains(
+  [hardhat, goerli],
+  [publicProvider()]
+);
 
 const client = createClient({
   autoConnect: false,

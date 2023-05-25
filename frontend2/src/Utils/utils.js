@@ -5,10 +5,10 @@ export const Pages = {
 };
 
 export const ChainID = {
-  Local: "1337",
-  HardhatLocal: "31337",
-  Goerli: "5",
-  Mumbai: "80001",
+  Local: 1337,
+  HardhatLocal: 31337,
+  Goerli: 5,
+  Mumbai: 80001,
 };
 
 export const ToShortAddress = (address) => {

@@ -13,6 +13,7 @@ import { useAccount, useNetwork } from "wagmi";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Typography } from "@mui/material";
+import { useSwitchNetwork } from "wagmi";
 
 const Quests = () => {
   const QuestReward = 1500;
@@ -24,14 +25,16 @@ const Quests = () => {
   const handleModalClose = () => setOpen(false);
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
   useEffect(() => {
     console.log("Loading page auction house");
 
     if (isConnected) {
-      setWrongChain(chain?.id != ChainID.HardhatLocal);
+      setWrongChain(chain?.id != ChainID.Goerli);
+      switchNetwork?.(ChainID.Goerli);
     }
-  }, [isConnected]);
+  }, [isConnected, wrongChain, chain]);
 
   const handleClick = async () => {
     try {
@@ -105,7 +108,7 @@ const Quests = () => {
         <>
           {wrongChain ? (
             <>
-              <ChangeChain chain="Goerli" />
+              <ChangeChain chain="Goerli" chainID={ChainID.Goerli} />
             </>
           ) : (
             <>
