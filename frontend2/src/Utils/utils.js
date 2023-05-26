@@ -16,6 +16,7 @@ export const ToShortAddress = (address) => {
 };
 
 export const ToFriendlyPrice = (price, decimals) => {
+  if (!decimals) decimals = 0;
   return parseFloat(price * 10 ** -decimals).toFixed(2);
 };
 

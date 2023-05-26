@@ -10,7 +10,6 @@ import Image from "next/image";
 import Quest1 from "../../assets/DiamondQuest1.png";
 import Quest2 from "../../assets/DiamondQuest2.png";
 import { useAccount, useNetwork } from "wagmi";
-import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Typography } from "@mui/material";
 import { useSwitchNetwork } from "wagmi";
@@ -48,7 +47,6 @@ const Quests = () => {
       // const web3 = new Web3("https://rpc.ankr.com/polygon_mumbai");
 
       // Get wallet of the Node Guardian admin
-      console.log(process.env.NEXT_PUBLIC_PRIVATE_KEY);
       const signer = new ethers.Wallet(
         process.env.NEXT_PUBLIC_PRIVATE_KEY,
         provider

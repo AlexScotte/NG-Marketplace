@@ -1,9 +1,18 @@
+import Image from "next/image";
 import HomePage from "../assets/Home.png";
 
 const Home = () => {
   return (
-    <div>
-      <img src={HomePage} style={{ width: "100%" }} />
+    <div className="div-full-screen">
+      <Image
+        src={HomePage}
+        alt="me"
+        style={{
+          height: "auto",
+          width: "100%",
+          justifyContent: "center",
+        }}
+      />
     </div>
   );
 };

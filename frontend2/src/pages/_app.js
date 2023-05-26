@@ -27,6 +27,12 @@ const client = createClient({
 export default function App({ Component, pageProps }) {
   let theme = createTheme({
     typography: {
+      h5: {
+        fontFamily: "Cinzel",
+        textTransform: "uppercase !important",
+        color: "rgb(142, 142, 142)",
+        textAlign: "center",
+      },
       h6: {
         fontFamily: "Cinzel",
         textTransform: "uppercase !important",
