@@ -28,15 +28,25 @@ async function main() {
   const guardianToken = await deployContract(guardianTokenName);
 
   // Mint ERC20 for TreasureGuardian
+  console.log("Mint ERC20 tokens and give them to treasure guardian contract");
   guardianToken.mint(treasureGuardian.address);
 
   // Initialize TreasureGuardianToken
+  console.log("Initialize treasure guardian");
   treasureGuardian.initialize(guardianToken.address);
 
-  console.log("Create collection...");
+  console.log("Creating collection...");
   // Create ERC1155 collection
   await treasureGuardian.createCollection();
   console.log("Collection created !");
+
+  // Get ERC1155 to save artifact in front file
+  const guardianStuffName = "GuardianStuff";
+  const guardiantStuffAddress = await treasureGuardian.guardianStuff();
+  const guardianStuff = await hre.ethers.getContractAt(
+    guardianStuffName,
+    guardiantStuffAddress
+  );
 
   // Deploy the Marketplace
   const auctionHouseName = "AuctionHouse";
@@ -48,6 +58,7 @@ async function main() {
 
   // Save the contract's artifacts and address in the FRONTEND directory
   await saveFrontendFiles(treasureGuardianName, treasureGuardian);
+  await saveFrontendFiles(guardianStuffName, guardianStuff);
   await saveFrontendFiles(guardianTokenName, guardianToken);
   await saveFrontendFiles(auctionHouseName, auctionHouse);
 }
@@ -108,10 +119,12 @@ async function saveFrontendFiles(contractName, contract) {
   }
 
   previousArtifact.networks[chainId].address = contract.address;
-  previousArtifact.networks[chainId].transactionHash =
-    contract.deployTransaction.hash;
-  previousArtifact.networks[chainId].blockNumber =
-    contract.deployTransaction.blockNumber;
+  if (contract.deployTransaction) {
+    previousArtifact.networks[chainId].transactionHash =
+      contract.deployTransaction.hash;
+    previousArtifact.networks[chainId].blockNumber =
+      contract.deployTransaction.blockNumber;
+  }
 
   artifact.networks = previousArtifact.networks;
 

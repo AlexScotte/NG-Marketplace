@@ -20,67 +20,162 @@ function EthProvider({ children }) {
   const { data: signer } = useSigner();
 
   const initContract = useCallback(async () => {
+    let loadingContractOK = false;
+    let treasureGuardianContractProvider = "";
+    let treasureGuardianContractSigner = "";
+    let treasureGuardianAddress = "";
+
+    let guardianStuffContractProvider = "";
+    let guardianStuffContractSigner = "";
+
+    let guardianTokenContractProvider = "";
+    let guardianTokenContractSigner = "";
+    let guardianTokenDecimals = "";
+
+    let auctionHouseContractProvider = "";
+    let auctionHouseContractSigner = "";
+    let auctionHouseAddress = "";
+
     if (isConnected && chain) {
+      // Load artifacts
       const [
         loadingArtifactsOK,
-        simpleStorageArtifact,
-        simpleStorage2Artifact,
+        // simpleStorageArtifact,
+        // simpleStorage2Artifact,
         treasureGuardianArtifact,
         guardianStuffArtifact,
         guardianTokenArtifact,
         auctionHouseArtifact,
       ] = await loadArtifact();
 
-      let treasureGuardianContract;
-      let treasureGuardianAddress;
-      let guardianStuffContract;
-      let guardianTokenContract;
-      let guardianTokenDecimals;
-      let auctionHouseContract;
-      let auctionHouseAddress;
       let deployBlock;
       let currentBlock;
 
-      if (loadingArtifactsOK) {
-        // Tresure guardian contract
-        // simpleStorageAddress =
-        //   simpleStorageArtifact.networks[chain?.id].address;
-        // deployBlock = simpleStorageArtifact.networks[chain?.id].blockNumber;
-        // currentBlock = await provider.getBlockNumber();
+      // Tresure guardian contract
+      // simpleStorageAddress =
+      //   simpleStorageArtifact.networks[chain?.id].address;
+      // deployBlock = simpleStorageArtifact.networks[chain?.id].blockNumber;
+      // currentBlock = await provider.getBlockNumber();
 
-        // console.log("Treasure guardian address: " + simpleStorageAddress);
+      // console.log("Treasure guardian address: " + simpleStorageAddress);
 
-        // simpleStorageContract = new ethers.Contract(
-        //   simpleStorageAddress,
-        //   simpleStorageArtifact.abi,
-        //   provider
-        // );
+      // simpleStorageContract = new ethers.Contract(
+      //   simpleStorageAddress,
+      //   simpleStorageArtifact.abi,
+      //   provider
+      // );
 
-        // let smartContractValue = await simpleStorageContract.retrieve();
-        // console.log("value:" + smartContractValue);
+      // let smartContractValue = await simpleStorageContract.retrieve();
+      // console.log("value:" + smartContractValue);
 
-        // const ctract = new ethers.Contract(
-        //   simpleStorageAddress,
-        //   simpleStorageArtifact.abi,
-        //   signer
-        // );
+      // const ctract = new ethers.Contract(
+      //   simpleStorageAddress,
+      //   simpleStorageArtifact.abi,
+      //   signer
+      // );
 
-        // console.log("signer:" + signer);
+      // console.log("signer:" + signer);
 
-        // let transaction = await ctract.store(6);
-        // await transaction.wait();
+      // let transaction = await ctract.store(6);
+      // await transaction.wait();
 
-        // let smartContractValue2 = await simpleStorageContract.retrieve();
-        // console.log("value:" + smartContractValue2);
+      // let smartContractValue2 = await simpleStorageContract.retrieve();
+      // console.log("value:" + smartContractValue2);
 
-        try {
-        } catch (err) {}
+      try {
+        if (loadingArtifactsOK) {
+          // deployBlock = treasureGuardianArtifact.networks[chain?.id].blockNumber;
+          // currentBlock = await provider.getBlockNumber();
+
+          // Treasure guardian contracts
+          // Provider
+          treasureGuardianContractProvider = new ethers.Contract(
+            treasureGuardianArtifact.networks[chain?.id].address,
+            treasureGuardianArtifact.abi,
+            provider
+          );
+
+          // Signer
+          treasureGuardianContractSigner = new ethers.Contract(
+            treasureGuardianArtifact.networks[chain?.id].address,
+            treasureGuardianArtifact.abi,
+            signer
+          );
+
+          // Guardian stuff contracts
+          // Provider
+          guardianStuffContractProvider = new ethers.Contract(
+            guardianStuffArtifact.networks[chain?.id].address,
+            guardianStuffArtifact.abi,
+            provider
+          );
+
+          // Signer
+          guardianStuffContractSigner = new ethers.Contract(
+            guardianStuffArtifact.networks[chain?.id].address,
+            guardianStuffArtifact.abi,
+            signer
+          );
+
+          // Guardian token contracts
+          // Provider
+          guardianTokenContractProvider = new ethers.Contract(
+            guardianTokenArtifact.networks[chain?.id].address,
+            guardianTokenArtifact.abi,
+            provider
+          );
+
+          // Signer
+          guardianTokenContractSigner = new ethers.Contract(
+            guardianTokenArtifact.networks[chain?.id].address,
+            guardianTokenArtifact.abi,
+            signer
+          );
+
+          // Auction house contracts
+          // Provider
+          auctionHouseContractProvider = new ethers.Contract(
+            auctionHouseArtifact.networks[chain?.id].address,
+            auctionHouseArtifact.abi,
+            provider
+          );
+
+          // Signer
+          auctionHouseContractSigner = new ethers.Contract(
+            auctionHouseArtifact.networks[chain?.id].address,
+            auctionHouseArtifact.abi,
+            signer
+          );
+
+          loadingContractOK = true;
+          console.log("Successfully loaded contracts");
+        }
+      } catch (error) {
+        console.log("Error when loading contracts");
+        console.log(error.message);
       }
     }
-  }, [isConnected, address, chain]);
+
+    dispatch({
+      type: actions.init,
+      data: {
+        // deployBlock,
+        // currentBlock,
+        loadingContractOK,
+        treasureGuardianContractProvider,
+        treasureGuardianContractSigner,
+        guardianStuffContractProvider,
+        guardianStuffContractSigner,
+        guardianTokenContractProvider,
+        guardianTokenContractSigner,
+        auctionHouseContractProvider,
+        auctionHouseContractSigner,
+      },
+    });
+  }, [isConnected, address, chain, provider, signer]);
 
   const loadArtifact = async () => {
-    console.log("Loading page");
+    console.log("Loading artifacts");
     let loadingArtifactsOK = false;
     let treasureGuardianArtifact;
     let auctionHouseArtifact;
@@ -89,15 +184,35 @@ function EthProvider({ children }) {
 
     if (chain?.id == ChainID.HardhatLocal) {
       try {
-        // // Check if the contract is deployed on the current chain
-        // // exception if not
-        // simpleStorageArtifact.networks[chain?.id].address;
-        // simpleStorage2Artifact.networks[chain?.id].address;
-
+        // Treasure guardian artifacts
         treasureGuardianArtifact = require("../../contracts/TreasureGuardian.json");
-        // guardianStuffArtifact = require("../../contracts/GuardianStuff.json");
-        // guardianTokenArtifact = require("../../contracts/GuardianToken.json");
+        if (!treasureGuardianArtifact.networks[chain?.id]) {
+          throw new Error(
+            `Treasure guardian contract not deployed on ${chain?.id}`
+          );
+        }
+
+        // Guardian stuff artifacts
+        guardianStuffArtifact = require("../../contracts/GuardianStuff.json");
+        if (!guardianStuffArtifact.networks[chain?.id])
+          throw new Error(
+            `Guardian stuff contract not deployed on ${chain?.id}`
+          );
+
+        // Guardian token artifacts
+        guardianTokenArtifact = require("../../contracts/GuardianToken.json");
+        if (!guardianTokenArtifact.networks[chain?.id])
+          throw new Error(
+            `Guardian token contract not deployed on ${chain?.id}`
+          );
+
+        // Auction house artifacts
         auctionHouseArtifact = require("../../contracts/AuctionHouse.json");
+        if (!auctionHouseArtifact.networks[chain?.id])
+          throw new Error(
+            `Auction house contract not deployed on ${chain?.id}`
+          );
+
         loadingArtifactsOK = true;
         console.log("Successfully loaded artifacts");
       } catch (error) {
