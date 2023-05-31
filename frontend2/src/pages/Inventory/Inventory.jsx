@@ -20,21 +20,30 @@ import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
 import TextField from "@mui/material/TextField";
 import Web3 from "web3";
-import { useAccount, useNetwork } from "wagmi";
+import { ethers } from "ethers";
+import { useAccount, useNetwork, useSigner } from "wagmi";
 import Image from "next/image";
-
+import allArmorIcon from "../../assets/all-armor.svg";
+import headArmorIcon from "../../assets/head-armor.svg";
+import bodyArmorIcon from "../../assets/body-armor.svg";
+import handsArmorIcon from "../../assets/hand-armor.svg";
+import legsArmorIcon from "../../assets/leg-armor.svg";
+import weaponLeftIcon from "../../assets/shield.svg";
+import weaponRightIcon from "../../assets/weapon-right.svg";
 const Inventory = () => {
   const {
     state: {
       deployBlock,
       currentBlock,
-      auctionHouseContract,
-      treasureGuardianAddress,
-      treasureGuardianContract,
-      guardianStuffContract,
-      guardianTokenContract,
-      guardianTokenDecimals,
-      auctionHouseAddress,
+      loadingContractOK,
+      treasureGuardianContractProvider,
+      treasureGuardianContractSigner,
+      guardianStuffContractProvider,
+      guardianStuffContractSigner,
+      guardianTokenContractProvider,
+      guardianTokenContractSigner,
+      auctionHouseContractProvider,
+      auctionHouseContractSigner,
     },
   } = useEth();
   const item = {
@@ -49,12 +58,16 @@ const Inventory = () => {
     amount: 0,
   };
 
-  const { isConnected, address } = useAccount();
+  const BigNumber = require("bignumber.js");
+  const { isConnected, address: userAccount } = useAccount();
   const { chain } = useNetwork();
 
   const [wrongChain, setWrongChain] = useState(true);
   const [ownedItems, setOwnedItems] = useState([]);
+  const [filteredOwnedItems, setFilteredOwnedItems] = useState([]);
+  const [currentFilter, setCurrentFilter] = useState("all");
   const [guardianTokens, setGuardianTokens] = useState(0);
+  const [guardianTokenDecimals, setGuardianTokenDecimals] = useState(0);
   const [chestItemCount, setChestItemCount] = useState(0);
   const [chestPrice, setChestPrice] = useState(0);
   const [selectedItem, setSelectedItem] = useState(item);
@@ -71,43 +84,33 @@ const Inventory = () => {
 
   const [ipfsUrl, setIpfsUrl] = useState("");
 
+  const { data: signer } = useSigner();
+
   useEffect(() => {
     console.log("Loading page inventory");
+    console.log("signer " + signer);
     if (isConnected) {
       const wrongChainID = chain?.id != ChainID.HardhatLocal;
       setWrongChain(wrongChainID);
-      if (!wrongChainID) {
-        if (guardianTokenContract) {
-          getBalanceOfGuardiantToken();
-        }
-
-        if (treasureGuardianContract) {
-          getOldEvents();
-          getChestsPrice();
-        }
-
-        if (auctionHouseContract && guardianStuffContract) {
-          getChestsCount();
-        }
+      if (!wrongChainID && loadingContractOK) {
+        getBalanceOfGuardiantToken();
+        getChestsPrice();
+        getChestsCount();
+        getOwnedItems();
       }
     }
-  }, [
-    isConnected,
-    wrongChain,
-    chain,
-    auctionHouseContract,
-    treasureGuardianContract,
-    guardianStuffContract,
-    guardianTokenContract,
-  ]);
+  }, [isConnected, chain, loadingContractOK]);
 
   const getBalanceOfGuardiantToken = async () => {
     try {
-      const tokenCount = await guardianTokenContract.methods
-        .balanceOf(currentAccount)
-        .call();
-      console.log("token: " + tokenCount);
+      const tokenCount = await guardianTokenContractProvider.balanceOf(
+        userAccount
+      );
+      console.log("Number of guardian tokens: " + tokenCount);
       setGuardianTokens(tokenCount);
+
+      const decimals = await guardianTokenContractProvider.decimals();
+      setGuardianTokenDecimals(decimals);
     } catch (error) {
       console.log(error.message);
     }
@@ -115,12 +118,11 @@ const Inventory = () => {
 
   const getChestsCount = async () => {
     try {
-      const chestItemID = await guardianStuffContract.methods
-        .chestItemID()
-        .call();
-      const chestItemCount = await guardianStuffContract.methods
-        .balanceOf(currentAccount, chestItemID)
-        .call();
+      const chestItemID = await guardianStuffContractProvider.chestItemID();
+      const chestItemCount = await guardianStuffContractProvider.balanceOf(
+        userAccount,
+        chestItemID
+      );
       console.log("Number of chest: " + chestItemCount);
       setChestItemCount(chestItemCount);
     } catch (error) {
@@ -130,9 +132,7 @@ const Inventory = () => {
 
   const getChestsPrice = async () => {
     try {
-      const chestsPrice = await treasureGuardianContract.methods
-        .chestPrice()
-        .call();
+      const chestsPrice = await treasureGuardianContractProvider.chestPrice();
       console.log("Chest Price: " + chestsPrice);
       setChestPrice(chestsPrice);
     } catch (error) {
@@ -140,60 +140,22 @@ const Inventory = () => {
     }
   };
 
-  const getOldEvents = async () => {
-    console.log("loading old event");
-    let onStuffTransferedToEvents =
-      await treasureGuardianContract.getPastEvents("onStuffTransferedTo", {
-        fromBlock: deployBlock,
-        toBlock: currentBlock,
-      });
-
-    let itemSoldSuccessEvents = await auctionHouseContract.getPastEvents(
-      "ItemSoldSuccess",
-      {
-        fromBlock: deployBlock,
-        toBlock: currentBlock,
-      }
-    );
-
-    let ids = [];
-
-    // Get struff transfered to the user
-    onStuffTransferedToEvents.map((event) => {
-      if (event.returnValues.to.toUpperCase() == currentAccount.toUpperCase()) {
-        ids = ids.concat(event.returnValues.ids);
-      }
-    });
-
-    // Get stuff that user bought
-    itemSoldSuccessEvents.map((event) => {
-      if (
-        event.returnValues.buyer.toUpperCase() == currentAccount.toUpperCase()
-      ) {
-        ids = ids.concat(event.returnValues.itemId);
-      }
-    });
-
-    getOwnedItems(ids);
-  };
-
-  const getOwnedItems = async (ids) => {
+  const getOwnedItems = async () => {
     try {
-      const addresses = ids.map((i) => currentAccount);
-      const balanceItems = await guardianStuffContract.methods
-        .balanceOfBatch(addresses, ids)
-        .call();
+      const ids = await guardianStuffContractProvider.getItemIDs();
+      const addresses = ids.map((i) => userAccount);
+      const balanceItems = await guardianStuffContractProvider.balanceOfBatch(
+        addresses,
+        ids
+      );
 
       const items = await Promise.all(
         ids.map(async (itemID, index) => {
           // TODO: manage missing supply for this id
           if (itemID != 0) {
             if (balanceItems[index] > 0) {
-              const uri = await guardianStuffContract.methods
-                .uri(0)
-                .call({ from: currentAccount });
+              const uri = await guardianStuffContractProvider.uri(0);
               const uriWithID = uri.replace("{id}", itemID);
-
               const meta = await axios.get(uriWithID);
               // const meta = await axios.get("https://ipfs.io/ipfs/QmZWjLS4zDjZ6C64ZeSKHktcd1jRuqnQPx2gj7AqjFSU2d/1100.json");
               // console.log("META:");
@@ -212,7 +174,7 @@ const Inventory = () => {
                 amount: balanceItems[index],
               };
             } else {
-              // User do not have the item anymore (listing etc)
+              // User do not owned this item id (item not dropped, listing, etc)
               return {
                 id: -1,
               };
@@ -220,49 +182,75 @@ const Inventory = () => {
           }
         })
       );
-      setOwnedItems(items);
+      const userItems = items.filter((i) => i.id != -1);
+      setOwnedItems(userItems);
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const handleOwnedItemClick = async (param, event) => {
+  useEffect(() => {
+    handleFilterClick(currentFilter);
+  }, [ownedItems]);
+
+  const handleOwnedItemClick = async (param) => {
+    console.log("Click on item");
     console.log(param);
-    setSelectedItem(ownedItems[param.id]);
+    const selectedItem = ownedItems.find((item) => item.id == param.id);
+    setSelectedItem(selectedItem);
     handleDetailsModalOpen();
+  };
+
+  const handleFilterClick = async (param) => {
+    console.log("Filter click: " + param);
+    if (param == "all") {
+      setFilteredOwnedItems(ownedItems);
+    } else {
+      const filteredItems = ownedItems.filter(
+        (i) => i.type.toLowerCase() == param
+      );
+      setFilteredOwnedItems(filteredItems);
+    }
+    setCurrentFilter(param);
   };
 
   const onPriceChange = async (e) => {
     setPriceValue(e.target.value);
   };
 
-  const handleBuyChestClick = async (param, event) => {
+  const handleBuyChestClick = async () => {
     if (parseInt(guardianTokens) < parseInt(chestPrice)) {
       setModalTitle("Not enough money !");
       setModalMesage("Sorry Guardian, you do not have enough money");
       handleModalOpen();
     } else {
       try {
-        const price = Web3.utils.BN(
-          await treasureGuardianContract.methods.chestPrice().call()
+        // Check current allowance
+        console.log("Check current allowance");
+        const currentAllowance = await guardianTokenContractProvider.allowance(
+          userAccount,
+          treasureGuardianContractProvider.address
         );
-        console.log(price);
-        console.log("Approve treasure guardian contract");
-        await guardianTokenContract.methods
-          .approve(treasureGuardianAddress, chestPrice)
-          .call({ from: currentAccount });
-        await guardianTokenContract.methods
-          .approve(treasureGuardianAddress, chestPrice)
-          .send({ from: currentAccount });
-        console.log("Approve treasure succeeded");
+
+        if (parseInt(currentAllowance) < parseInt(chestPrice)) {
+          // If not enough allowance, request to user
+          console.log("Not enough allowance, requesting user...");
+
+          const transaction = await guardianTokenContractSigner.approve(
+            treasureGuardianContractProvider.address,
+            chestPrice
+          );
+          await transaction.wait();
+          console.log("Allowance granted !");
+        } else {
+          console.log("Enough allowance already granted !");
+        }
 
         console.log("Buying chest ... ");
-        await treasureGuardianContract.methods
-          .buyChest(1)
-          .call({ from: currentAccount });
-        await treasureGuardianContract.methods
-          .buyChest(1)
-          .send({ from: currentAccount });
+
+        // TODO: Improve - Allow to buy several chest
+        const transaction = await treasureGuardianContractSigner.buyChest(1);
+        await transaction.wait();
 
         const title = "Congratulations Guardian !";
         const message =
@@ -271,6 +259,7 @@ const Inventory = () => {
         setModalTitle(title);
         setModalMesage(message);
         getChestsCount();
+        getOwnedItems();
         getBalanceOfGuardiantToken();
         handleModalOpen();
       } catch (error) {
@@ -286,24 +275,31 @@ const Inventory = () => {
   const handleOpenChestClick = async (param, event) => {
     if (chestItemCount > 0) {
       try {
-        console.log("Approve treasure guardian to take back the chest");
-        await guardianStuffContract.methods
-          .setApprovalForAll(treasureGuardianAddress, true)
-          .call({ from: currentAccount });
-        await guardianStuffContract.methods
-          .setApprovalForAll(treasureGuardianAddress, true)
-          .send({ from: currentAccount });
-        console.log("Approved");
+        console.log("Check approval for treasure guardian");
+        const isApproved = await guardianStuffContractProvider.isApprovedForAll(
+          userAccount,
+          treasureGuardianContractProvider.address
+        );
 
-        await treasureGuardianContract.methods
-          .openChest()
-          .call({ from: currentAccount });
-        await treasureGuardianContract.methods
-          .openChest()
-          .send({ from: currentAccount });
+        if (!isApproved) {
+          console.log("Approve treasure guardian to take back the chest");
+          const transaction =
+            await guardianStuffContractSigner.setApprovalForAll(
+              treasureGuardianContractProvider.address,
+              true
+            );
+          await transaction.wait();
+          console.log("Approved");
+        } else {
+          console.log("Already approved");
+        }
 
-        getOldEvents();
+        const transaction = await treasureGuardianContractSigner.openChest({
+          gasLimit: 500000,
+        });
+        await transaction.wait();
         getChestsCount();
+        getOwnedItems();
 
         setModalTitle("Congratulations Guardian !");
         setModalMesage("You can find your stuff in your inventory");
@@ -320,10 +316,12 @@ const Inventory = () => {
     }
 
     handleModalOpen();
+    handleFilterClick(currentFilter);
   };
 
   const handleListItem = async () => {
-    if (parseInt(priceValue) <= 0) {
+    // if (parseInt(priceValue) <= 0) {
+    if (!priceValue || ethers.utils.parseEther(priceValue).toString() <= 0) {
       setModalTitle("Incorrect price !");
       setModalMesage(
         "Sorry Guardian, you need to specify a correct sell price"
@@ -331,36 +329,36 @@ const Inventory = () => {
       handleModalOpen();
     } else {
       try {
-        console.log("Approve marketplace to manage our item");
-        console.log(auctionHouseAddress);
-        await guardianStuffContract.methods
-          .setApprovalForAll(auctionHouseAddress, true)
-          .call({ from: currentAccount });
-        await guardianStuffContract.methods
-          .setApprovalForAll(auctionHouseAddress, true)
-          .send({ from: currentAccount });
-        console.log("Approved");
+        console.log("Approve marketplace to manage our items");
 
-        let listingFee = web3.utils.BN(
-          await auctionHouseContract.methods
-            .listingFee()
-            .call({ from: currentAccount })
+        const isApproved = await guardianStuffContractProvider.isApprovedForAll(
+          userAccount,
+          auctionHouseContractProvider.address
         );
-        console.log("listing fee: " + listingFee);
 
-        console.log("Listing item");
-        await auctionHouseContract.methods
-          .listItem(
-            selectedItem.itemID,
-            web3.utils.toWei(priceValue.toString(), "ether")
-          )
-          .call({ from: currentAccount, value: listingFee });
-        await auctionHouseContract.methods
-          .listItem(
-            selectedItem.itemID,
-            web3.utils.toWei(priceValue.toString(), "ether")
-          )
-          .send({ from: currentAccount, value: listingFee });
+        if (!isApproved) {
+          const transaction =
+            await guardianStuffContractSigner.setApprovalForAll(
+              auctionHouseContractProvider.address,
+              true
+            );
+          await transaction.wait();
+          console.log("Approved");
+        } else {
+          console.log("Already approved");
+        }
+
+        console.log("Get marketplace listing fees");
+        const listingFees = await auctionHouseContractProvider.listingFee();
+        console.log("Listing fees: " + listingFees.toString());
+
+        console.log("Listing item on the marketplace");
+        const transaction = await auctionHouseContractSigner.listItem(
+          selectedItem.itemID,
+          ethers.utils.parseEther(priceValue),
+          { value: listingFees }
+        );
+        await transaction.wait();
 
         const title = "Congratulations Guardian !";
         const message = "You item is now available in the auction house";
@@ -371,6 +369,7 @@ const Inventory = () => {
         getChestsCount();
         getBalanceOfGuardiantToken();
         setSelectedItem("");
+        getOwnedItems();
         handleModalOpen();
         handleDetailsModalClose();
       } catch (error) {
@@ -381,20 +380,6 @@ const Inventory = () => {
         console.log(error.message);
       }
     }
-  };
-
-  const detailStyle = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    bgcolor: "rgb(29, 28, 26)",
-    border: "1px solid rgba(190, 167, 126, 0.314)",
-    boxShadow: 24,
-    borderRadius: "2px",
-    height: "80%",
-    p: 2,
   };
 
   return (
@@ -426,145 +411,140 @@ const Inventory = () => {
               </Modal>
 
               {/* ITEM DETAILS MODAL */}
-              <Modal
-                open={openDetailsModal}
-                onClose={handleDetailsModalClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={detailStyle} className="modal-main-content">
-                  <div
-                    className="header-modal-container"
-                    direction="row"
-                    display="block"
-                    style={{ marginBottom: "5px" }}
-                  >
-                    <label className="modal-details-text-title">
-                      {selectedItem.name}
-                    </label>
-                  </div>
+              <Modal open={openDetailsModal} onClose={handleDetailsModalClose}>
+                <Box className="modal-details-content" height="90%">
+                  <Stack height="100%" justifyContent="space-between">
+                    <Stack height="100%" overflow="auto">
+                      <div
+                        className="header-modal-container"
+                        direction="row"
+                        display="block"
+                        style={{ marginBottom: "5px" }}
+                      >
+                        <Typography variant="subtitle1">
+                          {selectedItem.name}
+                        </Typography>
+                      </div>
 
-                  <div
-                    className="modal-picture-container"
-                    style={{
-                      background:
-                        "radial-gradient(circle, " +
-                        GetColorRarity(selectedItem.rarity) +
-                        " 35%, rgba(235, 249, 1, 0) 100%)",
-                    }}
-                  >
-                    <img src={selectedItem.image} />
-                  </div>
-
-                  <Stack
-                    direction="row"
-                    justifyContent="center"
-                    style={{ marginTop: "10px", marginBottom: "10px" }}
-                  >
-                    <div>
-                      <img
-                        src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                      <div
                         style={{
-                          alignContent: "center",
-                          marginTop: "5px",
-                          marginRight: "5px",
+                          textAlign: "center",
+                          background:
+                            "radial-gradient(circle, " +
+                            GetColorRarity(selectedItem.rarity) +
+                            " 35%, rgba(235, 249, 1, 0) 100%)",
                         }}
-                      />
-                    </div>
+                      >
+                        <img src={selectedItem.image} width="30%" />
+                      </div>
 
-                    <label
-                      className="generic-text-font2 modal-details-text-title"
-                      style={{
-                        color: GetColorRarityWithoutTransparency(
-                          selectedItem.rarity
-                        ),
-                      }}
-                    >
-                      {selectedItem.rarity}
-                    </label>
+                      <Stack
+                        direction="row"
+                        justifyContent="center"
+                        style={{ marginTop: "10px", marginBottom: "10px" }}
+                      >
+                        <img
+                          src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                          style={{
+                            alignContent: "center",
+                            marginRight: "5px",
+                          }}
+                        />
 
-                    <img
-                      src="https://nodeguardians.io/assets/divers/title-decoration.svg"
-                      style={{
-                        alignContent: "center",
-                        rotate: "180deg",
-                        marginLeft: "10px",
-                      }}
-                    />
+                        <Typography
+                          variant="subtitle1"
+                          style={{
+                            color: GetColorRarityWithoutTransparency(
+                              selectedItem.rarity
+                            ),
+                          }}
+                        >
+                          {selectedItem.rarity}
+                        </Typography>
+
+                        <img
+                          src="https://nodeguardians.io/assets/divers/title-decoration.svg"
+                          style={{
+                            alignContent: "center",
+                            rotate: "180deg",
+                            marginLeft: "10px",
+                          }}
+                        />
+                      </Stack>
+
+                      <Stack direction="row" marginBottom="5px">
+                        <Typography variant="subtitle4" marginRight="5px">
+                          Class:
+                        </Typography>
+                        <Typography variant="subtitle3">
+                          {selectedItem.class}
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row" marginBottom="5px">
+                        <Typography variant="subtitle4" marginRight="5px">
+                          Set:
+                        </Typography>
+                        <Typography variant="subtitle3">
+                          {selectedItem.set}
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row" marginBottom="5px">
+                        <Typography
+                          variant="subtitle4"
+                          style={{ marginRight: "5px" }}
+                        >
+                          Type:
+                        </Typography>
+                        <Typography variant="subtitle3">
+                          {selectedItem.type}
+                        </Typography>
+                      </Stack>
+
+                      <Typography
+                        variant="subtitle3"
+                        marginTop="5px"
+                        marginBottom="5px"
+                      >
+                        {selectedItem.description}
+                      </Typography>
+                    </Stack>
+
+                    <Stack>
+                      <Stack
+                        direction="row"
+                        textAlign="center"
+                        justifyContent="center"
+                        marginTop="10px"
+                        marginBottom="10px"
+                      >
+                        <input
+                          type="number"
+                          style={{
+                            border: "1px solid rgb(159, 140, 108)",
+                            backgroundColor: "rgb(29, 28, 26)",
+                            color: "rgb(159, 140, 108)",
+                            borderRadius: "2px",
+                          }}
+                          onChange={onPriceChange}
+                        />
+
+                        <img
+                          style={{ width: "30px", marginLeft: "10px" }}
+                          src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
+                        />
+                      </Stack>
+
+                      <Button
+                        className="generic-button"
+                        onClick={handleListItem}
+                        variant="outlined"
+                      >
+                        Sell
+                      </Button>
+                    </Stack>
                   </Stack>
-
-                  <Stack direction="row" style={{ marginBottom: "5px" }}>
-                    <label
-                      className="generic-text-font2 generic-text-color-yellow modal-details-text"
-                      style={{ marginRight: "5px" }}
-                    >
-                      Class:
-                    </label>
-                    <label className="generic-text-font2 generic-text-color modal-details-text">
-                      {selectedItem.class}
-                    </label>
-                  </Stack>
-
-                  <Stack direction="row" style={{ marginBottom: "5px" }}>
-                    <label
-                      className="generic-text-font2 generic-text-color-yellow modal-details-text"
-                      style={{ marginRight: "5px" }}
-                    >
-                      Set:
-                    </label>
-                    <label className="generic-text-font2 generic-text-color modal-details-text">
-                      {selectedItem.set}
-                    </label>
-                  </Stack>
-
-                  <Stack direction="row" style={{ marginBottom: "5px" }}>
-                    <label
-                      className="generic-text-font2 generic-text-color-yellow modal-details-text"
-                      style={{ marginRight: "5px" }}
-                    >
-                      Type:
-                    </label>
-                    <label className="generic-text-font2 generic-text-color modal-details-text">
-                      {selectedItem.type}
-                    </label>
-                  </Stack>
-
-                  <div
-                    className="text-modal-container generic-text-font2 generic-text-color modal-details-text"
-                    style={{ marginTop: "10px" }}
-                  >
-                    {selectedItem.description}
-                  </div>
-
-                  <Stack
-                    direction="row"
-                    textAlign="center"
-                    justifyContent="center"
-                  >
-                    <input
-                      type="number"
-                      style={{
-                        border: "1px solid rgb(159, 140, 108)",
-                        backgroundColor: "rgb(29, 28, 26)",
-                        color: "rgb(159, 140, 108)",
-                        borderRadius: "2px",
-                      }}
-                      onChange={onPriceChange}
-                    />
-
-                    <img
-                      style={{ width: "30px", marginLeft: "10px" }}
-                      src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
-                    />
-                  </Stack>
-
-                  <Button
-                    className="generic-button"
-                    onClick={handleListItem}
-                    variant="outlined"
-                  >
-                    Sell
-                  </Button>
                 </Box>
               </Modal>
 
@@ -577,99 +557,207 @@ const Inventory = () => {
                 <Stack
                   direction="row"
                   height="100%"
-                  width="50%"
-                  backgroundColor="blue"
+                  width="60%"
+                  justifyContent="center"
                 >
-                  {/* 
-                                                    // TODO: Manage filters
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            flexWrap: 'wrap',
-                                                            // p: 1,
-                                                            // m: 1,
-                                                            bgcolor: 'blue',
-                                                            maxWidth: 60,
-                                                            alignContent: 'flex-start',
-                                                            borderRadius: 1,
-                                                        }}
-                                                    >
-                                                        <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                                                        <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                                                        <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-                                                        <img style={{}} src="https://ipfs.io/ipfs/QmWKAJ8EZEjNp6DShjiFh4sY7Eo8mcMqKaGHKr9cUMfuYK/Axes/2.png" width='60px' height='60px' />
-
-
-                                                    </Box> */}
-
+                  {/* Items filters */}
                   <Box
                     sx={{
                       display: "flex",
                       flexWrap: "wrap",
-                      // p: 1,
-                      // m: 1,
-                      width: 200,
-                      height: "70vh",
+                      width: 60,
+                      height: 60,
                       alignContent: "flex-start",
                       borderRadius: 1,
-                      // TODO: How to change the scroll bar style ?
-
-                      WebkitScrollbar: {
-                        width: "6px",
-                        height: "6px ",
-                      },
-                      WebkitScrollbarTrack: {
-                        borderRadius: "6px",
-                        boxShadow:
-                          "rgb(15, 15, 15) 0px 0px 6px inset; !important",
-                      },
-                      WebkitScrollbarThumb: {
-                        borderRadius: "6px",
-                        boxShadow: "rgb(146, 146, 146) 0px 0px 6px inset",
-                      },
                     }}
                   >
-                    {ownedItems
-                      .filter((i) => i.id != -1)
-                      .map((item, index) => {
-                        return (
-                          <div key={index}>
-                            <Box
-                              sx={{
-                                borderColor: "rgba(190, 167, 126, 0.125)",
-                                background:
-                                  "linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, " +
-                                  GetColorRarity(item.rarity) +
-                                  " 100%);",
+                    {/* No filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "all"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={allArmorIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("all")}
+                      />
+                    </Box>
+
+                    {/* Head Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "head"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={headArmorIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("head")}
+                      />
+                    </Box>
+
+                    {/* Body Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "body"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={bodyArmorIcon}
+                        sx={{ backgroundColor: "red" }}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("body")}
+                      />
+                    </Box>
+
+                    {/* Hands Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "hands"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={handsArmorIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("hands")}
+                      />
+                    </Box>
+
+                    {/* Legs Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "legs"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={legsArmorIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("legs")}
+                      />
+                    </Box>
+
+                    {/* Weapon Right Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "weapon right"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={weaponRightIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("weapon right")}
+                      />
+                    </Box>
+
+                    {/* Weapon Left Filter */}
+                    <Box
+                      className={
+                        "filter-inventory-box " +
+                        (currentFilter === "weapon left"
+                          ? "filter-inventory-box-selected"
+                          : "")
+                      }
+                    >
+                      <Image
+                        alt="me"
+                        src={weaponLeftIcon}
+                        className="filter-inventory-icon"
+                        onClick={() => handleFilterClick("weapon left")}
+                      />
+                    </Box>
+                  </Box>
+
+                  {/* Owned items */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      height: "100%",
+                      width: "100%",
+                      alignContent: "flex-start",
+                      borderRadius: 1,
+                      border: "1px solid rgb(190, 167, 126)",
+                      overflow: "auto",
+                    }}
+                  >
+                    {filteredOwnedItems.map((item, index) => {
+                      return (
+                        <Box
+                          key={index}
+                          sx={{
+                            borderColor: "rgba(190, 167, 126, 0.125)",
+                            background:
+                              "linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, " +
+                              GetColorRarity(item.rarity) +
+                              " 100%);",
+                          }}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              width: "60px",
+                              height: "60px",
+                            }}
+                          >
+                            <img
+                              onClick={() => handleOwnedItemClick(item)}
+                              style={{ position: "absolute" }}
+                              src={item.image}
+                              width="60px"
+                              height="60px"
+                            />
+
+                            <Typography
+                              variant="subtitle1"
+                              style={{
+                                position: "absolute",
+                                zIndex: "1",
+                                right: "5px",
+                                bottom: "0",
                               }}
                             >
-                              <img
-                                onClick={() => handleOwnedItemClick(item)}
-                                style={{}}
-                                src={item.image}
-                                width="60px"
-                                height="60px"
-                              />
-                            </Box>
+                              {item.amount.toString()}
+                            </Typography>
                           </div>
-                        );
-                      })}
+                        </Box>
+                      );
+                    })}
                   </Box>
                 </Stack>
 
                 {/* CHEST OPEN/BUY */}
                 <Stack
-                  backgroundColor="red"
                   direction="row"
                   height="100%"
                   width="90%"
                   justifyContent="center"
                 >
-                  <Stack
-                    backgroundColor="yellow"
-                    direction="column"
-                    justifyContent="center"
-                  >
+                  <Stack direction="column" justifyContent="center">
                     <Stack
                       direction="row"
                       justifyContent="center"
@@ -729,7 +817,6 @@ const Inventory = () => {
                   direction="column"
                   height="100%"
                   width="20%"
-                  backgroundColor="grey"
                   paddingTop="50px"
                 >
                   <Stack direction="row" justifyContent="end" marginRight="30%">
@@ -752,7 +839,7 @@ const Inventory = () => {
                     marginRight="25%"
                   >
                     <Typography variant="h5" marginRight="7px">
-                      {chestItemCount}
+                      {chestItemCount.toString()}
                     </Typography>
                     <img
                       style={{ width: "40px" }}

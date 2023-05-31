@@ -33,7 +33,7 @@ const Quests = () => {
       setWrongChain(chain?.id != ChainID.Goerli);
       switchNetwork?.(ChainID.Goerli);
     }
-  }, [isConnected, wrongChain, chain]);
+  }, [isConnected, chain]);
 
   const handleClick = async () => {
     try {
@@ -56,7 +56,7 @@ const Quests = () => {
 
       // Tresure guardian contract
       const treasureGuardianAddress =
-        treasureGuardianArtifact.networks[chain?.id].address;
+        treasureGuardianArtifact.networks[ChainID.HardhatLocal].address;
       const treasureGuardianContract = new ethers.Contract(
         treasureGuardianAddress,
         treasureGuardianArtifact.abi,
