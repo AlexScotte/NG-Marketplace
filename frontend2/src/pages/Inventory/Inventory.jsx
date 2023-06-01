@@ -1,27 +1,22 @@
 import React, { useEffect, useState } from "react";
-import useEth from "../../contexts/EthContext/useEth";
-import web3 from "web3";
-import { DataGrid } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import axios from "axios";
-
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import axios from "axios";
 import {
   ChainID,
   ToFriendlyPrice,
   GetColorRarity,
   GetColorRarityWithoutTransparency,
 } from "../../Utils/utils";
+import useEth from "../../contexts/EthContext/useEth";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
-import TextField from "@mui/material/TextField";
-import Web3 from "web3";
 import { ethers } from "ethers";
-import { useAccount, useNetwork, useSigner } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import Image from "next/image";
 import allArmorIcon from "../../assets/all-armor.svg";
 import headArmorIcon from "../../assets/head-armor.svg";
@@ -84,11 +79,8 @@ const Inventory = () => {
 
   const [ipfsUrl, setIpfsUrl] = useState("");
 
-  const { data: signer } = useSigner();
-
   useEffect(() => {
     console.log("Loading page inventory");
-    console.log("signer " + signer);
     if (isConnected) {
       const wrongChainID = chain?.id != ChainID.HardhatLocal;
       setWrongChain(wrongChainID);
