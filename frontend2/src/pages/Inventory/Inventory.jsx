@@ -60,13 +60,22 @@ const Inventory = () => {
   const [wrongChain, setWrongChain] = useState(true);
   const [ownedItems, setOwnedItems] = useState([]);
   const [filteredOwnedItems, setFilteredOwnedItems] = useState([]);
-  const [currentFilter, setCurrentFilter] = useState("all");
   const [guardianTokens, setGuardianTokens] = useState(0);
   const [guardianTokenDecimals, setGuardianTokenDecimals] = useState(0);
   const [chestItemCount, setChestItemCount] = useState(0);
   const [chestPrice, setChestPrice] = useState(0);
   const [selectedItem, setSelectedItem] = useState(item);
   const [priceValue, setPriceValue] = useState("");
+  const Filters = {
+    All: "all",
+    Head: "head",
+    Body: "body",
+    Hands: "hands",
+    Legs: "legs",
+    WeaponRight: "weapon right",
+    WeaponLeft: "weapon left",
+  };
+  const [currentFilter, setCurrentFilter] = useState(Filters.All);
 
   const [modalMesage, setModalMesage] = useState("");
   const [modalTitle, setModalTitle] = useState("");
@@ -194,7 +203,7 @@ const Inventory = () => {
   };
 
   const handleFilterClick = async (param) => {
-    console.log("Filter click: " + param);
+    console.log("Filter clicked: " + param);
     if (param == "all") {
       setFilteredOwnedItems(ownedItems);
     } else {
@@ -207,7 +216,9 @@ const Inventory = () => {
   };
 
   const onPriceChange = async (e) => {
-    setPriceValue(e.target.value);
+    if (!isNaN(e.target.value)) {
+      setPriceValue(e.target.value);
+    }
   };
 
   const handleBuyChestClick = async () => {
@@ -513,17 +524,17 @@ const Inventory = () => {
                       >
                         <input
                           type="number"
-                          style={{
-                            border: "1px solid rgb(159, 140, 108)",
-                            backgroundColor: "rgb(29, 28, 26)",
-                            color: "rgb(159, 140, 108)",
-                            borderRadius: "2px",
-                          }}
+                          className="item-details-input"
                           onChange={onPriceChange}
                         />
 
                         <img
-                          style={{ width: "30px", marginLeft: "10px" }}
+                          style={{
+                            width: "30px",
+                            height: "20px",
+                            marginLeft: "10px",
+                            marginTop: "5px",
+                          }}
                           src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
                         />
                       </Stack>
@@ -567,7 +578,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "all"
+                        (currentFilter === Filters.All
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -576,7 +587,7 @@ const Inventory = () => {
                         alt="me"
                         src={allArmorIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("all")}
+                        onClick={() => handleFilterClick(Filters.All)}
                       />
                     </Box>
 
@@ -584,7 +595,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "head"
+                        (currentFilter === Filters.Head
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -593,7 +604,7 @@ const Inventory = () => {
                         alt="me"
                         src={headArmorIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("head")}
+                        onClick={() => handleFilterClick(Filters.Head)}
                       />
                     </Box>
 
@@ -601,7 +612,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "body"
+                        (currentFilter === Filters.Body
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -609,9 +620,8 @@ const Inventory = () => {
                       <Image
                         alt="me"
                         src={bodyArmorIcon}
-                        sx={{ backgroundColor: "red" }}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("body")}
+                        onClick={() => handleFilterClick(Filters.Body)}
                       />
                     </Box>
 
@@ -619,7 +629,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "hands"
+                        (currentFilter === Filters.Hands
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -628,7 +638,7 @@ const Inventory = () => {
                         alt="me"
                         src={handsArmorIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("hands")}
+                        onClick={() => handleFilterClick(Filters.Hands)}
                       />
                     </Box>
 
@@ -636,7 +646,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "legs"
+                        (currentFilter === Filters.Legs
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -645,7 +655,7 @@ const Inventory = () => {
                         alt="me"
                         src={legsArmorIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("legs")}
+                        onClick={() => handleFilterClick(Filters.Legs)}
                       />
                     </Box>
 
@@ -653,7 +663,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "weapon right"
+                        (currentFilter === Filters.WeaponRight
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -662,7 +672,7 @@ const Inventory = () => {
                         alt="me"
                         src={weaponRightIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("weapon right")}
+                        onClick={() => handleFilterClick(Filters.WeaponRight)}
                       />
                     </Box>
 
@@ -670,7 +680,7 @@ const Inventory = () => {
                     <Box
                       className={
                         "filter-inventory-box " +
-                        (currentFilter === "weapon left"
+                        (currentFilter === Filters.WeaponLeft
                           ? "filter-inventory-box-selected"
                           : "")
                       }
@@ -679,7 +689,7 @@ const Inventory = () => {
                         alt="me"
                         src={weaponLeftIcon}
                         className="filter-inventory-icon"
-                        onClick={() => handleFilterClick("weapon left")}
+                        onClick={() => handleFilterClick(Filters.WeaponLeft)}
                       />
                     </Box>
                   </Box>

@@ -65,6 +65,18 @@ a {
   background: rgb(190, 167, 126, 0.5); 
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 
 /* ****** HEADER ****** */
 
@@ -217,5 +229,35 @@ a {
 
 .filter-inventory-box-selected{
   background: radial-gradient(circle, rgb(190, 167, 125) 10%, rgba(235, 249, 1, 0) 100%);
+}
+
+.item-details-input{
+  border: 1px solid rgb(159, 140, 108);
+  background-color: rgb(29, 28, 26);
+  color: rgb(159, 140, 108);
+  border-radius: 5px;
+  padding: 5px;
+  text-align: right;
+}
+
+input:focus { 
+  outline: none !important;
+  border-color: rgb(159, 140, 108);
+  box-shadow: 0 0 10px rgb(159, 140, 108);
+}
+
+.mp-filter-sales{
+  padding:5px 10px;
+  border:1.5px solid rgb(51, 51, 51);
+  border-top:none;
+  border-radius:5px;
+  margin-bottom:10px;
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+.mp-filter-sales-selected{
+  color:rgb(241, 242, 242);
+  background: radial-gradient(circle, rgba(190, 167, 125, 0.763) 5%, rgba(235, 249, 1, 0) 100%);
 }
 

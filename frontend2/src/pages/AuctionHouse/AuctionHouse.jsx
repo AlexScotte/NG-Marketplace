@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridFooter, GridFooterContainer } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -20,6 +20,20 @@ import { ethers } from "ethers";
 import { useAccount, useNetwork } from "wagmi";
 
 const AuctionHouse = () => {
+  const {
+    state: {
+      loadingContractOK,
+      treasureGuardianContractProvider,
+      treasureGuardianContractSigner,
+      guardianStuffContractProvider,
+      guardianStuffContractSigner,
+      guardianTokenContractProvider,
+      guardianTokenContractSigner,
+      auctionHouseContractProvider,
+      auctionHouseContractSigner,
+    },
+  } = useEth();
+
   const { isConnected, address: userAccount } = useAccount();
   const { chain } = useNetwork();
   const [open, setOpen] = useState(false);
@@ -35,22 +49,15 @@ const AuctionHouse = () => {
   const [modalMesage, setModalMesage] = useState("");
 
   const [listedItems, setListedItems] = useState([]);
+  const [filteredListedItems, setFilteredListedItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState("");
   const [wrongChain, setWrongChain] = useState(true);
-
-  const {
-    state: {
-      loadingContractOK,
-      treasureGuardianContractProvider,
-      treasureGuardianContractSigner,
-      guardianStuffContractProvider,
-      guardianStuffContractSigner,
-      guardianTokenContractProvider,
-      guardianTokenContractSigner,
-      auctionHouseContractProvider,
-      auctionHouseContractSigner,
-    },
-  } = useEth();
+  const Filters = {
+    Sales: 0,
+    MySales: 1,
+    Sold: 2,
+  };
+  const [currentFilter, setCurrentFilter] = useState(Filters.Sales);
 
   useEffect(() => {
     console.log("Loading page auction house");
@@ -110,9 +117,73 @@ const AuctionHouse = () => {
     }
   };
 
+  useEffect(() => {
+    handleFilterClick(currentFilter);
+  }, [listedItems]);
+
+  const handleRowClick = async (param) => {
+    const selectedItem = listedItems.find((item) => item.id == param.id);
+    setSelectedItem(selectedItem);
+    handleDetailsModalOpen();
+  };
+
+  /* Buy item */
+  const handleBuyItem = async () => {
+    if (selectedItem.seller.toUpperCase() === userAccount.toUpperCase()) {
+      setModalTitle("Error !");
+      setModalMesage("Sorry Guardian, you cannot buy your own item");
+      handleModalOpen();
+    } else {
+      try {
+        // price already in ether
+        console.log(selectedItem.price);
+        console.log(selectedItem.listedItemId);
+        await auctionHouseContractSigner.executeSale(
+          selectedItem.listedItemId,
+          { value: selectedItem.price }
+        );
+
+        const title = "Congratulations Guardian !";
+        const message = "You buy a new piece of equipement";
+        setModalTitle(title);
+        setModalMesage(message);
+        await getListedItems();
+        handleModalOpen();
+        handleDetailsModalClose();
+      } catch (error) {
+        setModalTitle("Error !");
+        setModalMesage("An error occurred while buying the item");
+        handleModalOpen();
+        console.log(error);
+      }
+    }
+  };
+
+  const handleFilterClick = (filter) => {
+    console.log("Filter clicked: " + filter);
+
+    let filteredItems = listedItems;
+    switch (filter) {
+      case Filters.Sales:
+      default:
+        break;
+
+      case Filters.MySales:
+        filteredItems = listedItems.filter((i) => i.seller == userAccount);
+        break;
+
+      case Filters.Sold:
+        filteredItems = listedItems.filter((i) => i.isSold == true);
+        break;
+    }
+
+    setFilteredListedItems(filteredItems);
+    setCurrentFilter(filter);
+  };
+
   const renderDesignationCell = (params) => {
     return (
-      <div style={{ display: "contents", alignContent: "center" }}>
+      <Stack style={{ display: "contents", alignContent: "center" }}>
         <Box
           sx={{
             borderColor: "rgba(190, 167, 126, 0.125)",
@@ -120,11 +191,13 @@ const AuctionHouse = () => {
               "linear-gradient(135deg, rgba(255, 255, 244, 0) 0%, " +
               GetColorRarity(params.row.rarity) +
               " 100%);",
+            height: "90%",
+            marginTop: "5px",
           }}
         >
           <img
             src={params.row.image}
-            height="80%"
+            height="90%"
             style={{ marginTop: "5px" }}
           />
         </Box>
@@ -137,35 +210,28 @@ const AuctionHouse = () => {
         >
           {params.row.name}
         </label>
-      </div>
+      </Stack>
     );
   };
 
   const renderPriceCell = (params) => {
     return (
-      // <Stack direction="row" textAlign="center" justifyContent="center">
-      <div style={{ display: "contents", alignContent: "center" }}>
+      <Stack direction="row" justifyContent="center" alignContent="center">
         <label
           variant="contained"
           color="primary"
           fontFamily="Lato"
-          style={{ marginLeft: "10px" }}
+          style={{ marginLeft: "10px", marginRight: "10px" }}
         >
           {ToFriendlyPrice(params.value, guardianTokenDecimals)}
         </label>
 
-        {/* <img src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"/> */}
-      </div>
-      //</Stack>
-    );
-  };
-  const renderCells = (params) => {
-    return (
-      <Box sx={{}}>
-        <label variant="contained" color="primary" size="small" style={{}}>
-          {params.value}
-        </label>
-      </Box>
+        <img
+          src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
+          height="20px"
+          width="30px"
+        />
+      </Stack>
     );
   };
 
@@ -173,8 +239,9 @@ const AuctionHouse = () => {
     {
       field: "designation",
       headerName: "Designation",
-      minWidth: 300,
-      flex: 1,
+      //   minWidth: 300,
+      width: "50px",
+      flex: 2,
       renderCell: renderDesignationCell,
     },
     {
@@ -224,41 +291,65 @@ const AuctionHouse = () => {
     },
   ];
 
-  const handleRowClick = async (param, event) => {
-    setSelectedItem(listedItems[param.id]);
-    handleDetailsModalOpen();
-  };
-
-  /* Buy item */
-  const handleBuyItem = async () => {
-    if (selectedItem.seller.toUpperCase() === userAccount.toUpperCase()) {
-      setModalTitle("Error !");
-      setModalMesage("Sorry Guardian, you cannot buy your own item");
-      handleModalOpen();
-    } else {
-      try {
-        // price already in ether
-        console.log(selectedItem.price);
-        console.log(selectedItem.listedItemId);
-        await auctionHouseContractSigner.executeSale(
-          selectedItem.listedItemId,
-          { value: selectedItem.price }
-        );
-
-        const title = "Congratulations Guardian !";
-        const message = "You buy a new piece of equipement";
-        setModalTitle(title);
-        setModalMesage(message);
-        await getListedItems();
-        handleModalOpen();
-        handleDetailsModalClose();
-      } catch (error) {
-        setModalTitle("Error !");
-        setModalMesage("An error occurred while buying the item");
-        handleModalOpen();
-        console.log(error);
-      }
-    }
+  const customFooter = () => {
+    return (
+      <GridFooterContainer
+        sx={{
+          borderTop: "none", // To delete double border.
+        }}
+      >
+        {/* Add what you want here */}
+        <Stack direction="row" width="100%" marginBottom="-0px">
+          <Box
+            marginLeft="5px"
+            onClick={() => handleFilterClick(Filters.Sales)}
+          >
+            <Typography
+              variant="subtitle1"
+              className={
+                "mp-filter-sales " +
+                (currentFilter === Filters.Sales
+                  ? "mp-filter-sales-selected"
+                  : "")
+              }
+            >
+              Sales
+            </Typography>
+          </Box>
+          <Box onClick={() => handleFilterClick(Filters.MySales)}>
+            <Typography
+              variant="subtitle1"
+              className={
+                "mp-filter-sales " +
+                (currentFilter === Filters.MySales
+                  ? "mp-filter-sales-selected"
+                  : "")
+              }
+            >
+              My sales
+            </Typography>
+          </Box>
+          <Box onClick={() => handleFilterClick(Filters.Sold)}>
+            <Typography
+              variant="subtitle1"
+              className={
+                "mp-filter-sales " +
+                (currentFilter === Filters.Sold
+                  ? "mp-filter-sales-selected"
+                  : "")
+              }
+            >
+              Sold
+            </Typography>
+          </Box>
+        </Stack>
+        <GridFooter
+          sx={{
+            borderTop: "none", // To delete double border.
+          }}
+        />
+      </GridFooterContainer>
+    );
   };
 
   return (
@@ -432,23 +523,24 @@ const AuctionHouse = () => {
               </Modal>
 
               <DataGrid
-                rows={listedItems}
+                rows={filteredListedItems}
                 columns={columns}
                 // pageSize={5}
                 // rowsPerPageOptions={[5]}
                 onRowClick={handleRowClick}
-                // rowHeight={120}
-                hideFooter
+                // hideFooter
                 hideFooterPagination
                 hideFooterSelectedRowCount
                 disableColumnMenu
                 components={{
+                  Footer: customFooter,
                   NoRowsOverlay: () => (
                     <Stack
                       height="100%"
                       alignItems="center"
                       justifyContent="center"
                       backgroundColor="rgb(29, 28, 26)"
+                      // backgroundColor="transparent"
                     >
                       <Typography variant="h5">No rows in DataGrid</Typography>
                     </Stack>
@@ -514,16 +606,11 @@ const AuctionHouse = () => {
                     height: 60,
                     fontFamily: "Lato",
                     fontSize: "16px",
-                    // "&:hover": {
-                    //     backgroundColor: "purple"
-                    // },
-                    "&.Mui-selected": {
+                    "&:hover": {
                       backgroundColor: "rgba(29, 28, 26, 0.7)",
                     },
-                    "& div": {
-                      minHeight: "60px !important",
-                      height: 60,
-                      lineHeight: "59px !important",
+                    "&.Mui-selected": {
+                      backgroundColor: "rgba(29, 28, 26, 0.7)",
                     },
                   },
 
@@ -537,11 +624,6 @@ const AuctionHouse = () => {
                     {
                       outline: "none !important",
                     },
-
-                  // '& .MuiDataGrid-virtualScrollerContent': {
-                  //     paddingBottom: 6, // to compensate space between rows
-                  //     boxSizing: 'content-box',
-                  // },
 
                   // Arrow sort icon
                   ".MuiDataGrid-sortIcon": {
