@@ -16,8 +16,8 @@ import {
 } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
-import { ethers } from "ethers";
 import { useAccount, useNetwork } from "wagmi";
+import Tooltip from "@mui/material/Tooltip";
 
 const AuctionHouse = () => {
   const {
@@ -111,7 +111,7 @@ const AuctionHouse = () => {
         })
       );
 
-      setListedItems(items.filter((i) => !i.isSold));
+      setListedItems(items);
     } catch (error) {
       console.log(error.message);
     }
@@ -164,16 +164,24 @@ const AuctionHouse = () => {
 
     let filteredItems = listedItems;
     switch (filter) {
+      // All listed item not sold
       case Filters.Sales:
+        filteredItems = listedItems.filter((i) => !i.isSold);
+
       default:
         break;
 
+      // Current user sales
       case Filters.MySales:
-        filteredItems = listedItems.filter((i) => i.seller == userAccount);
+        filteredItems = listedItems.filter(
+          (i) => i.seller == userAccount && !i.isSold
+        );
         break;
 
+      // All items sold
       case Filters.Sold:
-        filteredItems = listedItems.filter((i) => i.isSold == true);
+        filteredItems = listedItems.filter((i) => i.isSold);
+        console.log(listedItems);
         break;
     }
 
@@ -214,6 +222,20 @@ const AuctionHouse = () => {
     );
   };
 
+  const renderRarityCell = (params) => {
+    return (
+      <label
+        variant="contained"
+        fontFamily="Lato"
+        style={{
+          color: GetColorRarityWithoutTransparency(params.row.rarity),
+        }}
+      >
+        {params.row.rarity}
+      </label>
+    );
+  };
+
   const renderPriceCell = (params) => {
     return (
       <Stack direction="row" justifyContent="center" alignContent="center">
@@ -249,6 +271,7 @@ const AuctionHouse = () => {
       headerName: "Rarity",
       width: 90,
       flex: 1,
+      renderCell: renderRarityCell,
     },
     {
       field: "class",
@@ -269,6 +292,13 @@ const AuctionHouse = () => {
       flex: 1,
       valueGetter: (params) => `${ToShortAddress(params.value)}`,
     },
+    {
+      field: "buyer",
+      headerName: "Buyer",
+      width: 90,
+      flex: 1,
+      valueGetter: (params) => `${ToShortAddress(params.value)}`,
+    },
     // {
     //     field: 'deadline',
     //     headerName: 'Dead line',
@@ -284,7 +314,6 @@ const AuctionHouse = () => {
     {
       field: "price",
       headerName: "Price",
-      // description: 'This column has a value getter and is not sortable.',
       width: 90,
       flex: 1,
       renderCell: renderPriceCell,
@@ -300,48 +329,54 @@ const AuctionHouse = () => {
       >
         {/* Add what you want here */}
         <Stack direction="row" width="100%" marginBottom="-0px">
-          <Box
-            marginLeft="5px"
-            onClick={() => handleFilterClick(Filters.Sales)}
-          >
-            <Typography
-              variant="subtitle1"
-              className={
-                "mp-filter-sales " +
-                (currentFilter === Filters.Sales
-                  ? "mp-filter-sales-selected"
-                  : "")
-              }
+          <Tooltip title="All listed items">
+            <Box
+              marginLeft="5px"
+              onClick={() => handleFilterClick(Filters.Sales)}
             >
-              Sales
-            </Typography>
-          </Box>
-          <Box onClick={() => handleFilterClick(Filters.MySales)}>
-            <Typography
-              variant="subtitle1"
-              className={
-                "mp-filter-sales " +
-                (currentFilter === Filters.MySales
-                  ? "mp-filter-sales-selected"
-                  : "")
-              }
-            >
-              My sales
-            </Typography>
-          </Box>
-          <Box onClick={() => handleFilterClick(Filters.Sold)}>
-            <Typography
-              variant="subtitle1"
-              className={
-                "mp-filter-sales " +
-                (currentFilter === Filters.Sold
-                  ? "mp-filter-sales-selected"
-                  : "")
-              }
-            >
-              Sold
-            </Typography>
-          </Box>
+              <Typography
+                variant="subtitle1"
+                className={
+                  "mp-filter-sales " +
+                  (currentFilter === Filters.Sales
+                    ? "mp-filter-sales-selected"
+                    : "")
+                }
+              >
+                Sales
+              </Typography>
+            </Box>
+          </Tooltip>
+          <Tooltip title="User current sales">
+            <Box onClick={() => handleFilterClick(Filters.MySales)}>
+              <Typography
+                variant="subtitle1"
+                className={
+                  "mp-filter-sales " +
+                  (currentFilter === Filters.MySales
+                    ? "mp-filter-sales-selected"
+                    : "")
+                }
+              >
+                My sales
+              </Typography>
+            </Box>
+          </Tooltip>
+          <Tooltip title="All items sold">
+            <Box onClick={() => handleFilterClick(Filters.Sold)}>
+              <Typography
+                variant="subtitle1"
+                className={
+                  "mp-filter-sales " +
+                  (currentFilter === Filters.Sold
+                    ? "mp-filter-sales-selected"
+                    : "")
+                }
+              >
+                Sold
+              </Typography>
+            </Box>
+          </Tooltip>
         </Stack>
         <GridFooter
           sx={{
@@ -525,6 +560,9 @@ const AuctionHouse = () => {
               <DataGrid
                 rows={filteredListedItems}
                 columns={columns}
+                columnVisibilityModel={{
+                  buyer: currentFilter == Filters.Sold,
+                }}
                 // pageSize={5}
                 // rowsPerPageOptions={[5]}
                 onRowClick={handleRowClick}
@@ -542,17 +580,7 @@ const AuctionHouse = () => {
                       backgroundColor="rgb(29, 28, 26)"
                       // backgroundColor="transparent"
                     >
-                      <Typography variant="h5">No rows in DataGrid</Typography>
-                    </Stack>
-                  ),
-                  NoResultsOverlay: () => (
-                    <Stack
-                      height="100%"
-                      alignItems="center"
-                      justifyContent="center"
-                      backgroundColor="rgb(29, 28, 26)"
-                    >
-                      <Typography variant="h5">No rows in DataGrid</Typography>
+                      <Typography variant="h5">No items</Typography>
                     </Stack>
                   ),
                 }}

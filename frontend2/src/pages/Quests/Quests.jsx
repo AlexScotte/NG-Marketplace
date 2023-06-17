@@ -86,7 +86,6 @@ const Quests = () => {
         ethers.utils.parseUnits(`${QuestReward}`, guardianTokenDecimals),
         { from: signer.address }
       );
-      // .send({ from: signer.address, gas: 10000000 });
       await transaction.wait();
 
       setModalTitle("Congratulations !");

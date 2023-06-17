@@ -17,6 +17,7 @@ import NotConnected from "../../components/NotConnected";
 import logoWhite from "../../assets/ng-logo-white.png";
 import { ethers } from "ethers";
 import { useAccount, useNetwork } from "wagmi";
+import Tooltip from "@mui/material/Tooltip";
 import Image from "next/image";
 import allArmorIcon from "../../assets/all-armor.svg";
 import headArmorIcon from "../../assets/head-armor.svg";
@@ -53,7 +54,6 @@ const Inventory = () => {
     amount: 0,
   };
 
-  const BigNumber = require("bignumber.js");
   const { isConnected, address: userAccount } = useAccount();
   const { chain } = useNetwork();
 
@@ -323,7 +323,6 @@ const Inventory = () => {
   };
 
   const handleListItem = async () => {
-    // if (parseInt(priceValue) <= 0) {
     if (!priceValue || ethers.utils.parseEther(priceValue).toString() <= 0) {
       setModalTitle("Incorrect price !");
       setModalMesage(
@@ -575,123 +574,136 @@ const Inventory = () => {
                     }}
                   >
                     {/* No filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.All
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={allArmorIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.All)}
-                      />
-                    </Box>
+                    <Tooltip title="All items">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.All
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={allArmorIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.All)}
+                        />
+                      </Box>
+                    </Tooltip>
 
                     {/* Head Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.Head
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={headArmorIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.Head)}
-                      />
-                    </Box>
-
+                    <Tooltip title="Head">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.Head
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={headArmorIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.Head)}
+                        />
+                      </Box>
+                    </Tooltip>
                     {/* Body Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.Body
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={bodyArmorIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.Body)}
-                      />
-                    </Box>
+                    <Tooltip title="Body">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.Body
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={bodyArmorIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.Body)}
+                        />
+                      </Box>
+                    </Tooltip>
 
                     {/* Hands Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.Hands
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={handsArmorIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.Hands)}
-                      />
-                    </Box>
+                    <Tooltip title="Hands">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.Hands
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={handsArmorIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.Hands)}
+                        />
+                      </Box>
+                    </Tooltip>
 
                     {/* Legs Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.Legs
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={legsArmorIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.Legs)}
-                      />
-                    </Box>
+                    <Tooltip title="Legs">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.Legs
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={legsArmorIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.Legs)}
+                        />
+                      </Box>
+                    </Tooltip>
 
                     {/* Weapon Right Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.WeaponRight
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={weaponRightIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.WeaponRight)}
-                      />
-                    </Box>
+                    <Tooltip title="Weapon right">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.WeaponRight
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={weaponRightIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.WeaponRight)}
+                        />
+                      </Box>
+                    </Tooltip>
 
                     {/* Weapon Left Filter */}
-                    <Box
-                      className={
-                        "filter-inventory-box " +
-                        (currentFilter === Filters.WeaponLeft
-                          ? "filter-inventory-box-selected"
-                          : "")
-                      }
-                    >
-                      <Image
-                        alt="me"
-                        src={weaponLeftIcon}
-                        className="filter-inventory-icon"
-                        onClick={() => handleFilterClick(Filters.WeaponLeft)}
-                      />
-                    </Box>
+                    <Tooltip title="Weapon left">
+                      <Box
+                        className={
+                          "filter-inventory-box " +
+                          (currentFilter === Filters.WeaponLeft
+                            ? "filter-inventory-box-selected"
+                            : "")
+                        }
+                      >
+                        <Image
+                          alt="me"
+                          src={weaponLeftIcon}
+                          className="filter-inventory-icon"
+                          onClick={() => handleFilterClick(Filters.WeaponLeft)}
+                        />
+                      </Box>
+                    </Tooltip>
                   </Box>
 
                   {/* Owned items */}
