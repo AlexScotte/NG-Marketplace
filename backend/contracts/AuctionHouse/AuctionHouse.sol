@@ -36,16 +36,14 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     Counters.Counter public listedItemsCount;
 
     /**
-     * @notice The fee charged to be able to list an item
+     * @notice Listed token Informations
      */
-    // Listed token Informations
     struct ListedItem {
-        uint256 listedItemId; // Id in the marketplace list
-        uint256 itemId; // token id
+        uint256 listedItemId; // ID in the marketplace list
+        uint256 itemId; // ERC1155 token ID
         address payable seller;
         address buyer;
         uint256 price;
-        bool currentlyListed;
         bool isSold;
     }
 
@@ -68,7 +66,7 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
         uint256 price
     );
     /**
-     * @notice Map listedItem by itemId
+     * @notice Map listedItem by marketplace ID
      */
     mapping(uint256 => ListedItem) private idToListedItem;
 
@@ -86,10 +84,8 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     }
 
     /**
-     * @notice Allows a registered voter to check informations of another voter.
-     * Requirements:
-     *  - The caller must be the owner.
-     * @param newListingFee: New marketplace listing fee
+     * @notice Allows the administrator to set the listing fees
+     * @param newListingFee: New marketplace listing fees
      */
     function updatelistingFee(
         uint256 newListingFee
@@ -134,14 +130,13 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
             payable(msg.sender), // seller
             address(0), // buyer
             sellingPrice,
-            true,
             false
         );
 
         // Transfer fee to the contract
         auctionHouseFunds += msg.value;
 
-        //Update the mapping of tokenId's to Item details, useful for retrieval functions
+        // Update the mapping of tokenId's to Item details, useful for retrieval functions
         idToListedItem[listedItemCount] = newListedItem;
         listedItems.push(newListedItem);
 
@@ -153,7 +148,6 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
             "0x0"
         );
 
-        // _marketOwner.transfer(LISTING_FEE);
         listedItemsCount.increment();
 
         // Trigger the event
@@ -173,11 +167,11 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
 
         // Update item informations
         ListedItem memory listedItem = idToListedItem[listedItemId];
-        listedItem.currentlyListed = false;
         listedItem.buyer = payable(msg.sender);
         listedItem.isSold = true;
 
         listedItems[listedItemId] = listedItem;
+        idToListedItem[listedItemId] = listedItem;
 
         _itemsSoldCount.increment();
 
