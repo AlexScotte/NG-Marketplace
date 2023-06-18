@@ -74,10 +74,10 @@ async function main() {
     .connect(a1)
     .setApprovalForAll(treasureGuardian.address, true);
   console.log("Openning chest");
-  itemIDs = await treasureGuardian.connect(a1).openChest();
+  itemIDs = await treasureGuardian.connect(a1).openChest({ gasLimit: 500000 });
   console.log(
     "User1 ERC1155 chest item balance after opening chest: " +
-      (await guardianStuff.balanceOf(a1.address, itemChestID)).toNumber()
+      (await guardianStuff.balanceOf(a1.address, itemChestID))
   );
   console.log(
     "Tresure ERC1155 chest item balance: " +
@@ -117,7 +117,7 @@ async function main() {
 
   console.log(
     "ERC1155 item 1 User2 balance: " +
-      (await guardianStuff.balanceOf(a2.address, itemId1)).toNumber()
+      (await guardianStuff.balanceOf(a2.address, itemId1))
   );
 
   console.log("Give approval to the marketplace to list items of User2");
@@ -128,7 +128,7 @@ async function main() {
   console.log("fees: " + listingFee);
   console.log(
     "Marketplace balance before listing: " +
-      (await auctionHouse.auctionHouseFunds())
+      (await auctionHouse.auctionHouseFunds()).toString()
   );
 
   console.log("User2 list item to 1 ether");
@@ -145,12 +145,12 @@ async function main() {
 
   console.log(
     "ERC1155 item 1 User2 balance: " +
-      (await guardianStuff.balanceOf(a2.address, itemId1)).toNumber()
+      (await guardianStuff.balanceOf(a2.address, itemId1))
   );
 
   console.log(
     "ERC1155 item 1 Marketplace balance: " +
-      (await guardianStuff.balanceOf(auctionHouse.address, itemId1)).toNumber()
+      (await guardianStuff.balanceOf(auctionHouse.address, itemId1))
   );
 
   console.log("Get listed items on the marketplace: ");
