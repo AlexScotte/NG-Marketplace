@@ -1,5 +1,5 @@
 const { network } = require("hardhat");
-const contractFrontFolder = "../../frontend2/src/contracts";
+const contractFrontFolder = "../../frontend/src/contracts";
 
 module.exports = {
   deploy: async function () {
