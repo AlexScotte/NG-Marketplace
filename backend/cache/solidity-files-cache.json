@@ -590,8 +590,8 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\AuctionHouse\\AuctionHouse.sol": {
-      "lastModificationDate": 1687009561319,
-      "contentHash": "2b0ba9b153268acc60683797478e3d39",
+      "lastModificationDate": 1687023028145,
+      "contentHash": "c9b4d7c4cbfe27965f21f80d366b3ea7",
       "sourceName": "contracts/AuctionHouse/AuctionHouse.sol",
       "solcConfig": {
         "version": "0.8.18",

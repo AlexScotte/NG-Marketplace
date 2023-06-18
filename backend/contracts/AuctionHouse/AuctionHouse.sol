@@ -36,7 +36,7 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     Counters.Counter public listedItemsCount;
 
     /**
-     * @notice Listed token Informations
+     * @notice Listed item Informations
      */
     struct ListedItem {
         uint256 listedItemId; // ID in the marketplace list
@@ -48,7 +48,7 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     }
 
     /**
-     * @notice Event listing successfull
+     * @notice Event item listed successfully
      */
     event ItemListedSuccess(
         uint256 indexed itemId,
@@ -57,7 +57,7 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
     );
 
     /**
-     * @notice Event sell successfull
+     * @notice Event Item sold successfully
      */
     event ItemSoldSuccess(
         uint256 indexed itemId,
@@ -65,6 +65,12 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
         address buyer,
         uint256 price
     );
+
+    /**
+     * @notice Event Item canceled successfully
+     */
+    event ItemCanceledSuccess();
+
     /**
      * @notice Map listedItem by marketplace ID
      */
@@ -200,5 +206,46 @@ contract AuctionHouse is Ownable, ERC1155Holder, ReentrancyGuard {
             msg.sender,
             listedItem.price
         );
+    }
+
+    /**
+     * @notice Allow a user to cancel a sale that he created
+     * @param marketplaceId: ID in the market place list
+     */
+    function cancelSale(uint256 marketplaceId) external {
+        ListedItem memory listedItem = idToListedItem[marketplaceId];
+
+        require(listedItem.itemId != 0, "Item not found in the marketplace");
+        require(
+            listedItem.seller == msg.sender,
+            "You are not the seller of the item"
+        );
+
+        // Send back the item to the seller
+        IERC1155(tokenAddress).safeTransferFrom(
+            address(this), // from
+            msg.sender, // to
+            listedItem.itemId,
+            1,
+            "0x0"
+        );
+
+        uint256 listedItemCount = listedItemsCount.current();
+        if (listedItemCount > 1) {
+            // Get last item in list
+            ListedItem storage lastItem = listedItems[listedItemCount - 1];
+
+            // Put last item at the canceled item place
+            lastItem.listedItemId = marketplaceId;
+            idToListedItem[marketplaceId] = lastItem;
+            listedItems[marketplaceId] = lastItem;
+        }
+
+        // Remove the last item in the marketplace list
+        listedItems.pop();
+        listedItemsCount.decrement();
+
+        // Trigger the event
+        emit ItemCanceledSuccess();
     }
 }
