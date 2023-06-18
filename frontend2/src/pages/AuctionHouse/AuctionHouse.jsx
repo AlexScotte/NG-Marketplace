@@ -15,6 +15,8 @@ import {
   GetColorRarityWithoutTransparency,
   ToShortAddress,
   GetCoinIconWithEnv,
+  GetExpectedChainIdWithEnv,
+  GetExpectedChainNameWithEnv,
 } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
@@ -66,7 +68,7 @@ const AuctionHouse = () => {
     console.log("Loading page auction house");
 
     if (isConnected) {
-      const wrongChainID = chain?.id != ChainID.HardhatLocal;
+      const wrongChainID = chain?.id != GetExpectedChainIdWithEnv();
       setWrongChain(wrongChainID);
       if (!wrongChainID && loadingContractOK) {
         getListedItems();
@@ -419,7 +421,10 @@ const AuctionHouse = () => {
         <>
           {wrongChain ? (
             <>
-              <ChangeChain chain="Mumbai" chainID={ChainID.HardhatLocal} />
+              <ChangeChain
+                chain={GetExpectedChainNameWithEnv()}
+                chainID={GetExpectedChainIdWithEnv()}
+              />
             </>
           ) : (
             <>

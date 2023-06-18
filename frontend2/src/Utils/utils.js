@@ -61,3 +61,22 @@ export const GetCoinIconWithEnv = () => {
     return "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880";
   }
 };
+
+export const GetExpectedChainIdWithEnv = () => {
+  // Use to define what chain is used in function of the current environment
+  // Development -> Hardhat Local
+  // Production -> Mumbai
+  if (process.env.NODE_ENV === "production") {
+    return ChainID.Mumbai;
+  } else {
+    return ChainID.HardhatLocal;
+  }
+};
+
+export const GetExpectedChainNameWithEnv = () => {
+  if (process.env.NODE_ENV === "production") {
+    return "Mumbai";
+  } else {
+    return "Hardhat local";
+  }
+};

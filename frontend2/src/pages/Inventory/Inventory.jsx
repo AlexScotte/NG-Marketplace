@@ -11,6 +11,8 @@ import {
   GetColorRarity,
   GetColorRarityWithoutTransparency,
   GetCoinIconWithEnv,
+  GetExpectedChainIdWithEnv,
+  GetExpectedChainNameWithEnv,
 } from "../../Utils/utils";
 import useEth from "../../contexts/EthContext/useEth";
 import ChangeChain from "../../components/ChangeChain";
@@ -92,7 +94,7 @@ const Inventory = () => {
   useEffect(() => {
     console.log("Loading page inventory");
     if (isConnected) {
-      const wrongChainID = chain?.id != ChainID.HardhatLocal;
+      const wrongChainID = chain?.id != GetExpectedChainIdWithEnv();
       setWrongChain(wrongChainID);
       if (!wrongChainID && loadingContractOK) {
         getBalanceOfGuardiantToken();
@@ -391,7 +393,10 @@ const Inventory = () => {
         <>
           {wrongChain ? (
             <>
-              <ChangeChain chain="Mumbai" chainID={ChainID.HardhatLocal} />
+              <ChangeChain
+                chain={GetExpectedChainNameWithEnv()}
+                chainID={GetExpectedChainIdWithEnv()}
+              />
             </>
           ) : (
             <>
