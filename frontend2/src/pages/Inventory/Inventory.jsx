@@ -580,7 +580,7 @@ const Inventory = () => {
                     }}
                   >
                     {/* No filter */}
-                    <Tooltip title="All items">
+                    <Tooltip title="All items" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -599,7 +599,7 @@ const Inventory = () => {
                     </Tooltip>
 
                     {/* Head Filter */}
-                    <Tooltip title="Head">
+                    <Tooltip title="Head" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -617,7 +617,7 @@ const Inventory = () => {
                       </Box>
                     </Tooltip>
                     {/* Body Filter */}
-                    <Tooltip title="Body">
+                    <Tooltip title="Body" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -636,7 +636,7 @@ const Inventory = () => {
                     </Tooltip>
 
                     {/* Hands Filter */}
-                    <Tooltip title="Hands">
+                    <Tooltip title="Hands" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -655,7 +655,7 @@ const Inventory = () => {
                     </Tooltip>
 
                     {/* Legs Filter */}
-                    <Tooltip title="Legs">
+                    <Tooltip title="Legs" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -674,7 +674,7 @@ const Inventory = () => {
                     </Tooltip>
 
                     {/* Weapon Right Filter */}
-                    <Tooltip title="Weapon right">
+                    <Tooltip title="Weapon right" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
@@ -693,7 +693,7 @@ const Inventory = () => {
                     </Tooltip>
 
                     {/* Weapon Left Filter */}
-                    <Tooltip title="Weapon left">
+                    <Tooltip title="Weapon left" placement="right">
                       <Box
                         className={
                           "filter-inventory-box " +
