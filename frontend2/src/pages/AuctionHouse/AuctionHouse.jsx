@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import Image from "next/image";
 import axios from "axios";
 import useEth from "../../contexts/EthContext/useEth";
 import {
@@ -18,6 +19,7 @@ import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
 import { useAccount, useNetwork } from "wagmi";
 import Tooltip from "@mui/material/Tooltip";
+import soldIcon from "../../assets/Sold.png";
 
 const AuctionHouse = () => {
   const {
@@ -135,9 +137,7 @@ const AuctionHouse = () => {
       handleModalOpen();
     } else {
       try {
-        // price already in ether
-        console.log(selectedItem.price);
-        console.log(selectedItem.listedItemId);
+        console.log("Buy in progress");
         await auctionHouseContractSigner.executeSale(
           selectedItem.listedItemId,
           { value: selectedItem.price }
@@ -145,6 +145,36 @@ const AuctionHouse = () => {
 
         const title = "Congratulations Guardian !";
         const message = "You buy a new piece of equipement";
+        setModalTitle(title);
+        setModalMesage(message);
+        await getListedItems();
+        handleModalOpen();
+        handleDetailsModalClose();
+      } catch (error) {
+        setModalTitle("Error !");
+        setModalMesage("An error occurred while buying the item");
+        handleModalOpen();
+        console.log(error);
+      }
+    }
+  };
+
+  /* Cancel sale */
+  const handleCancelSale = async () => {
+    if (selectedItem.seller.toUpperCase() != userAccount.toUpperCase()) {
+      setModalTitle("Error !");
+      setModalMesage(
+        "Sorry Guardian, you cannot this sale because you do not created it"
+      );
+      handleModalOpen();
+    } else {
+      try {
+        // price already in ether
+        console.log("Cancel sale in progress");
+        await auctionHouseContractSigner.cancelSale(selectedItem.listedItemId);
+
+        const title = "Congratulations Guardian !";
+        const message = "The sale has been canceled";
         setModalTitle(title);
         setModalMesage(message);
         await getListedItems();
@@ -181,7 +211,6 @@ const AuctionHouse = () => {
       // All items sold
       case Filters.Sold:
         filteredItems = listedItems.filter((i) => i.isSold);
-        console.log(listedItems);
         break;
     }
 
@@ -546,13 +575,49 @@ const AuctionHouse = () => {
                       </Stack>
                     </Stack>
 
-                    <Button
-                      className="generic-button"
-                      onClick={handleBuyItem}
-                      variant="outlined"
-                    >
-                      Buy
-                    </Button>
+                    {currentFilter == Filters.Sold ? (
+                      <>
+                        {
+                          <Image
+                            alt="me"
+                            src={soldIcon}
+                            style={{
+                              position: "absolute",
+                              bottom: "20px",
+                              right: "50px",
+                              width: "95px",
+                              height: "auto",
+                              alignSelf: "center",
+                            }}
+                          />
+                        }
+                      </>
+                    ) : (
+                      <>
+                        {selectedItem.seller?.toUpperCase() ===
+                        userAccount?.toUpperCase() ? (
+                          <>
+                            <Button
+                              className="generic-button"
+                              onClick={handleCancelSale}
+                              variant="outlined"
+                            >
+                              Cancel sale
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              className="generic-button"
+                              onClick={handleBuyItem}
+                              variant="outlined"
+                            >
+                              Buy
+                            </Button>
+                          </>
+                        )}
+                      </>
+                    )}
                   </Stack>
                 </Box>
               </Modal>
