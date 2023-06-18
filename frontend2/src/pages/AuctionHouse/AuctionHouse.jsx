@@ -14,6 +14,7 @@ import {
   GetColorRarity,
   GetColorRarityWithoutTransparency,
   ToShortAddress,
+  GetCoinIconWithEnv,
 } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import NotConnected from "../../components/NotConnected";
@@ -277,11 +278,7 @@ const AuctionHouse = () => {
           {ToFriendlyPrice(params.value, guardianTokenDecimals)}
         </label>
 
-        <img
-          src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
-          height="20px"
-          width="30px"
-        />
+        <img src={GetCoinIconWithEnv()} height="20px" width="20px" />
       </Stack>
     );
   };
@@ -565,12 +562,12 @@ const AuctionHouse = () => {
 
                         <img
                           style={{
-                            height: "20px",
-                            width: "30px",
+                            height: "25px",
+                            width: "25px",
+                            marginTop: "3px",
                             marginLeft: "10px",
-                            marginTop: "8px",
                           }}
-                          src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
+                          src={GetCoinIconWithEnv()}
                         />
                       </Stack>
                     </Stack>

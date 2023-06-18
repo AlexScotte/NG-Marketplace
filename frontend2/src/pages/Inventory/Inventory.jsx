@@ -10,6 +10,7 @@ import {
   ToFriendlyPrice,
   GetColorRarity,
   GetColorRarityWithoutTransparency,
+  GetCoinIconWithEnv,
 } from "../../Utils/utils";
 import useEth from "../../contexts/EthContext/useEth";
 import ChangeChain from "../../components/ChangeChain";
@@ -530,11 +531,11 @@ const Inventory = () => {
                         <img
                           style={{
                             width: "30px",
-                            height: "20px",
+                            height: "30px",
                             marginLeft: "10px",
-                            marginTop: "5px",
+                            marginTop: "0px",
                           }}
-                          src="https://nodeguardians.io/_next/image?url=%2Fassets%2Farmory%2Fforge%2Fgold_icon.png&w=1800&q=100"
+                          src={GetCoinIconWithEnv()}
                         />
                       </Stack>
 

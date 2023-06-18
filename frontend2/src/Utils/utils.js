@@ -53,3 +53,11 @@ export const GetColorRarityWithoutTransparency = (rarity) => {
       return "rgba(255, 255, 244, 1)";
   }
 };
+
+export const GetCoinIconWithEnv = () => {
+  if (process.env.NODE_ENV === "production") {
+    return "https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912";
+  } else {
+    return "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880";
+  }
+};
