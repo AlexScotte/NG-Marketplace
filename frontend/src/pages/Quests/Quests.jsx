@@ -43,7 +43,7 @@ const Quests = () => {
 
       let provider;
       console.log("Current environment: " + process.env.NODE_ENV);
-      if (process.env.NODE_ENV != "production") {
+      if (process.env.NODE_ENV === "production") {
         // Create Mumbai RPC
         provider = new ethers.providers.JsonRpcProvider(
           "https://rpc.ankr.com/polygon_mumbai"
@@ -74,7 +74,6 @@ const Quests = () => {
         treasureGuardianArtifact.abi,
         provider
       );
-      console.log("hop");
 
       // Guardian token contract
       const guardianTokenAddress =
