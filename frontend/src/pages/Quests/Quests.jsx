@@ -13,6 +13,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { ethers } from "ethers";
 import { Typography } from "@mui/material";
 import { useSwitchNetwork } from "wagmi";
+import { GetExpectedChainIdWithEnv } from "../../Utils/utils";
 
 const Quests = () => {
   const QuestReward = 1500;
@@ -63,8 +64,9 @@ const Quests = () => {
       console.log("Admin Node Guardian address: " + signer.address);
 
       // Tresure guardian contract
+      const chainID = GetExpectedChainIdWithEnv();
       const treasureGuardianAddress =
-        treasureGuardianArtifact.networks[ChainID.HardhatLocal].address;
+        treasureGuardianArtifact.networks[chainID].address;
       const treasureGuardianContract = new ethers.Contract(
         treasureGuardianAddress,
         treasureGuardianArtifact.abi,
