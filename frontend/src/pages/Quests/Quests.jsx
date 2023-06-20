@@ -40,11 +40,19 @@ const Quests = () => {
       const treasureGuardianArtifact = require("../../contracts/TreasureGuardian.json");
       const guardianTokenArtifact = require("../../contracts/GuardianToken.json");
 
-      // Create Local RPC
-      const provider = new ethers.providers.JsonRpcProvider();
+      let provider;
+      console.log("Current environment: " + process.env.NODE_ENV);
+      if (process.env.NODE_ENV != "production") {
+        // Create Mumbai RPC
+        provider = new ethers.providers.JsonRpcProvider(
+          "https://rpc.ankr.com/polygon_mumbai"
+        );
+      } else {
+        // Create Local RPC
+        provider = new ethers.providers.JsonRpcProvider();
+      }
 
-      // Create Mumbai RPC
-      // const web3 = new Web3("https://rpc.ankr.com/polygon_mumbai");
+      console.log("provider created !");
 
       // Get wallet of the Node Guardian admin
       const signer = new ethers.Wallet(
