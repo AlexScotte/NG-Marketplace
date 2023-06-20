@@ -35,6 +35,7 @@ module.exports = {
         mnemonic: `${process.env.MNEMONIC}`,
       },
       chainId: 80001,
+      gasPrice: 80000000000,
     },
 
     // TRUFFLE
