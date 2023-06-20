@@ -65,13 +65,16 @@ const Quests = () => {
 
       // Tresure guardian contract
       const chainID = GetExpectedChainIdWithEnv();
+      console.log("Current chainID:" + chainID);
       const treasureGuardianAddress =
         treasureGuardianArtifact.networks[chainID].address;
+      console.log("Treasure guardian address:" + treasureGuardianAddress);
       const treasureGuardianContract = new ethers.Contract(
         treasureGuardianAddress,
         treasureGuardianArtifact.abi,
         provider
       );
+      console.log("hop");
 
       // Guardian token contract
       const guardianTokenAddress =
