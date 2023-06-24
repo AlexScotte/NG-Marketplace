@@ -156,7 +156,7 @@ input[type=number] {
 .icon {
   color: rgb(190, 167, 126);
   cursor: "pointer";
-  font-size: 20px;
+  font-size: 20px !important;
 }
 
 /* *********************** */
@@ -177,9 +177,9 @@ input[type=number] {
 }
 
 .generic-button:hover{
-  background-color: rgb(39, 36, 32);
-  color: rgb(190, 167, 125);
-  border-color: rgb(190, 167, 125);
+  background-color: rgb(39, 36, 32) !important;
+  color: rgb(190, 167, 125) !important;
+  border-color: rgb(190, 167, 125) !important;
 }
 
 .modal-main-content {
