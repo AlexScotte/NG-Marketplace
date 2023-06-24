@@ -6,12 +6,10 @@
 }
 
 html,
+
 body {
   max-height: 100vh;
   overflow-x: hidden;
-}
-
-body {
   height: 100vw;
   width: 100vw;
   color: rgb(var(--foreground-rgb));
@@ -50,7 +48,7 @@ a {
 /* Track */
 ::-webkit-scrollbar-track {
   /* background: var(--lightestgrey);  */
-  border-radius: 6px;
+  border-radius: 6px !important;
   box-shadow: rgb(15, 15, 15) 0px 0px 6px inset;
 }
 
