@@ -1,50 +1,62 @@
-const Factory = artifacts.require("../contracts/Forge/ForgeMaster.sol");
-const ERC1155Token = artifacts.require("../contracts/Forge/GuardianStuff.sol");
-
-const { BN, expectRevert, expectEvent } = require("@openzeppelin/test-helpers");
 const { ZERO_ADDRESS } = require("@openzeppelin/test-helpers/src/constants");
-
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { expect } = require("chai");
 
-contract("***** Factory - Forge Master Tests *****", (accounts) => {
-  const account0 = accounts[0];
-  const account1 = accounts[1];
-  const account2 = accounts[2];
+describe("***** Factory - Forge Master Tests *****", () => {
   const collectionName = "Node Guardian Alyra Collection";
+  let owner = "";
+  let account1 = "";
+  let account2 = "";
+  let factory = "";
 
-  let factory;
+  async function deployForgeMasterFixture() {
+    const [o, a1, a2] = await ethers.getSigners();
+
+    // Deploy factory contract
+    const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
+    const forgeMaster = await ForgeMaster.deploy();
+    await forgeMaster.deployed();
+
+    factory = forgeMaster;
+    owner = o;
+    account1 = a1;
+    account2 = a2;
+  }
 
   describe("Collection deployment and creation", function () {
     beforeEach(async function () {
-      factory = await Factory.new({ from: account0 });
-      await factory.createCollection(collectionName, { from: account0 });
+      await loadFixture(deployForgeMasterFixture);
+
+      // Create ERC1155 token collection
+      await factory.createCollection(collectionName);
     });
 
     it("...Should collection named as expected 'Node Guardian Alyra Collection'", async () => {
-      const receipt = await factory.collectionName({ from: account0 });
+      const receipt = await factory.collectionName();
       expect(receipt).equal(collectionName);
     });
 
     it("...Should collection be correctly deployed at an address ", async () => {
-      const receipt = await factory.collectionAddress.call({ from: account0 });
+      const receipt = await factory.collectionAddress();
       expect(receipt).not.equal(ZERO_ADDRESS);
     });
   });
 
   describe("Forge items collection from the factory", function () {
     beforeEach(async function () {
-      factory = await Factory.new({ from: account0 });
-      await factory.createCollection(collectionName, { from: account0 });
-      await factory.forgeCollection({ from: account0 });
+      await loadFixture(deployForgeMasterFixture);
+
+      // Create ERC1155 token collection and create all items
+      await factory.createCollection(collectionName);
+      await factory.forgeCollection();
     });
 
     it("...Should ERC1155 token be created at collection address", async () => {
-      const collectionAddress = await factory.collectionAddress.call({
-        from: account0,
-      });
+      const collectionAddress = await factory.collectionAddress();
 
-      const erc1155 = await ERC1155Token.at(collectionAddress);
-      const receipt = await erc1155.uri(0, { from: account0 });
+      const GuardianStuff = await ethers.getContractFactory("GuardianStuff");
+      const erc1155 = await GuardianStuff.attach(collectionAddress);
+      const receipt = await erc1155.uri(0);
       expect(receipt).not.equal("");
       expect(receipt).not.equal(" ");
     });
