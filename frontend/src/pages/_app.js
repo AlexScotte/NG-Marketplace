@@ -1,4 +1,3 @@
-// import EthProvider from "@/contexts/EthContext/EthProvider";
 import "@/styles/globals.css";
 
 import { WagmiConfig, createClient, configureChains } from "wagmi";
