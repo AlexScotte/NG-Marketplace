@@ -25,6 +25,15 @@ const client = createClient({
 
 export default function App({ Component, pageProps }) {
   let theme = createTheme({
+    button: {
+      border: "1px solid rgb(109, 98, 76)",
+      color: "rgb(241, 242, 242)",
+      backgroundColor: "rgb(29, 28, 26)",
+      cursor: "pointer",
+      borderRadius: "5px",
+      fontFamily: "Cinzel",
+      fontWeight: "900",
+    },
     typography: {
       h5: {
         fontFamily: "Cinzel",
