@@ -25,9 +25,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -65,9 +62,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -103,9 +97,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -141,9 +132,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -181,9 +169,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -221,9 +206,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -259,9 +241,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -297,9 +276,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -338,9 +314,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -378,9 +351,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -418,9 +388,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -463,9 +430,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -501,9 +465,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -541,9 +502,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -583,9 +541,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -621,9 +576,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -661,9 +613,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -705,9 +654,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -723,8 +669,8 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\TreasureGuardian.sol": {
-      "lastModificationDate": 1687078867568,
-      "contentHash": "0297c7d3c11f0ed2b10d898f432219fe",
+      "lastModificationDate": 1687725976958,
+      "contentHash": "ccef3c7cf3f10b981ff14aacf6896b8f",
       "sourceName": "contracts/TreasureGuardian.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -746,9 +692,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -766,6 +709,47 @@
       ],
       "artifacts": [
         "TreasureGuardian"
+      ]
+    },
+    "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Forge\\ForgeMaster.sol": {
+      "lastModificationDate": 1687725815092,
+      "contentHash": "6bf231c32bae3b4ff12e3cc9281ed118",
+      "sourceName": "contracts/Forge/ForgeMaster.sol",
+      "solcConfig": {
+        "version": "0.8.18",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol",
+        "../../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        "../../node_modules/@openzeppelin/contracts/utils/Counters.sol",
+        "../../node_modules/@openzeppelin/contracts/access/Ownable.sol",
+        "./GuardianStuff.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.18"
+      ],
+      "artifacts": [
+        "ForgeMaster"
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Forge\\GuardianStuff.sol": {
@@ -792,9 +776,6 @@
                 "ast"
               ]
             }
-          },
-          "metadata": {
-            "useLiteralContent": false
           }
         }
       },
@@ -808,50 +789,6 @@
       ],
       "artifacts": [
         "GuardianStuff"
-      ]
-    },
-    "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Forge\\ForgeMaster.sol": {
-      "lastModificationDate": 1687078867565,
-      "contentHash": "b7826258a628b49fadbe593f36ef8eef",
-      "sourceName": "contracts/Forge/ForgeMaster.sol",
-      "solcConfig": {
-        "version": "0.8.18",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "metadata": {
-            "useLiteralContent": false
-          }
-        }
-      },
-      "imports": [
-        "../../node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol",
-        "../../node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
-        "../../node_modules/@openzeppelin/contracts/utils/Counters.sol",
-        "../../node_modules/@openzeppelin/contracts/access/Ownable.sol",
-        "./GuardianStuff.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.18"
-      ],
-      "artifacts": [
-        "ForgeMaster"
       ]
     }
   }

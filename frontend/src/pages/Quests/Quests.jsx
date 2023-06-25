@@ -3,7 +3,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import NotConnected from "../../components/NotConnected";
-import { ChainID } from "../../Utils/utils";
+import { ChainID, GetExpectedChainIdWithEnv } from "../../Utils/utils";
 import ChangeChain from "../../components/ChangeChain";
 import Stack from "@mui/material/Stack";
 import Image from "next/image";
@@ -13,7 +13,6 @@ import { useAccount, useNetwork } from "wagmi";
 import { ethers } from "ethers";
 import { Typography } from "@mui/material";
 import { useSwitchNetwork } from "wagmi";
-import { GetExpectedChainIdWithEnv } from "../../Utils/utils";
 
 const Quests = () => {
   const QuestReward = 1500;

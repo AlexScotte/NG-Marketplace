@@ -94,7 +94,6 @@ const Inventory = () => {
     console.log("Loading page inventory");
     if (isConnected) {
       const wrongChainID = chain?.id != GetExpectedChainIdWithEnv();
-      setWrongChain(wrongChainID);
       if (!wrongChainID && loadingContractOK) {
         getBalanceOfGuardiantToken();
         getChestsPrice();

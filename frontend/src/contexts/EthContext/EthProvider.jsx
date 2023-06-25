@@ -8,7 +8,7 @@ import {
   useSigner,
   useProvider,
 } from "wagmi";
-import { ChainID } from "../../Utils/utils";
+import { ChainID, GetExpectedChainIdWithEnv } from "../../Utils/utils";
 import { ethers } from "ethers";
 
 function EthProvider({ children }) {
@@ -182,7 +182,7 @@ function EthProvider({ children }) {
     let guardianStuffArtifact;
     let guardianTokenArtifact;
 
-    if (chain?.id == ChainID.HardhatLocal) {
+    if (chain?.id == GetExpectedChainIdWithEnv()) {
       try {
         // Treasure guardian artifacts
         treasureGuardianArtifact = require("../../contracts/TreasureGuardian.json");

@@ -1,3 +1,4 @@
+const { kMaxLength } = require("buffer");
 const { network } = require("hardhat");
 const contractFrontFolder = "../../frontend/src/contracts";
 
@@ -32,31 +33,49 @@ module.exports = {
     console.log(
       "Mint ERC20 tokens and give them to treasure guardian contract"
     );
-    guardianToken.mint(treasureGuardian.address);
+    await guardianToken.mint(treasureGuardian.address);
 
     // Initialize TreasureGuardianToken
     console.log("Initialize treasure guardian");
-    treasureGuardian.initialize(guardianToken.address);
+    await treasureGuardian.initialize(guardianToken.address);
+
+    // console.log("Creating collection...");
+    // // Create ERC1155 collection
+    // await treasureGuardian.createCollection();
+    // console.log("Collection created !");
+
+    // const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
+    // const forgeMaster = ForgeMaster.attach(await treasureGuardian.factory());
+    // const addr = forgeMaster.collectionAddress();
+
+    const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
+    const forgeMaster = await ForgeMaster.deploy();
+    await forgeMaster.deployed();
 
     console.log("Creating collection...");
-    // Create ERC1155 collection
-    await treasureGuardian.createCollection();
+
+    await forgeMaster.createCollection("Node Guardians Alyra Collection");
+    console.log(await forgeMaster.collectionAddress());
+    await forgeMaster.forgeCollectionForSomeone(treasureGuardian.address);
     console.log("Collection created !");
+
+    await treasureGuardian.initializeGuardianStuff(
+      await forgeMaster.collectionAddress()
+    );
 
     // Get ERC1155 to save artifact in front file
     const guardianStuffName = "GuardianStuff";
-    const guardiantStuffAddress = await treasureGuardian.guardianStuff();
-    const guardianStuff = await hre.ethers.getContractAt(
+    const guardianStuffAddress = await treasureGuardian.guardianStuff();
+    const guardianStuff = await ethers.getContractAt(
       guardianStuffName,
-      guardiantStuffAddress
+      guardianStuffAddress
     );
 
     // Deploy the Marketplace
     const auctionHouseName = "AuctionHouse";
-    const guardianStuffAddr = await treasureGuardian.guardianStuff();
     const auctionHouse = await this.deployContract(
       auctionHouseName,
-      guardianStuffAddr
+      guardianStuffAddress
     );
 
     // Save the contract's artifacts and address in the FRONTEND directory

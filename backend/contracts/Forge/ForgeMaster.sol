@@ -23,7 +23,6 @@ contract ForgeMaster is Ownable, ERC1155Holder {
         bytes memory collectionBytecode = type(GuardianStuff).creationCode;
         // Make a random salt based on the artist name
         bytes32 salt = keccak256(abi.encodePacked(newCollectionName));
-
         assembly {
             newCollectionAddress := create2(
                 0,
@@ -38,7 +37,7 @@ contract ForgeMaster is Ownable, ERC1155Holder {
         }
 
         collectionName = newCollectionName;
-        collectionAddress = newCollectionAddress;
+        collectionAddress = address(newCollectionAddress);
         return (newCollectionAddress);
     }
 
@@ -46,8 +45,24 @@ contract ForgeMaster is Ownable, ERC1155Holder {
      * @notice Allow the owner to trigger the generation of all the ERC115 tokens
      */
     function forgeCollection() external onlyOwner {
+        require(
+            address(collectionAddress) != address(0),
+            "You need to create collection first"
+        );
+
         GuardianStuff guardianStuff = GuardianStuff(collectionAddress);
         guardianStuff.forgeStuff(msg.sender);
         guardianStuff.forgeChests(msg.sender);
+    }
+
+    function forgeCollectionForSomeone(address itemOwner) external onlyOwner {
+        require(
+            address(collectionAddress) != address(0),
+            "You need to create collection first"
+        );
+
+        GuardianStuff guardianStuff = GuardianStuff(collectionAddress);
+        guardianStuff.forgeStuff(itemOwner);
+        guardianStuff.forgeChests(itemOwner);
     }
 }

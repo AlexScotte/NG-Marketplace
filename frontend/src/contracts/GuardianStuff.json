@@ -431,10 +431,7 @@
   "deployedLinkReferences": {},
   "networks": {
     "31337": {
-      "address": "0x5597c57A0d21428f3105eD13abb7BB8Ce0670df6"
-    },
-    "80001": {
-      "address": "0x0000000000000000000000000000000000000000"
+      "address": "0x4b338d1766469Ab186b5cED921505796C48CbAB7"
     }
   }
 }

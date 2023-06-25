@@ -41,15 +41,19 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
         guardianToken = GuardianToken(guardianTokenAddr);
     }
 
+    function initializeGuardianStuff(
+        address guardianStuffAddr
+    ) external onlyOwner {
+        guardianStuff = GuardianStuff(guardianStuffAddr);
+    }
+
     /**
      * @notice Create the collection of all the ERC1155 tokens
      */
     function createCollection() external onlyOwner {
-        address collectionAddress = factory.createCollection(
-            "Node Guardians Alyra Collection"
-        );
+        factory.createCollection("Node Guardians Alyra Collection");
         factory.forgeCollection();
-        guardianStuff = GuardianStuff(collectionAddress);
+        guardianStuff = GuardianStuff(factory.collectionAddress());
     }
 
     /**
