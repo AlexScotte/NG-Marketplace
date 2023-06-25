@@ -29,7 +29,7 @@ For this project the structure of the site has been retained.
 ![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/adec9991-b311-40bc-9b01-b4e46a74b348)
 
 
-## Links
+## Links :
 Lien vers l'application déployée sur Vercel:
 https://ng-marketplace-git-master-alexscotte.vercel.app
 
@@ -47,14 +47,15 @@ https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
 
 
 
-## Aperçu de l'application:
+## Preview :
 
 <img width="957" alt="Inventory" src="https://user-images.githubusercontent.com/53000621/230975145-99f53105-831b-426b-b985-5db83a6f833f.png">
 <img width="950" alt="Inventory details" src="https://user-images.githubusercontent.com/53000621/230975171-0b243f64-c37e-4e1a-8241-a86189838d70.png">
 <img width="952" alt="Marketplace" src="https://user-images.githubusercontent.com/53000621/230975190-ce387fb1-b450-497c-9dd6-e96a40454953.png">
 <img width="950" alt="Marketplace details" src="https://user-images.githubusercontent.com/53000621/230975207-77fbca59-2374-4fb7-9a66-33627d621152.png">
 
-Test unitaires:
+## Unit tests :
 
-<img width="805" alt="image" src="https://user-images.githubusercontent.com/53000621/231377385-adf88dcb-3239-4b79-af03-bd497060999b.png">
+![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/29ef8329-3948-440c-adc3-fbf7b6f54c0d)
+
 
