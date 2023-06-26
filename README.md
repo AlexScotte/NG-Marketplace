@@ -1,7 +1,7 @@
 <img width="1132" alt="banner-marketplace" src="https://github.com/AlexScotte/NG-Marketplace/assets/53000621/d4da6856-a391-46d7-b818-302da1dce98e">
 
 Welcome guardian. You have come a long way and braved multiple challenges to get all these rewards.
-Now it's time to trade them with others guardians
+Now it's time to trade them with other guardians
 
 > **Warning**
 > All assets used in this project are the property of https://nodeguardians.io/
