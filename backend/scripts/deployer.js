@@ -35,33 +35,35 @@ module.exports = {
     );
     await guardianToken.mint(treasureGuardian.address);
 
-    // Initialize TreasureGuardianToken
-    console.log("Initialize treasure guardian");
-    await treasureGuardian.initialize(guardianToken.address);
-
-    // console.log("Creating collection...");
-    // // Create ERC1155 collection
-    // await treasureGuardian.createCollection();
-    // console.log("Collection created !");
-
-    // const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
-    // const forgeMaster = ForgeMaster.attach(await treasureGuardian.factory());
-    // const addr = forgeMaster.collectionAddress();
-
+    // Create ERC1155 collection with the factory
     const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
     const forgeMaster = await ForgeMaster.deploy();
     await forgeMaster.deployed();
 
     console.log("Creating collection...");
-
-    await forgeMaster.createCollection("Node Guardians Alyra Collection");
-    console.log(await forgeMaster.collectionAddress());
-    await forgeMaster.forgeCollectionForSomeone(treasureGuardian.address);
-    console.log("Collection created !");
-
-    await treasureGuardian.initializeGuardianStuff(
-      await forgeMaster.collectionAddress()
+    const txCreateCollection = await forgeMaster.createCollection(
+      "Node Guardians Alyra Collection"
     );
+    await txCreateCollection.wait();
+    const erc1155CollectionAddr = await forgeMaster.collectionAddress();
+    console.log("Collection created !");
+    console.log(
+      "Collection address: " + (await forgeMaster.collectionAddress())
+    );
+    console.log("Forging collection...");
+    const txForgeCollection = await forgeMaster.forgeCollection(
+      treasureGuardian.address
+    );
+    await txForgeCollection.wait();
+    console.log("Collection forged !");
+
+    // Initialize TreasureGuardian with ERC20 and ERC155 token address
+    console.log("Initialize treasure guardian");
+    var txTreasureInitialize = await treasureGuardian.initialize(
+      guardianToken.address,
+      erc1155CollectionAddr
+    );
+    await txTreasureInitialize.wait();
 
     // Get ERC1155 to save artifact in front file
     const guardianStuffName = "GuardianStuff";

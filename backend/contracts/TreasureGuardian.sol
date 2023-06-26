@@ -11,7 +11,6 @@ import "./Forge/GuardianStuff.sol";
 import "./Token/GuardianToken.sol";
 
 contract TreasureGuardian is Ownable, ERC1155Holder {
-    ForgeMaster public factory;
     GuardianStuff public guardianStuff;
     GuardianToken public guardianToken;
 
@@ -30,30 +29,19 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
      */
     event onStuffTransferedTo(address to, uint256[] ids, uint256[] missingIds);
 
+    constructor() {}
+
     /**
-     * @notice Create also the ERC20 token and the factory
-     */
-    constructor() {
-        factory = new ForgeMaster();
-    }
-
-    function initialize(address guardianTokenAddr) external onlyOwner {
-        guardianToken = GuardianToken(guardianTokenAddr);
-    }
-
-    function initializeGuardianStuff(
+     * @notice Initialize the treasure guardian contract with addresses tokens
+     * @param guardianTokenAddr: Deployed ERC20 token address
+     * @param guardianStuffAddr: Deployed ERC1155 token address
+     **/
+    function initialize(
+        address guardianTokenAddr,
         address guardianStuffAddr
     ) external onlyOwner {
+        guardianToken = GuardianToken(guardianTokenAddr);
         guardianStuff = GuardianStuff(guardianStuffAddr);
-    }
-
-    /**
-     * @notice Create the collection of all the ERC1155 tokens
-     */
-    function createCollection() external onlyOwner {
-        factory.createCollection("Node Guardians Alyra Collection");
-        factory.forgeCollection();
-        guardianStuff = GuardianStuff(factory.collectionAddress());
     }
 
     /**
