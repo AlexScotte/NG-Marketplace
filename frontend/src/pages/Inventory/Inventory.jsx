@@ -63,9 +63,11 @@ const Inventory = () => {
   const [ownedItems, setOwnedItems] = useState([]);
   const [filteredOwnedItems, setFilteredOwnedItems] = useState([]);
   const [guardianTokens, setGuardianTokens] = useState(0);
-  const [guardianTokenDecimals, setGuardianTokenDecimals] = useState(0);
   const [chestItemCount, setChestItemCount] = useState(0);
   const [chestPrice, setChestPrice] = useState(0);
+  const [friendlyChestPrice, setFriendlyChestPrice] = useState(0);
+  const [friendlyGuardianTokenAmount, setFriendlyGuardianTokenAmount] =
+    useState(0);
   const [selectedItem, setSelectedItem] = useState(item);
   const [priceValue, setPriceValue] = useState("");
   const Filters = {
@@ -96,7 +98,7 @@ const Inventory = () => {
       const wrongChainID = chain?.id != GetExpectedChainIdWithEnv();
       setWrongChain(wrongChainID);
       if (!wrongChainID && loadingContractOK) {
-        getBalanceOfGuardiantToken();
+        getBalanceOfGuardianToken();
         getChestsPrice();
         getChestsCount();
         getOwnedItems();
@@ -104,7 +106,7 @@ const Inventory = () => {
     }
   }, [isConnected, chain, loadingContractOK]);
 
-  const getBalanceOfGuardiantToken = async () => {
+  const getBalanceOfGuardianToken = async () => {
     try {
       const tokenCount = await guardianTokenContractProvider.balanceOf(
         userAccount
@@ -113,7 +115,7 @@ const Inventory = () => {
       setGuardianTokens(tokenCount);
 
       const decimals = await guardianTokenContractProvider.decimals();
-      setGuardianTokenDecimals(decimals);
+      setFriendlyGuardianTokenAmount(ToFriendlyPrice(tokenCount, decimals));
     } catch (error) {
       console.log(error.message);
     }
@@ -138,6 +140,9 @@ const Inventory = () => {
       const chestsPrice = await treasureGuardianContractProvider.chestPrice();
       console.log("Chest Price: " + chestsPrice);
       setChestPrice(chestsPrice);
+
+      const decimals = await guardianTokenContractProvider.decimals();
+      setFriendlyChestPrice(ToFriendlyPrice(chestsPrice, decimals));
     } catch (error) {
       console.log(error.message);
     }
@@ -265,7 +270,7 @@ const Inventory = () => {
         setModalMesage(message);
         getChestsCount();
         getOwnedItems();
-        getBalanceOfGuardiantToken();
+        getBalanceOfGuardianToken();
         handleModalOpen();
       } catch (error) {
         setModalTitle("Error !");
@@ -371,7 +376,7 @@ const Inventory = () => {
         setModalTitle(title);
         setModalMesage(message);
         getChestsCount();
-        getBalanceOfGuardiantToken();
+        getBalanceOfGuardianToken();
         setSelectedItem("");
         getOwnedItems();
         handleModalOpen();
@@ -784,8 +789,7 @@ const Inventory = () => {
                       marginBottom="20px"
                     >
                       <Typography variant="h5">
-                        Chest Price:{" "}
-                        {ToFriendlyPrice(chestPrice, guardianTokenDecimals)}
+                        Chest Price: {friendlyChestPrice}
                       </Typography>
                       <Image
                         style={{
@@ -840,7 +844,7 @@ const Inventory = () => {
                 >
                   <Stack direction="row" justifyContent="end" marginRight="30%">
                     <Typography variant="h5" marginRight="5px">
-                      {ToFriendlyPrice(guardianTokens, guardianTokenDecimals)}
+                      {friendlyGuardianTokenAmount}
                     </Typography>
                     <Image
                       style={{
