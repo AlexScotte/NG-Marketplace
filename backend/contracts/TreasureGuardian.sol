@@ -34,7 +34,7 @@ contract TreasureGuardian is Ownable, ERC1155Holder {
     /**
      * @notice Initialize the treasure guardian contract with addresses tokens
      * @param guardianTokenAddr: Deployed ERC20 token address
-     * @param guardianStuffAddr: Deployed ERC1155 token address
+     * @param guardianStuffAddr: Deployed ERC1155token address
      **/
     function initialize(
         address guardianTokenAddr,
