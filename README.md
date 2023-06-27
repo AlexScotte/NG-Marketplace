@@ -1,7 +1,7 @@
 <img width="1132" alt="banner-marketplace" src="https://github.com/AlexScotte/NG-Marketplace/assets/53000621/d4da6856-a391-46d7-b818-302da1dce98e">
 
 Welcome guardian. You have come a long way and braved multiple challenges to get all these rewards.
-Now it's time to trade them with others guardians
+Now it's time to trade them with other guardians
 
 > **Warning**
 > All assets used in this project are the property of https://nodeguardians.io/
@@ -30,32 +30,35 @@ For this project the structure of the site has been retained.
 
 
 ## Links :
-Lien vers l'application déployée sur Vercel:
-https://ng-marketplace-git-master-alexscotte.vercel.app
+App link deployed on Vercel:
+https://ng-marketplace.vercel.app/
 
-Vidéo de présentation de Node Guardians pour plus de contexte:
+Project presentation (French):
+[https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df](https://www.loom.com/share/a9b04a50ce8a4e4da775626e075f9086?sid=defb58ba-685c-4543-9ed7-51f79a361022)
+
+Node Guardians presentation for more context:
 https://www.loom.com/share/1d6defa0b70b45bfb236d8404ae338ed
-
-Vidéo de présentation du projet en LOCAL:
-https://www.loom.com/share/fc2acebf33d9400389fb6d970d3d7d87
-
-Vidéo de présentation du projet sur TEST NET:
-https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
-
-
-
-
 
 
 ## Preview :
 
-<img width="957" alt="Inventory" src="https://user-images.githubusercontent.com/53000621/230975145-99f53105-831b-426b-b985-5db83a6f833f.png">
-<img width="950" alt="Inventory details" src="https://user-images.githubusercontent.com/53000621/230975171-0b243f64-c37e-4e1a-8241-a86189838d70.png">
-<img width="952" alt="Marketplace" src="https://user-images.githubusercontent.com/53000621/230975190-ce387fb1-b450-497c-9dd6-e96a40454953.png">
-<img width="950" alt="Marketplace details" src="https://user-images.githubusercontent.com/53000621/230975207-77fbca59-2374-4fb7-9a66-33627d621152.png">
+<img width="960" alt="Home" src="https://github.com/AlexScotte/NG-Marketplace/assets/53000621/a7161ace-0285-4a69-b5f5-4d2f035c4294">
+
+<img width="960" alt="Quests" src="https://github.com/AlexScotte/NG-Marketplace/assets/53000621/ce00bb43-e7fe-4ddf-9353-becf2b25cadc">
+
+![Inventory](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/31e92d23-753d-4100-84fa-599b19425f9a)
+
+![Inventory details](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/4fc6cca6-9572-42da-b5d2-80078adf3195)
+
+![Marketplace](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/5e275f07-9c5a-4e75-8054-f35c5876b43a)
+
+![Marketplace details](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/e0f04253-fa43-4bf4-ad64-85cf556b3e2d)
+
+![Marketplace details sold](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/cb2b9986-055c-465c-a5dc-09cc009f2b0a)
+
 
 ## Unit tests :
 
-![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/29ef8329-3948-440c-adc3-fbf7b6f54c0d)
+![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/a662c20a-c7c0-4678-9fde-6bb52c6e3ff8)
 
 
