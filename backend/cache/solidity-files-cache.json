@@ -25,6 +25,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -62,6 +65,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -97,6 +103,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -132,6 +141,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -169,6 +181,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -206,6 +221,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -241,6 +259,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -276,6 +297,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -314,6 +338,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -351,6 +378,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -388,6 +418,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -430,6 +463,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -465,6 +501,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -502,6 +541,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -541,6 +583,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -576,6 +621,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -590,7 +638,7 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\AuctionHouse\\AuctionHouse.sol": {
-      "lastModificationDate": 1687078867565,
+      "lastModificationDate": 1687760171114,
       "contentHash": "c9b4d7c4cbfe27965f21f80d366b3ea7",
       "sourceName": "contracts/AuctionHouse/AuctionHouse.sol",
       "solcConfig": {
@@ -613,6 +661,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -631,7 +682,7 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Token\\GuardianToken.sol": {
-      "lastModificationDate": 1687078867567,
+      "lastModificationDate": 1687760171120,
       "contentHash": "c3aabc4ffb71b0a29b5653cfe8efa172",
       "sourceName": "contracts/Token/GuardianToken.sol",
       "solcConfig": {
@@ -654,6 +705,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -669,8 +723,8 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\TreasureGuardian.sol": {
-      "lastModificationDate": 1687762480712,
-      "contentHash": "71f20a9ccf3b103116f11fe5e4518db4",
+      "lastModificationDate": 1687805353262,
+      "contentHash": "6aad6acf1e923c7425a01d1d046ab4b3",
       "sourceName": "contracts/TreasureGuardian.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -692,6 +746,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -735,6 +792,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -753,7 +813,7 @@
       ]
     },
     "C:\\Users\\Alex\\Documents\\Travail\\Alyra\\NG-Marketplace\\backend\\contracts\\Forge\\GuardianStuff.sol": {
-      "lastModificationDate": 1687078867566,
+      "lastModificationDate": 1687760171117,
       "contentHash": "078cdb7e6b79f594775e70f8c81c04d7",
       "sourceName": "contracts/Forge/GuardianStuff.sol",
       "solcConfig": {
@@ -776,6 +836,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },

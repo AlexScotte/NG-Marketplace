@@ -48,7 +48,7 @@ describe("***** Factory - Forge Master Tests *****", () => {
 
       // Create ERC1155 token collection and create all items
       await factory.createCollection(collectionName);
-      await factory.forgeCollection();
+      await factory.forgeCollection(owner.address);
     });
 
     it("...Should ERC1155 token be created at collection address", async () => {

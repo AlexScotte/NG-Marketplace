@@ -7,6 +7,7 @@ describe("***** Marketplace - Auction House Tests *****", () => {
   let account1 = "";
   let account2 = "";
   let treasure;
+  let factory;
   let marketplace;
   let erc20Token;
 
@@ -20,12 +21,15 @@ describe("***** Marketplace - Auction House Tests *****", () => {
     const treasureGuardian = await TreasureGuardian.deploy();
     treasure = await treasureGuardian.deployed();
 
-    // Create ERC1155 Collection
-    await treasure.createCollection();
-
-    // Get Factory contract
+    // Deploy Factory contract
     const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
-    factory = ForgeMaster.attach(await treasure.factory());
+    const forgeMaster = await ForgeMaster.deploy();
+    factory = await forgeMaster.deployed();
+
+    // Create ERC1155 Collection
+    await forgeMaster.createCollection("Node Guardians Alyra Collection");
+    const erc1155CollectionAddr = await forgeMaster.collectionAddress();
+    await forgeMaster.forgeCollection(treasure.address);
 
     // Deploy ERC20 token
     const GuardianToken = await ethers.getContractFactory("GuardianToken");
@@ -33,7 +37,10 @@ describe("***** Marketplace - Auction House Tests *****", () => {
     erc20Token = await gurdToken.deployed();
 
     // Initialize treasure guardian with ERC20 token address
-    await treasureGuardian.initialize(erc20Token.address);
+    await treasureGuardian.initialize(
+      erc20Token.address,
+      erc1155CollectionAddr
+    );
 
     // Deploy marketplace with ERC1155 token address
     const AuctionHouse = await ethers.getContractFactory("AuctionHouse");

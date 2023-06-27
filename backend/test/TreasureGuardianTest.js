@@ -10,6 +10,7 @@ describe("***** Treasure Guardian Tests *****", () => {
   let account2 = "";
   let treasure = "";
   let erc20Token = "";
+  let factory = "";
 
   async function deployContractsFixture() {
     const [o, a1, a2] = await ethers.getSigners();
@@ -26,8 +27,21 @@ describe("***** Treasure Guardian Tests *****", () => {
     const guardianToken = await GuardianToken.deploy();
     erc20Token = await guardianToken.deployed();
 
+    // Deploy Factory contract
+    const ForgeMaster = await ethers.getContractFactory("ForgeMaster");
+    const forgeMaster = await ForgeMaster.deploy();
+    factory = await forgeMaster.deployed();
+
+    // Create ERC1155 Collection
+    await forgeMaster.createCollection("Node Guardians Alyra Collection");
+    const erc1155CollectionAddr = await forgeMaster.collectionAddress();
+    await forgeMaster.forgeCollection(treasure.address);
+
     // Initialize treasure guardian contract with erc20 token address
-    await treasureGuardian.initialize(erc20Token.address);
+    await treasureGuardian.initialize(
+      erc20Token.address,
+      erc1155CollectionAddr
+    );
     owner = o;
     account1 = a1;
     account2 = a2;
@@ -44,44 +58,13 @@ describe("***** Treasure Guardian Tests *****", () => {
     });
 
     it("...Should have deploy the ERC1155 Factory ", async () => {
-      const receipt = await treasure.factory();
+      const receipt = await treasure.guardianStuff();
       expect(receipt).not.equal(ZERO_ADDRESS);
-    });
-  });
-
-  describe("Create ERC155 items collection from treasure contract", function () {
-    it("...Should not be able to create the collection if not owner of the treasure contract", async () => {
-      await expect(
-        treasure.connect(account1).createCollection()
-      ).to.be.revertedWith(onlyOwnerMessage);
-    });
-
-    it("...Should the owner of the factory be the treasure guardian contract", async () => {
-      await treasure.createCollection();
-
-      const Factory = await ethers.getContractFactory("ForgeMaster");
-
-      const factoryAddr = await treasure.factory();
-      const factory = await Factory.attach(factoryAddr);
-      const owner = await factory.owner();
-      expect(treasure.address).equal(owner);
-    });
-
-    it("...Should items collection be created", async () => {
-      await treasure.createCollection();
-
-      const ERC1155Token = await ethers.getContractFactory("GuardianStuff");
-
-      const erc1155Addr = await treasure.guardianStuff();
-      const erc1155 = await ERC1155Token.attach(erc1155Addr);
-      const itemIDs = await erc1155.getItemIDs();
-      expect(itemIDs.length).greaterThan(0);
     });
   });
 
   describe("Manage ERC20 from treasure contract", function () {
     beforeEach(async function () {
-      await treasure.createCollection();
       await erc20Token.mint(treasure.address);
     });
 
@@ -98,7 +81,6 @@ describe("***** Treasure Guardian Tests *****", () => {
     let erc1155Token;
     let itemIDs;
     beforeEach(async function () {
-      await treasure.createCollection();
       const ERC1155Token = await ethers.getContractFactory("GuardianStuff");
       const erc1155Addr = await treasure.guardianStuff();
       erc1155Token = await ERC1155Token.attach(erc1155Addr);
@@ -127,7 +109,6 @@ describe("***** Treasure Guardian Tests *****", () => {
     let chestItemID;
 
     beforeEach(async function () {
-      await treasure.createCollection();
       const ERC1155Token = await ethers.getContractFactory("GuardianStuff");
       const erc1155Addr = await treasure.guardianStuff();
       erc1155Token = await ERC1155Token.attach(erc1155Addr);
