@@ -33,16 +33,11 @@ For this project the structure of the site has been retained.
 App link deployed on Vercel:
 https://ng-marketplace.vercel.app/
 
-Vidéo de présentation de Node Guardians pour plus de contexte:
+Project presentation (French):
+[https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df](https://www.loom.com/share/a9b04a50ce8a4e4da775626e075f9086?sid=defb58ba-685c-4543-9ed7-51f79a361022)
+
+Node Guardians presentation for more context:
 https://www.loom.com/share/1d6defa0b70b45bfb236d8404ae338ed
-
-Vidéo de présentation du projet en LOCAL:
-https://www.loom.com/share/fc2acebf33d9400389fb6d970d3d7d87
-
-Vidéo de présentation du projet sur TEST NET:
-https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
-
-
 
 
 ## Preview :
@@ -64,5 +59,6 @@ https://www.loom.com/share/fe4b3009276543db9ae2136e1a73e1df
 
 ## Unit tests :
 
-![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/29ef8329-3948-440c-adc3-fbf7b6f54c0d)
+![image](https://github.com/AlexScotte/NG-Marketplace/assets/53000621/a662c20a-c7c0-4678-9fde-6bb52c6e3ff8)
+
 
